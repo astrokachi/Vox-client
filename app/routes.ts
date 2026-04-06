@@ -4,7 +4,7 @@ export default [
 
   route("login", "routes/auth/login.tsx"),
   route("auth/session", "routes/auth/session.tsx"),
-  route("api/user/profile", "routes/api/user-profile.server.ts"),
+  route("api/user/profile", "routes/api/user-profile.ts"),
 
   layout("routes/dashboard/index.tsx", [
     index("routes/dashboard/overview.tsx"),

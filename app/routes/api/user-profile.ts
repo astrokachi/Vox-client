@@ -1,5 +1,5 @@
 import { data } from "react-router";
-import type { Route } from "./+types";
+import type { Route } from "./+types/user-profile";
 import { getSession } from "~/sessions.server";
 import axios from "axios";
 

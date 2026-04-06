@@ -1,5 +1,5 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-import type { Route } from "./routes/+types";
+import type { Route } from "./+types/root";
 import 'app/styles/index.scss'
 import { UserProvider } from "~/contexts/user-provider";
 

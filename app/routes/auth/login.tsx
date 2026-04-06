@@ -3,7 +3,7 @@ import { redirect, data } from "react-router";
 import { useNavigate } from "react-router";
 import Button from "~/components/button";
 import "~/styles/login.scss";
-import type { Route } from "./+types";
+import type { Route } from "./+types/login";
 import { commitSession, getSession } from "~/sessions.server";
 import axios from "axios";
 import { routes } from "~/api/routes";

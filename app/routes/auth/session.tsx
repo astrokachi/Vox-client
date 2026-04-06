@@ -1,6 +1,6 @@
 import { getSession, commitSession } from "~/sessions.server";
 import { data } from "react-router";
-import type { Route } from "./+types";
+import type { Route } from "./+types/session";
 
 export async function action({ request }: Route.ActionArgs) {
   const { token } = await request.json();

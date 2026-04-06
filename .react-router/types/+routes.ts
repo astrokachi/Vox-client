@@ -44,8 +44,8 @@ type RouteFiles = {
     id: "routes/auth/session";
     page: "/auth/session";
   };
-  "routes/api/user-profile.server.ts": {
-    id: "routes/api/user-profile.server";
+  "routes/api/user-profile.ts": {
+    id: "routes/api/user-profile";
     page: "/api/user/profile";
   };
   "routes/dashboard/index.tsx": {
@@ -70,7 +70,7 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/auth/login": typeof import("./app/routes/auth/login.tsx");
   "routes/auth/session": typeof import("./app/routes/auth/session.tsx");
-  "routes/api/user-profile.server": typeof import("./app/routes/api/user-profile.server.ts");
+  "routes/api/user-profile": typeof import("./app/routes/api/user-profile.ts");
   "routes/dashboard/index": typeof import("./app/routes/dashboard/index.tsx");
   "routes/dashboard/overview": typeof import("./app/routes/dashboard/overview.tsx");
   "routes/dashboard/posts": typeof import("./app/routes/dashboard/posts.tsx");
