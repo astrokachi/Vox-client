@@ -1,0 +1,80 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+.toast-container {
+  position: fixed;
+  bottom: map.get(vars.$spacing, lg);
+  right: map.get(vars.$spacing, lg);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  max-width: 400px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  padding: map.get(vars.$spacing, md);
+  border-radius: map.get(vars.$border-radius, md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, md);
+  width: 100%;
+}
+
+.toast-success {
+  background-color: map.get(vars.$colors, success);
+  color: map.get(vars.$colors, text-primary);
+  border-left: 4px solid map.get(vars.$colors, success-dark);
+}
+
+.toast-error {
+  background-color: map.get(vars.$colors, error);
+  color: map.get(vars.$colors, text-primary);
+  border-left: 4px solid map.get(vars.$colors, error-dark);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .toast {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}

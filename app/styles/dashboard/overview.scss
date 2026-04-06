@@ -1,0 +1,43 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+.overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    gap: map.get(vars.$spacing, lg);
+  }
+}
+
+.overview-heading {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, xs);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    gap: map.get(vars.$spacing, sm);
+  }
+}
+
+.overview-greeting {
+  font-size: map.get(vars.$font-sizes, xl);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-primary);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, 2xl);
+  }
+}
+
+.overview-content {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    gap: map.get(vars.$spacing, lg);
+  }
+}
+

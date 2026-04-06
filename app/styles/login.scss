@@ -1,0 +1,145 @@
+@use "sass:map";
+@use "variables" as vars;
+
+.container {
+  max-width: map.get(vars.$breakpoints, xl);
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: map.get(vars.$spacing, sm);
+
+
+  &>span {
+    color: map.get(vars.$colors, text-muted);
+  }
+
+  &>span:last-child {
+    margin-top: map.get(vars.$spacing, sm);
+  }
+}
+
+.emphasis {
+  font-weight: 600;
+}
+
+.logo {
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &>img {
+    width: 100px;
+    height: 100px;
+    transition: filter 0.2s ease, box-shadow 0.1s ease;
+
+    &:hover {
+      filter: drop-shadow(0 0 12px rgba(49, 61, 242, 0.5));
+    }
+  }
+}
+
+.header {
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, 3xl);
+}
+
+.btn-wrapper {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+
+.login-card {
+  border-radius: map.get(vars.$border-radius, xl);
+  padding: map.get(vars.$spacing, lg);
+  margin-top: map.get(vars.$spacing, lg);
+  border: 1px solid map.get(vars.$colors, surface);
+  background-color: map.get(vars.$colors, surface);
+  max-width: 600px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.login-card-title {
+  margin-bottom: map.get(vars.$spacing, lg);
+  text-align: center;
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, xl);
+  font-weight: 600;
+}
+
+.login-button {
+  width: 100%;
+  padding: map.get(vars.$spacing, md) map.get(vars.$spacing, lg);
+  border-radius: map.get(vars.$border-radius, xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s;
+  background-color: map.get(vars.$colors, primary);
+  color: map.get(vars.$colors, text-primary);
+  font-weight: 600;
+  font-size: map.get(vars.$font-sizes, base);
+  box-shadow: 0 4px 12px rgba(29, 161, 242, 0.3);
+  border: none;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+}
+
+.login-button:active {
+  transform: scale(0.98);
+}
+
+.login-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, md);
+  margin: map.get(vars.$spacing, md) 0;
+}
+
+.login-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: map.get(vars.$colors, border-dark);
+}
+
+.login-divider-text {
+  color: map.get(vars.$colors, text-muted);
+  font-size: map.get(vars.$font-sizes, xs);
+}
+
+.login-info {
+  text-align: center;
+}
+
+.login-info-text {
+  color: map.get(vars.$colors, text-secondary);
+  font-size: 14.6px;
+  line-height: 1.5;
+}
+
+.login-footer {
+  margin-top: map.get(vars.$spacing, lg);
+  margin-bottom: 8rem;
+  text-align: center;
+}
+
+.login-footer-text {
+  color: map.get(vars.$colors, text-muted);
+  font-size: 14.6px;
+}

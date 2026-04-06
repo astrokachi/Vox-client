@@ -1,0 +1,13 @@
+@use "sass:map";
+@use "../../variables" as vars;
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: map.get(vars.$spacing, sm);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: map.get(vars.$spacing, md);
+  }
+}

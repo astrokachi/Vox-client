@@ -1,0 +1,61 @@
+$colors: (
+  primary: #1d9bf0,
+  primary-dark: #0C80CE,
+  secondary: #8b5cf6,
+  text-primary: #ffffff,
+  text-secondary: #71767b,
+  text-muted: #6b7280,
+  text-light: #e7e9ea,
+  text-steel: #adb5bd,
+  gray-dark: #161616,
+  surface: #121212,
+  liner: #1a1a1a,
+  sidebar-bg: #111,
+);
+
+$spacing: (
+  xs: 4px,
+  sm: 8px,
+  md: 16px,
+  lg: 24px,
+  xl: 32px,
+);
+
+$border-radius: (
+  sm: 4px,
+  md: 8px,
+  lg: 12px,
+  xl: 16px,
+  full: 9999px,
+);
+
+$font-sizes: (
+  xs: 12px,
+  sm: 14px,
+  base: 16px,
+  lg: 18px,
+  xl: 20px,
+  2xl: 24px,
+  3xl: 36px,
+);
+
+$breakpoints: (
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+$transitions: (
+  default: 0.3s,
+);
+
+$sidebar: (
+  expanded-width: 220px,
+  collapsed-width: 50px,
+);
+
+$overlays: (
+  hover-bg: rgba(255, 255, 255, 0.1),
+  backdrop-bg: rgba(0, 0, 0, 0.5),
+);

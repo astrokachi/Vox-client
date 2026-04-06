@@ -1,0 +1,48 @@
+@use "sass:map";
+@use "variables" as vars;
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  height: 100vh;
+  font-family: "funnel display", sans-serif;
+  background-color: #0a0a0a;
+  color: map.get(vars.$colors, text-primary)
+}
+
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+a {
+  font-weight: 500;
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: inherit;
+}
+
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  font-weight: 500;
+}
+
+button {
+  color: #f8f9fa;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  // background-color: #212529;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}

@@ -1,0 +1,11 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+.recents-con {
+  margin-top: 20px;
+  padding: 6px 12px;
+}
+
+.recents-title {
+  color: map.get(vars.$colors, text-steel);
+}

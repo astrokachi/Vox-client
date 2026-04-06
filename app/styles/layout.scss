@@ -1,0 +1,94 @@
+@use "sass:map";
+@use "./variables" as vars;
+
+
+main {
+  // max-width: map.get(vars.$breakpoints, xl);
+  margin: 0 auto;
+}
+
+.main-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    min-height: 100vh;
+  }
+}
+
+.dashboard-content {
+  position: relative;
+  flex: 1;
+  padding: map.get(vars.$spacing, sm);
+  min-height: 100vh;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    padding: 2rem;
+    min-height: auto;
+  }
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    flex-direction: row;
+  }
+}
+
+// Mobile header - hamburger menu
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: map.get(vars.$spacing, sm) map.get(vars.$spacing, sm);
+  background-color: transparent;
+  border-bottom: none;
+  gap: map.get(vars.$spacing, sm);
+  position: relative;
+  z-index: 100;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    display: none;
+  }
+}
+
+.mobile-header-spacer {
+  flex: 1;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.mobile-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: map.get(vars.$colors, text-primary);
+  transition: color 0.2s ease;
+
+  &:active {
+    background: rgba(map.get(vars.$colors, primary), 0.2);
+    color: map.get(vars.$colors, primary);
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+    color: map.get(vars.$colors, primary);
+  }
+
+  svg {
+    color: inherit;
+  }
+}

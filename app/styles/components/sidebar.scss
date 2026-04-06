@@ -1,0 +1,396 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+/* ====================================================
+   SHELL CONTROLLER
+   ==================================================== */
+
+.desktop-sidebar-shell {
+  display: block;
+}
+
+.mobile-sidebar-shell {
+  display: none;
+}
+
+@media (max-width: map.get(vars.$breakpoints, md)) {
+  .desktop-sidebar-shell {
+    display: none;
+  }
+
+  .mobile-sidebar-shell {
+    display: block;
+  }
+}
+
+/* ====================================================
+   SHARED SIDEBAR PARTS
+   ==================================================== */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: map.get(vars.$spacing, sm) 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 24px;
+}
+
+.sidebar-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 map.get(vars.$spacing, md);
+  transition: padding map.get(vars.$transitions, default) ease;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 150px;
+  overflow: hidden;
+  transition: min-width map.get(vars.$transitions, default) ease, margin map.get(vars.$transitions, default) ease, width map.get(vars.$transitions, default) ease, opacity map.get(vars.$transitions, default) ease, gap map.get(vars.$transitions, default) ease;
+}
+
+.brand-img {
+  width: map.get(vars.$font-sizes, 2xl);
+  height: map.get(vars.$font-sizes, 2xl);
+}
+
+.brand-text {
+  font-size: map.get(vars.$font-sizes, xl);
+  font-weight: 600;
+  margin: 0;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: max-width map.get(vars.$transitions, default) ease, opacity map.get(vars.$transitions, default) ease;
+}
+
+.sidebar-menu-control-con {
+  position: relative;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: map.get(vars.$spacing, sm);
+  border-radius: map.get(vars.$border-radius, md);
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+    color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    background: rgba(map.get(vars.$colors, primary), 0.2);
+    color: map.get(vars.$colors, primary);
+  }
+}
+
+.actions-con {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, sm);
+  padding: 0 map.get(vars.$spacing, sm);
+}
+
+.nav-links-con {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, xs);
+  padding: 0 map.get(vars.$spacing, sm);
+}
+
+/* ====================================================
+   DESKTOP SIDEBAR
+   ==================================================== */
+
+.desktop-sidebar {
+  width: map.get(vars.$sidebar, expanded-width);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--sidebar-bg, map.get(vars.$colors, sidebar-bg));
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  transition: width map.get(vars.$transitions, default) ease;
+  color: map.get(vars.$colors, text-primary);
+  overflow: visible;
+
+  &.collapsed {
+    width: map.get(vars.$sidebar, collapsed-width);
+
+    .brand-logo {
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      min-width: 0;
+      margin-left: 0;
+      gap: 0;
+    }
+
+    .brand-text {
+      max-width: 0;
+      opacity: 0;
+    }
+
+    .sidebar-control {
+      padding: 0 6px;
+    }
+
+    .sidebar-nav {
+      overflow: visible; // Allows tooltips to escape the clipping context
+    }
+
+    .recents-con {
+      width: 0;
+      opacity: 0;
+      min-width: 0;
+    }
+  }
+}
+
+/* ====================================================
+   MOBILE DRAWER SHELL
+   ==================================================== */
+
+.mobile-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: map.get(vars.$overlays, backdrop-bg);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity map.get(vars.$transitions, default) ease, visibility map.get(vars.$transitions, default) ease;
+
+  &.open {
+    opacity: 1;
+    // visibility: visible;
+  }
+}
+
+.mobile-sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(80vw, 220px);
+  height: 100vh;
+  background-color: var(--sidebar-bg, map.get(vars.$colors, sidebar-bg));
+  z-index: 1001;
+  transform: translateX(-100%);
+  transition: transform map.get(vars.$transitions, default) ease;
+  color: map.get(vars.$colors, text-primary);
+  // box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+
+  &.open {
+    transform: translateX(0);
+  }
+}
+
+/* ====================================================
+   USER MENU
+   ==================================================== */
+
+.user-menu {
+  position: relative;
+  margin-top: auto;
+  padding: map.get(vars.$spacing, md) map.get(vars.$spacing, sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transition: padding 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+  }
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 8px;
+  transition: background 0.3s ease, gap 0.3s ease;
+
+
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: linear-gradient(135deg, map.get(vars.$colors, primary), map.get(vars.$colors, secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.3s ease, height 0.3s ease, margin 0.3s ease;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.avatar-initials {
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 600;
+  color: white;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.user-name {
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  transition: max-width 0.3s ease, opacity 0.3s ease;
+}
+
+.user-plan {
+  font-size: map.get(vars.$font-sizes, xs);
+  color: map.get(vars.$colors, text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  transition: max-width 0.3s ease, opacity 0.3s ease;
+}
+
+.user-menu-chevron {
+  flex-shrink: 0;
+  opacity: 1;
+  max-width: 24px;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: map.get(vars.$spacing, sm);
+  right: map.get(vars.$spacing, sm);
+  background: map.get(vars.$colors, surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: map.get(vars.$border-radius, md);
+  z-index: 100;
+  padding: map.get(vars.$spacing, xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.user-menu.expanded .user-menu-dropdown {
+  max-height: 300px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+  padding: map.get(vars.$spacing, sm) map.get(vars.$spacing, md);
+  border-radius: map.get(vars.$border-radius, sm);
+  font-size: map.get(vars.$font-sizes, sm);
+  text-align: left;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.danger {
+    color: #ef4444;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+/* When the desktop sidebar is collapsed */
+.desktop-sidebar.collapsed {
+  .user-menu {
+    border-top: none;
+    padding: 8px 0;
+  }
+
+  .user-menu-trigger {
+    gap: 0;
+    padding: 5px;
+    position: relative;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .user-info {
+    position: absolute;
+    left: 50px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .user-name,
+  .user-plan {
+    opacity: 0;
+    max-width: 0;
+  }
+
+  .user-menu-chevron {
+    position: absolute;
+    right: -8px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    max-width: 0;
+  }
+
+  .user-menu-dropdown {
+    position: fixed;
+    bottom: 80px;
+    left: 6px;
+    width: 200px;
+  }
+}

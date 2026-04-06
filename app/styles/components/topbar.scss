@@ -1,0 +1,31 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+.topbar-con {
+  color: map.get(vars.$colors, text-primary);
+  background-color: map.get(vars.$colors, surface);
+  border-bottom: 1px solid map.get(vars.$colors, liner);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: map.get(vars.$spacing, md) 12px;
+  align-items: center;
+
+  &>.topbar-title {
+    width: max-content;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+}
+
+.btn-upgrade {
+  outline: none;
+  border: none;
+  background-color: map.get(vars.$colors, primary-dark);
+  border-radius: 30px;
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: 700;
+}
