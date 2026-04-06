@@ -41,6 +41,8 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
     .toUpperCase()
     .slice(0, 2);
 
+  console.log(user);
+
   if (isLoading && !user) {
     return (
       <div className={`user-menu ${isCollapsed ? 'collapsed' : ''}`}>
@@ -64,7 +66,7 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
         </div>
         <div className="user-info">
           <span className="user-name">{displayName}</span>
-          <span className="user-plan">{user?.email}</span>
+          <span className="user-plan">{user?.username}</span>
         </div>
         <CaretUpDownIcon className="user-menu-chevron" size={16} weight="bold" />
       </button>
