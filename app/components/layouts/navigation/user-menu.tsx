@@ -1,19 +1,17 @@
 import { CaretUpDownIcon } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
-import { useUser } from '~/hooks/use-user';
+import { useRouteLoaderData } from 'react-router';
+import type { loader as dashboardLoader } from '~/routes/dashboard/index';
 
 interface UserMenuProps {
   isCollapsed: boolean;
 }
 
 export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
-  const { user, isLoading, refetch } = useUser();
+  const data = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
+  const user = data?.user ?? null;
   const [isExpanded, setIsExpanded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   const toggle = () => setIsExpanded(prev => !prev);
 
@@ -36,27 +34,10 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
   const displayName = user?.name ?? 'User';
   const initials = displayName
     .split(' ')
-    .map(n => n[0])
+    .map((n: string) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
-
-  console.log(user);
-
-  if (isLoading && !user) {
-    return (
-      <div className={`user-menu ${isCollapsed ? 'collapsed' : ''}`}>
-        <div className="user-menu-trigger user-menu-loading">
-          <div className="user-avatar">
-            <span className="avatar-initials">..</span>
-          </div>
-          <div className="user-info">
-            <span className="user-name">Loading...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div ref={menuRef} onClick={toggle} aria-expanded={isExpanded} className={`user-menu ${isCollapsed ? 'collapsed' : ''} ${isExpanded ? 'expanded' : ''}`}>

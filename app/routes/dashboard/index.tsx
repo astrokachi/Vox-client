@@ -1,12 +1,14 @@
-import { Outlet } from "react-router";
+import { Outlet, useLoaderData, type ShouldRevalidateFunction } from "react-router";
 import { SidebarIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-// import TopBar from "~/components/layouts/topbar";
 import "~/styles/layout.scss";
 import type { Route } from "./+types";
 import { getSession } from "~/sessions.server";
 import SideBar from "~/components/layouts/sidebar";
 import { QuickActions } from "~/components/dashboard/quick-actions";
+import axios from "axios";
+
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export async function loader({
   request,
@@ -15,14 +17,28 @@ export async function loader({
     request.headers.get("Cookie")
   );
 
-  if (!session.has("jwtoken")) {
-    // return redirect('/login')
+  const token = session.get("jwtoken");
+
+  if (!token) {
+    return { user: null };
   }
 
-  return null;
+  try {
+    const res = await axios.get(`${API_BASE}/user/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return { user: res.data.status ? res.data.data : null };
+  } catch {
+    return { user: null };
+  }
 }
 
+export const shouldRevalidate: ShouldRevalidateFunction = () => {
+  return false;
+};
+
 const DashboardLayout = () => {
+  const { user } = useLoaderData<typeof loader>();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

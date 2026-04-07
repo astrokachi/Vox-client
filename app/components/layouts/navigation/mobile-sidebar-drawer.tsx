@@ -5,7 +5,8 @@ import { UserMenu } from './user-menu';
 const logo = "/vox-small.png";
 
 interface MobileSidebarDrawerProps {
-  isOpen: boolean; onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const MobileSidebarDrawer = ({ isOpen, onClose }: MobileSidebarDrawerProps) => {

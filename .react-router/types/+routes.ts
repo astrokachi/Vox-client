@@ -20,11 +20,16 @@ type Pages = {
   "/auth/session": {
     params: {};
   };
-  "/api/user/profile": {
-    params: {};
-  };
   "/posts": {
     params: {};
+  };
+  "/posts/new": {
+    params: {};
+  };
+  "/posts/:id": {
+    params: {
+      "id": string;
+    };
   };
   "/replies": {
     params: {};
@@ -34,7 +39,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/auth/session" | "/api/user/profile" | "/posts" | "/replies";
+    page: "/" | "/login" | "/auth/session" | "/posts" | "/posts/new" | "/posts/:id" | "/replies";
   };
   "routes/auth/login.tsx": {
     id: "routes/auth/login";
@@ -44,21 +49,25 @@ type RouteFiles = {
     id: "routes/auth/session";
     page: "/auth/session";
   };
-  "routes/api/user-profile.ts": {
-    id: "routes/api/user-profile";
-    page: "/api/user/profile";
-  };
   "routes/dashboard/index.tsx": {
     id: "routes/dashboard/index";
-    page: "/" | "/posts" | "/replies";
+    page: "/" | "/posts" | "/posts/new" | "/posts/:id" | "/replies";
   };
   "routes/dashboard/overview.tsx": {
     id: "routes/dashboard/overview";
     page: "/";
   };
-  "routes/dashboard/posts.tsx": {
-    id: "routes/dashboard/posts";
+  "routes/dashboard/posts/index.tsx": {
+    id: "routes/dashboard/posts/index";
     page: "/posts";
+  };
+  "routes/dashboard/posts/new.tsx": {
+    id: "routes/dashboard/posts/new";
+    page: "/posts/new";
+  };
+  "routes/dashboard/posts/[post].tsx": {
+    id: "routes/dashboard/posts/[post]";
+    page: "/posts/:id";
   };
   "routes/dashboard/replies.tsx": {
     id: "routes/dashboard/replies";
@@ -70,9 +79,10 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/auth/login": typeof import("./app/routes/auth/login.tsx");
   "routes/auth/session": typeof import("./app/routes/auth/session.tsx");
-  "routes/api/user-profile": typeof import("./app/routes/api/user-profile.ts");
   "routes/dashboard/index": typeof import("./app/routes/dashboard/index.tsx");
   "routes/dashboard/overview": typeof import("./app/routes/dashboard/overview.tsx");
-  "routes/dashboard/posts": typeof import("./app/routes/dashboard/posts.tsx");
+  "routes/dashboard/posts/index": typeof import("./app/routes/dashboard/posts/index.tsx");
+  "routes/dashboard/posts/new": typeof import("./app/routes/dashboard/posts/new.tsx");
+  "routes/dashboard/posts/[post]": typeof import("./app/routes/dashboard/posts/[post].tsx");
   "routes/dashboard/replies": typeof import("./app/routes/dashboard/replies.tsx");
 };

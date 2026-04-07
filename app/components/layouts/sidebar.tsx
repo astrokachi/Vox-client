@@ -24,9 +24,9 @@ const SideBar = ({ mobileMenuOpen = false, onMobileMenuToggle }: SideBarProps) =
 
       {/* Mobile Shell - Hidden via CSS on desktop */}
       <div className="mobile-sidebar-shell">
-        <MobileSidebarDrawer 
-          isOpen={mobileMenuOpen} 
-          onClose={handleCloseMobileMenu} 
+        <MobileSidebarDrawer
+          isOpen={mobileMenuOpen}
+          onClose={handleCloseMobileMenu}
         />
       </div>
     </>
