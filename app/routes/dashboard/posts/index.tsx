@@ -1,4 +1,4 @@
-import "../../styles/dashboard/posts.scss";
+import "~/styles/dashboard/posts.scss";
 
 const Posts = () => {
   return (

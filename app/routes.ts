@@ -3,14 +3,13 @@ import { type RouteConfig, index, route, layout, prefix } from "@react-router/de
 export default [
   route("login", "routes/auth/login.tsx"),
   route("auth/session", "routes/auth/session.tsx"),
-  route("api/user/profile", "routes/api/user-profile.ts"),
-
   layout("routes/dashboard/index.tsx", [
     index("routes/dashboard/overview.tsx"),
 
     ...prefix("posts", [
-      index("routes/dashboard/posts.tsx"),
-      // route(":id", "routes/dashboard/post.tsx")
+      index("routes/dashboard/posts/index.tsx"),
+      route("new", "routes/dashboard/posts/new.tsx"),
+      route(":id", "routes/dashboard/posts/[post].tsx")
     ]),
 
     ...prefix("replies", [
