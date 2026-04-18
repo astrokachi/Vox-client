@@ -59,15 +59,39 @@ const Login = () => {
   };
 
   useEffect(() => {
+    const loginPerf: Record<string, number> = {};
     const handleMessage = async (event: MessageEvent) => {
-      if (event.data.status === "success") {
-        console.log(event.data.token);
-        // TODO: set the session data;
+      if (event.data.status !== "success") return;
+
+      loginPerf.messageReceived = performance.now();
+      console.log("message received");
+
+      try {
+        loginPerf.sessionRequestStart = performance.now();
+
         await axios.post(routes.auth.session, { token: event.data.token });
-        setIsLoading(false);
-        navigate('/');
+
+        loginPerf.sessionRequestEnd = performance.now();
+
+        console.log(
+          "message -> request start:",
+          loginPerf.sessionRequestStart - loginPerf.messageReceived,
+          "ms"
+        );
+
+        console.log(
+          "session request duration:",
+          loginPerf.sessionRequestEnd - loginPerf.sessionRequestStart,
+          "ms"
+        );
+
+        loginPerf.navigateStart = performance.now();
+        navigate("/");
+      } catch (err) {
+        console.error("session setup failed", err);
       }
     };
+
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, [navigate]);
