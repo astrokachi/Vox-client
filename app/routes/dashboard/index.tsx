@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData, type ShouldRevalidateFunction } from "react-router";
+import { Outlet, redirect, type ShouldRevalidateFunction } from "react-router";
 import { SidebarIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import "~/styles/layout.scss";
@@ -7,38 +7,35 @@ import { getSession } from "~/sessions.server";
 import SideBar from "~/components/layouts/sidebar";
 import { QuickActions } from "~/components/dashboard/quick-actions";
 import axios from "axios";
+import { routes } from "~/api/routes";
 
-const API_BASE = import.meta.env.VITE_API_URL;
-
-export async function loader({
-  request,
-}: Route.LoaderArgs) {
-  const session = await getSession(
-    request.headers.get("Cookie")
-  );
-
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("jwtoken");
 
   if (!token) {
-    return { user: null };
+    return redirect("/login");
   }
 
-  try {
-    const res = await axios.get(`${API_BASE}/user/profile`, {
+  const userPromise = axios
+    .get(routes.user.profile, {
       headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => {
+      if (!res.data.status) throw new Error("Invalid profile response");
+      return res.data.data;
     });
-    return { user: res.data.status ? res.data.data : null };
-  } catch {
-    return { user: null };
-  }
+
+
+  return { userPromise };
 }
+
 
 export const shouldRevalidate: ShouldRevalidateFunction = () => {
   return false;
 };
 
 const DashboardLayout = () => {
-  const { user } = useLoaderData<typeof loader>();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {

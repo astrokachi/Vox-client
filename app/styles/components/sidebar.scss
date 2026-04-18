@@ -343,6 +343,74 @@
   }
 }
 
+/* ====================================================
+   USER MENU SKELETON / LOADING STATE
+   ==================================================== */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: map.get(vars.$border-radius, md);
+
+  @keyframes skeleton-loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+.user-menu-skeleton-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: not-allowed;
+  padding: 5px;
+  border-radius: 8px;
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: map.get(vars.$border-radius, full);
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    flex-grow: 1;
+    gap: 6px;
+  }
+
+  .user-name {
+    height: map.get(vars.$font-sizes, sm);
+    width: 80%;
+  }
+
+  .user-plan {
+    height: map.get(vars.$font-sizes, xs);
+    width: 60%;
+  }
+
+  .skeleton-text {
+    display: block;
+  }
+}
+
 /* When the desktop sidebar is collapsed */
 .desktop-sidebar.collapsed {
   .user-menu {
