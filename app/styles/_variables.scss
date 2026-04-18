@@ -1,4 +1,5 @@
 $colors: (
+  bg-dark: #0a0a0a,
   primary: #1d9bf0,
   primary-dark: #0C80CE,
   secondary: #8b5cf6,
@@ -7,10 +8,17 @@ $colors: (
   text-muted: #6b7280,
   text-light: #e7e9ea,
   text-steel: #adb5bd,
+  text-light-blue: #e8f6ff,
   gray-dark: #161616,
   surface: #121212,
   liner: #1a1a1a,
   sidebar-bg: #111,
+  card-fill: #0e0e0e,
+  card-fill-dark: #161616,
+  card-fill-darker: #18171d,
+  card-stroke: #2b2b2b,
+  card-stroke-blue: #181e37,
+  accent-blue-light: #0067ac,
 );
 
 $spacing: (

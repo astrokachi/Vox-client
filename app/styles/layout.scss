@@ -21,6 +21,7 @@ main {
 .dashboard-content {
   position: relative;
   flex: 1;
+  margin-top: map.get(vars.$spacing, md);
   padding: map.get(vars.$spacing, sm);
   min-height: 100vh;
 
@@ -45,10 +46,12 @@ main {
   align-items: center;
   justify-content: space-between;
   padding: map.get(vars.$spacing, sm) map.get(vars.$spacing, sm);
-  background-color: transparent;
+  background-color: map.get(vars.$colors, bg-dark);
+  width: 100%;
   border-bottom: none;
   gap: map.get(vars.$spacing, sm);
   position: relative;
+  position: fixed;
   z-index: 100;
 
   @media (min-width: map.get(vars.$breakpoints, md)) {

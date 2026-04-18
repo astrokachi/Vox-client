@@ -6,3 +6,432 @@
     color: map.get(vars.$colors, text-primary);
   }
 }
+
+.chat-container {
+  // position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    gap: 20px;
+    padding: 30px 12px;
+  }
+}
+
+.greeting-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    gap: 6px;
+  }
+}
+
+.logo-gradient {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00528a, #1f0c97);
+}
+
+.greeting-text {
+  font-size: map.get(vars.$font-sizes, base);
+  color: map.get(vars.$colors, text-secondary);
+  margin: 0;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    font-size: map.get(vars.$font-sizes, sm);
+  }
+}
+
+.greeting-heading {
+  font-size: map.get(vars.$font-sizes, 2xl);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-primary);
+  margin: 0;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    font-size: map.get(vars.$font-sizes, lg);
+  }
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 657px;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    gap: 12px;
+  }
+}
+
+.trending-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    gap: 8px;
+  }
+}
+
+.trending-label {
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 500;
+  color: map.get(vars.$colors, accent-blue-light);
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    font-size: map.get(vars.$font-sizes, xs);
+  }
+}
+
+.topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    gap: 6px;
+  }
+}
+
+.topic-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: map.get(vars.$border-radius, lg);
+  background: map.get(vars.$colors, card-fill-darker);
+  border: 1px solid map.get(vars.$colors, card-stroke-blue);
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, sm);
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    padding: 5px 12px;
+    font-size: map.get(vars.$font-sizes, xs);
+    border-radius: map.get(vars.$border-radius, md);
+  }
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.15);
+    border-color: map.get(vars.$colors, primary);
+  }
+}
+
+.chat-form {
+  display: flex;
+  flex-direction: column;
+  border-radius: map.get(vars.$border-radius, lg);
+  background: map.get(vars.$colors, card-fill);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  overflow: hidden;
+}
+
+.textarea-wrapper {
+  padding: 20px;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    padding: 12px;
+  }
+}
+
+.chat-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 16px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, card-fill-dark);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, base);
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    min-height: 80px;
+    padding: 12px;
+    font-size: map.get(vars.$font-sizes, sm);
+  }
+
+  &::placeholder {
+    color: map.get(vars.$colors, text-muted);
+  }
+
+  &:focus {
+    border-color: map.get(vars.$colors, primary);
+  }
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid map.get(vars.$colors, card-stroke);
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    padding: 8px 12px;
+  }
+}
+
+.prompts-count {
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-secondary);
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    font-size: map.get(vars.$font-sizes, xs);
+  }
+}
+
+.generate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: map.get(vars.$colors, primary-dark);
+  color: map.get(vars.$colors, text-light-blue);
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  @media (max-width: map.get(vars.$breakpoints, sm)) {
+    padding: 8px 14px;
+    font-size: map.get(vars.$font-sizes, xs);
+    gap: 6px;
+  }
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
+}
+
+// Chat UI Styles
+.post-chat-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 98dvh;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 20px 24px;
+}
+
+.chat-messages-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  min-height: 0;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: map.get(vars.$colors, card-stroke);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(map.get(vars.$colors, text-secondary), 0.5);
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  text-align: center;
+
+  h2 {
+    font-size: map.get(vars.$font-sizes, xl);
+    color: map.get(vars.$colors, text-primary);
+    margin: 0;
+  }
+
+  p {
+    font-size: map.get(vars.$font-sizes, sm);
+    color: map.get(vars.$colors, text-secondary);
+    margin: 0;
+  }
+}
+
+.message-group {
+  display: flex;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+
+  &.message-user {
+    justify-content: flex-end;
+  }
+
+  &.message-agent {
+    justify-content: flex-start;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-message {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 60%;
+
+  .message-bubble {
+    padding: 12px 16px;
+    background: map.get(vars.$colors, primary);
+    color: map.get(vars.$colors, text-primary);
+    border-radius: map.get(vars.$border-radius, lg);
+    font-size: map.get(vars.$font-sizes, sm);
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+}
+
+.agent-response {
+  width: 100%;
+}
+
+.suggestions-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.post-card {
+  display: flex;
+  flex-direction: column;
+  background: map.get(vars.$colors, card-fill-dark);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  border-radius: map.get(vars.$border-radius, lg);
+  padding: 16px;
+  gap: 12px;
+  transition: background map.get(vars.$transitions, default) ease,
+    border-color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.05);
+    border-color: rgba(map.get(vars.$colors, primary), 0.3);
+  }
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-gradient {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00528a, #1f0c97);
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-secondary);
+  font-size: map.get(vars.$font-sizes, lg);
+  cursor: pointer;
+  padding: 0;
+  transition: color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    color: map.get(vars.$colors, text-primary);
+  }
+}
+
+.post-content {
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.post-footer {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.engagement-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-secondary);
+  font-size: map.get(vars.$font-sizes, xs);
+  cursor: pointer;
+  transition: color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    color: map.get(vars.$colors, primary);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+.chat-input-section {
+  position: relative;
+  flex-shrink: 0;
+  padding: 20px 0;
+  margin-top: auto;
+}
