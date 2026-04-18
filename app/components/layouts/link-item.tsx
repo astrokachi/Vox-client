@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import '~/styles/components/link-item.scss';
 
 interface LinkItemProps {
@@ -7,13 +7,23 @@ interface LinkItemProps {
   ref: string;
   icon: ReactNode;
   tooltip?: string;
+  type?: 'link' | 'action';
 }
 
-export const LinkItem = ({ title, icon, ref, tooltip }: LinkItemProps) => {
+export const LinkItem = ({ title, icon, ref, tooltip, type = 'link' }: LinkItemProps) => {
+  if (type === 'action') {
+    return (
+      <Link to={ref} data-tooltip={tooltip} className="nav-link">
+        <div className="nav-icon">{icon}</div>
+        <span className='link-title'>{title}</span>
+      </Link>
+    );
+  }
+
   return (
     <NavLink
       to={ref}
-      end={ref === '/'}
+      end
       className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
       data-tooltip={tooltip}
     >

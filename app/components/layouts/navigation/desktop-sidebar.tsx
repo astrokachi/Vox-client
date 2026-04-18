@@ -1,7 +1,7 @@
 import { SidebarIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { SidebarNavItems } from './sidebar-nav-items';
-import { UserMenu } from './user-menu';
+import { UserMenu } from '../user-menu';
 
 const logo = "/vox-small.png";
 
