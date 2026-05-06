@@ -5,8 +5,7 @@ import Button from "~/components/button";
 import "~/styles/login.scss";
 import type { Route } from "./+types/login";
 import { commitSession, getSession } from "~/sessions.server";
-import axios from "axios";
-import { routes } from "~/api/routes";
+import { authApi } from "~/api/endpoints";
 const logo = "/vox.png";
 
 // check if user already logged in
@@ -16,7 +15,6 @@ export async function loader({
   const session = await getSession(
     request.headers.get("Cookie")
   );
-
 
   if (session.has("jwtoken")) {
     return redirect('/');
@@ -37,12 +35,12 @@ const Login = () => {
   const handleLogin = () => {
     setIsLoading(true);
     const popup = window.open(
-      routes.auth.authorize,
+      authApi.authorize,
       "_blank",
       "popup=true"
     );
 
-    // listen for when closed, update loading state`
+    // listen for when closed, update loading state
     if (popup) {
       const checkPopup = setInterval(() => {
         try {
@@ -59,33 +57,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const loginPerf: Record<string, number> = {};
     const handleMessage = async (event: MessageEvent) => {
       if (event.data.status !== "success") return;
-
-      loginPerf.messageReceived = performance.now();
-      console.log("message received");
-
       try {
-        loginPerf.sessionRequestStart = performance.now();
-
-        await axios.post(routes.auth.session, { token: event.data.token });
-
-        loginPerf.sessionRequestEnd = performance.now();
-
-        console.log(
-          "message -> request start:",
-          loginPerf.sessionRequestStart - loginPerf.messageReceived,
-          "ms"
-        );
-
-        console.log(
-          "session request duration:",
-          loginPerf.sessionRequestEnd - loginPerf.sessionRequestStart,
-          "ms"
-        );
-
-        loginPerf.navigateStart = performance.now();
+        await authApi.session(event.data.token);
         navigate("/");
       } catch (err) {
         console.error("session setup failed", err);

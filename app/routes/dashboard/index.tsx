@@ -1,33 +1,37 @@
 import { Outlet, redirect, type ShouldRevalidateFunction } from "react-router";
 import { SidebarIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import "~/styles/layout.scss";
 import type { Route } from "./+types";
+import type { UserProfile } from "~/types/user";
 import { getSession } from "~/sessions.server";
 import SideBar from "~/components/layouts/sidebar";
 import { QuickActions } from "~/components/dashboard/quick-actions";
-import axios from "axios";
-import { routes } from "~/api/routes";
+import { initSocket } from "~/services/socket";
 
 export async function loader({ request }: Route.LoaderArgs) {
+
   const session = await getSession(request.headers.get("Cookie"));
+
   const token = session.get("jwtoken");
 
   if (!token) {
+    return redirect("/logout");
+  }
+
+  initSocket(token);
+
+  let user: UserProfile;
+  try {
+    user = jwtDecode<UserProfile>(token);
+  } catch (error) {
+    console.error("Failed to decode JWT:", error);
     return redirect("/login");
   }
 
-  const userPromise = axios
-    .get(routes.user.profile, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => {
-      if (!res.data.status) throw new Error("Invalid profile response");
-      return res.data.data;
-    });
 
-
-  return { userPromise };
+  return { user, token };
 }
 
 
