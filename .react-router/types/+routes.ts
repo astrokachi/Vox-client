@@ -20,6 +20,9 @@ type Pages = {
   "/auth/session": {
     params: {};
   };
+  "/logout": {
+    params: {};
+  };
   "/posts": {
     params: {};
   };
@@ -39,7 +42,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/auth/session" | "/posts" | "/posts/new" | "/posts/:id" | "/replies";
+    page: "/" | "/login" | "/auth/session" | "/logout" | "/posts" | "/posts/new" | "/posts/:id" | "/replies";
   };
   "routes/auth/login.tsx": {
     id: "routes/auth/login";
@@ -48,6 +51,10 @@ type RouteFiles = {
   "routes/auth/session.tsx": {
     id: "routes/auth/session";
     page: "/auth/session";
+  };
+  "routes/auth/logout.tsx": {
+    id: "routes/auth/logout";
+    page: "/logout";
   };
   "routes/dashboard/index.tsx": {
     id: "routes/dashboard/index";
@@ -79,6 +86,7 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/auth/login": typeof import("./app/routes/auth/login.tsx");
   "routes/auth/session": typeof import("./app/routes/auth/session.tsx");
+  "routes/auth/logout": typeof import("./app/routes/auth/logout.tsx");
   "routes/dashboard/index": typeof import("./app/routes/dashboard/index.tsx");
   "routes/dashboard/overview": typeof import("./app/routes/dashboard/overview.tsx");
   "routes/dashboard/posts/index": typeof import("./app/routes/dashboard/posts/index.tsx");
