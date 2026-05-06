@@ -1,6 +1,6 @@
 import { CaretUpDownIcon } from '@phosphor-icons/react';
-import { useEffect, useRef, useState, Suspense } from 'react';
-import { Await, useRouteLoaderData } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { useRouteLoaderData, useNavigate } from 'react-router';
 import type { loader as dashboardLoader } from '~/routes/dashboard/index';
 import { UserMenuSkeleton } from './user-menu-skeleton';
 
@@ -36,12 +36,13 @@ const UserMenuContent = ({ user }: { user: UserData }) => {
 };
 
 export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
-  const loaderData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
-  const userPromise = loaderData?.userPromise;
+  const { user } = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index')!;
   const [isExpanded, setIsExpanded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const toggle = () => setIsExpanded(prev => !prev);
+  const handleLogout = () => navigate('/logout');
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -61,23 +62,14 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
 
   return (
     <div ref={menuRef} onClick={toggle} aria-expanded={isExpanded} className={`user-menu ${isCollapsed ? 'collapsed' : ''} ${isExpanded ? 'expanded' : ''}`}>
-      <Suspense fallback={<UserMenuSkeleton isCollapsed={isCollapsed} />}>
-        {userPromise ? (
-          <Await
-            resolve={userPromise}
-            errorElement={<UserMenuSkeleton isCollapsed={isCollapsed} />}
-          >
-            {(user) => (
-              <button className="user-menu-trigger">
-                <UserMenuContent user={user} />
-                <CaretUpDownIcon className="user-menu-chevron" size={16} weight="bold" />
-              </button>
-            )}
-          </Await>
-        ) : (
-          <UserMenuSkeleton isCollapsed={isCollapsed} />
-        )}
-      </Suspense>
+      {user ? (
+        <button className="user-menu-trigger">
+          <UserMenuContent user={user} />
+          <CaretUpDownIcon className="user-menu-chevron" size={16} weight="bold" />
+        </button>
+      ) : (
+        <UserMenuSkeleton isCollapsed={isCollapsed} />
+      )}
 
       <div className="user-menu-dropdown">
         <button className="dropdown-item">
@@ -86,7 +78,7 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
         <button className="dropdown-item">
           <span>Billing</span>
         </button>
-        <button className="dropdown-item danger">
+        <button className="dropdown-item danger" onClick={handleLogout}>
           <span>Sign Out</span>
         </button>
       </div>
