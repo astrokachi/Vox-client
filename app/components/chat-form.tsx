@@ -1,26 +1,40 @@
-import { Form, } from "react-router"
 import { SparkleIcon } from "@phosphor-icons/react";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 
 interface ChatFormProps {
-  suggestion: string;
+  suggestion?: string;
+  onSubmit?: (content: string) => void;
 }
-export const ChatForm = ({ suggestion }: ChatFormProps) => {
+
+export const ChatForm = ({ suggestion, onSubmit }: ChatFormProps) => {
   const [content, setContent] = useState("");
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
-  }
+  };
+
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (content.trim() && onSubmit) {
+      onSubmit(content);
+      setContent("");
+    }
+  };
 
   useEffect(() => {
-    setContent(suggestion);
+    function setSuggestion() {
+      if (suggestion) {
+        setContent(suggestion);
+      }
+    }
+
+    setSuggestion();
   }, [suggestion]);
 
   return (
-    <Form method="post" className="chat-form">
+    <form onSubmit={handleSubmit} className="chat-form">
       <div className="textarea-wrapper">
         <textarea
-          name="content"
           className="chat-textarea"
           placeholder="Enter a topic or describe what you want to talk about"
           value={content}
@@ -34,6 +48,6 @@ export const ChatForm = ({ suggestion }: ChatFormProps) => {
           Generate post
         </button>
       </div>
-    </Form>
-  )
-}
+    </form>
+  );
+};
