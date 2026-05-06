@@ -294,11 +294,11 @@
   gap: 12px;
   animation: fadeIn 0.3s ease;
 
-  &.message-user {
+  &.message-User {
     justify-content: flex-end;
   }
 
-  &.message-agent {
+  &.message-Assistant {
     justify-content: flex-start;
   }
 }
