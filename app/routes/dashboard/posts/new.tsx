@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { redirect, useRouteLoaderData } from "react-router";
-import type { Route } from "./+types";
+import { useNavigate, useRouteLoaderData } from "react-router";
 import type { loader as dashboardLoader } from '~/routes/dashboard/index';
 import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
+import { useApiCall } from "~/hooks/useApiCall";
+import { chatApi } from "~/api/endpoints";
+import type { ChatCreateWithPromptDto, ChatsResponse } from "~/types";
+// import { socket } from "~/services/socket";
 
 const TRENDING_TOPICS = [
   "Trump's statement",
@@ -12,26 +15,21 @@ const TRENDING_TOPICS = [
   "#30dayschallenge",
 ];
 
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-  const content = formData.get("content");
-
-  if (!content || typeof content !== "string" || content.trim() === "") {
-    return { error: "Content is required" };
-  }
-
-  const postId = crypto.randomUUID();
-
-  return redirect(`/posts/${postId}`);
-}
-
 const NewPost = () => {
   const [suggestion, setSuggestion] = useState("");
-  const data = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
-  const user = data?.user ?? null;
+  const navigate = useNavigate();
+  const dashboardData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
+  const user = dashboardData?.user;
+  const { execute, data, loading, error } = useApiCall<ChatCreateWithPromptDto, ChatsResponse>(chatApi.createWithPrompt);
+
 
   const handleTopicClick = (topic: string) => {
     setSuggestion(`Create a new x post on ${topic}`);
+  };
+
+  const handleFormSubmit = async (content: string) => {
+    await execute({ payload: { content, type: "MULTIPLE" } });
+    if (!error) navigate(`/${data?.id}`);
   };
 
   return (
@@ -58,7 +56,9 @@ const NewPost = () => {
             ))}
           </div>
         </div>
-        <ChatForm suggestion={suggestion} />
+        {error && <div className="error-message">{error.message}</div>}
+        <ChatForm suggestion={suggestion} onSubmit={handleFormSubmit} />
+        {loading && <div className="loading-message">Creating conversation...</div>}
       </div>
     </div>
   );
