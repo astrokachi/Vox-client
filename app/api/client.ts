@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from 'axios';
 import { parseApiError } from './parseError';
+import { isTokenSet, getAccessToken } from '~/lib/auth';
 
 export const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -12,7 +13,6 @@ interface ApiResponse<T> {
 
 class ApiClient {
   private instance: AxiosInstance;
-  private token: string | undefined;
 
   constructor(config: AxiosRequestConfig) {
     this.instance = axios.create({
@@ -22,15 +22,12 @@ class ApiClient {
     this.configureInterceptors();
   }
 
-  setAuthToken(token: string) {
-    this.token = token;
-  }
-
   private configureInterceptors() {
     // attach token to request if needed
     this.instance.interceptors.request.use((config) => {
-      if (this.token && config.headers) {
-        config.headers.Authorization = `Bearer ${this.token}`
+      if (isTokenSet() && config.headers) {
+        config.headers.Authorization = `Bearer ${getAccessToken()}`
+        console.log("Auth Token :", getAccessToken());
       }
 
       return config;
@@ -38,13 +35,13 @@ class ApiClient {
 
     this.instance.interceptors.response.use((response: AxiosResponse<ApiResponse<unknown>>) => {
       if (import.meta.env.MODE !== "production") {
-        console.log(`${response.data.message} :`, {
+        console.log(`${response.data.message || "RESPONSE"} :`, {
           status: response.status,
           data: response.data,
         });
       }
 
-      // return typed response data
+      // return typed response data:window
       return response;
 
     }, async (error) => {

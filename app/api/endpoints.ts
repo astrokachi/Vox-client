@@ -1,36 +1,62 @@
-import type { Message, UserProfile } from "~/types"
-import { API_BASE, externalApi, internalApi } from "./client"
+import type {
+  CampaignReplyDto,
+  ChatAddMessageDto,
+  ChatCreateWithPromptDto,
+  ChatGetMessagesDto,
+  ChatsResponse,
+  Conversation,
+  ConversationCreateDto,
+  ConversationDeleteDto,
+  ConversationGetDto,
+  ConversationListDto,
+  ConversationUpdateDto,
+  Message,
+  PaginatedResponse,
+  QueueTweetRepliesResponse,
+  User,
+} from "~/types";
+import { API_BASE, externalApi, internalApi } from "./client";
 
 export const authApi = {
-  authorize: `${API_BASE}/auth/authorize`,
-  session: (token: string) =>
-    internalApi.post<void>('/auth/session', { token }),
-  logout: () =>
-    internalApi.post<void>('/auth/logout'),
-}
+  authorize: (): string => `${API_BASE}/auth/authorize`,
+  logout: (): Promise<{ status: boolean; message: string }> =>
+    internalApi.post<{ status: boolean; message: string }>("/auth/logout"),
+};
 
 export const userApi = {
-  profile: () =>
-    externalApi.get<UserProfile>('/user/profile'),
-}
+  profile: (): Promise<User> =>
+    externalApi.get<User>("/user/profile"),
+};
 
 export const campaignApi = {
-  reply: () =>
-    externalApi.post('/api/reply'),
-  post: () =>
-    externalApi.post('/api/post'),
-}
+  reply: (dto: CampaignReplyDto): Promise<QueueTweetRepliesResponse> =>
+    externalApi.post<QueueTweetRepliesResponse>("/api/reply", dto.payload),
+  post: (): Promise<void> =>
+    externalApi.post<void>("/api/post"),
+};
 
-export const conversation = {
-  get: () =>
-    externalApi.get('/api/conversations'),
-}
+export const conversationApi = {
+  create: (dto: ConversationCreateDto): Promise<Conversation> =>
+    externalApi.post<Conversation>("/api/conversations", dto.payload),
+  list: (dto: ConversationListDto): Promise<PaginatedResponse<Conversation>> =>
+    externalApi.get<PaginatedResponse<Conversation>>(
+      `/api/conversations?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 20}`
+    ),
+  get: (dto: ConversationGetDto): Promise<Conversation> =>
+    externalApi.get<Conversation>(`/api/conversations/${dto.id}`),
+  update: (dto: ConversationUpdateDto): Promise<Conversation> =>
+    externalApi.patch<Conversation>(`/api/conversations/${dto.id}`, dto.payload),
+  delete: (dto: ConversationDeleteDto): Promise<void> =>
+    externalApi.delete<void>(`/api/conversations/${dto.id}`),
+};
 
-export const chat = {
-  create: () =>
-    externalApi.post('/api/chat/new/prompt'),
-  get: (conversation_id: string) =>
-    externalApi.post<Message[]>(`/api/chat/${conversation_id}/messages`),
-  post: (conversation_id: string, content: string) =>
-    externalApi.post(`/api/chat/${conversation_id}/prompt`, { content }),
-}
+export const chatApi = {
+  createWithPrompt: (dto: ChatCreateWithPromptDto): Promise<ChatsResponse> =>
+    externalApi.post<ChatsResponse>("/api/chat/new/prompt", dto.payload),
+  getMessages: (dto: ChatGetMessagesDto): Promise<PaginatedResponse<Message>> =>
+    externalApi.get<PaginatedResponse<Message>>(
+      `/api/chat/${dto.conversationId}/messages?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 50}`
+    ),
+  addMessage: (dto: ChatAddMessageDto): Promise<Message> =>
+    externalApi.post<Message>(`/api/chat/${dto.conversationId}/prompt`, dto.payload),
+};
