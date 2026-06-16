@@ -1,30 +1,18 @@
 import { useEffect, useState } from "react";
-import { redirect, data } from "react-router";
+import { redirect } from "react-router";
 import { useNavigate } from "react-router";
 import Button from "~/components/button";
 import "~/styles/login.scss";
 import type { Route } from "./+types/login";
-import { commitSession, getSession } from "~/sessions.server";
 import { authApi } from "~/api/endpoints";
+import { isTokenSet, setAccessToken } from "~/lib/auth";
 const logo = "/vox.png";
 
 // check if user already logged in
-export async function loader({
-  request,
-}: Route.LoaderArgs) {
-  const session = await getSession(
-    request.headers.get("Cookie")
-  );
-
-  if (session.has("jwtoken")) {
-    return redirect('/');
+export async function loader() {
+  if (isTokenSet()) {
+    redirect('/')
   }
-
-  return data({ error: session.get("error") }, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    }
-  })
 }
 
 const Login = () => {
@@ -35,7 +23,7 @@ const Login = () => {
   const handleLogin = () => {
     setIsLoading(true);
     const popup = window.open(
-      authApi.authorize,
+      authApi.authorize(),
       "_blank",
       "popup=true"
     );
@@ -60,7 +48,7 @@ const Login = () => {
     const handleMessage = async (event: MessageEvent) => {
       if (event.data.status !== "success") return;
       try {
-        await authApi.session(event.data.token);
+        setAccessToken(event.data.token);
         navigate("/");
       } catch (err) {
         console.error("session setup failed", err);
@@ -71,39 +59,38 @@ const Login = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, [navigate]);
 
-  return (
-    <div className="container">
-      <div className="logo">
-        <img src={logo} alt="logo" />
-        <h1 className="header">Vox</h1>
+  return (<div className="container">
+    <div className="logo">
+      <img src={logo} alt="logo" />
+      <h1 className="header">Vox</h1>
+    </div>
+
+    <div className="login-card">
+      <h2 className="login-card-title">Sign in to continue</h2>
+      <div className="btn-wrapper">
+        <Button isLoading={isLoading} onClick={handleLogin} withIcon>
+          Continue with X
+        </Button>
       </div>
 
-      <div className="login-card">
-        <h2 className="login-card-title">Sign in to continue</h2>
-        <div className="btn-wrapper">
-          <Button isLoading={isLoading} onClick={handleLogin} withIcon>
-            Continue with X
-          </Button>
-        </div>
-
-        <div className="login-divider">
-          <div className="login-divider-line"></div>
-          <div className="login-divider-line"></div>
-        </div>
-
-        <div className="login-info">
-          <p className="login-info-text">
-            By signing in, you authorize this app to access your X account and generate tweets based on your preferences.
-          </p>
-        </div>
+      <div className="login-divider">
+        <div className="login-divider-line"></div>
+        <div className="login-divider-line"></div>
       </div>
 
-      <div className="login-footer">
-        <p className="login-footer-text">
-          New to Vox? Your account will be created automatically.
+      <div className="login-info">
+        <p className="login-info-text">
+          By signing in, you authorize this app to access your X account and generate tweets based on your preferences.
         </p>
       </div>
     </div>
+
+    <div className="login-footer">
+      <p className="login-footer-text">
+        New to Vox? Your account will be created automatically.
+      </p>
+    </div>
+  </div>
   );
 };
 

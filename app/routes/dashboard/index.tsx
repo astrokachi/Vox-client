@@ -3,33 +3,28 @@ import { SidebarIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import "~/styles/layout.scss";
-import type { Route } from "./+types";
-import type { UserProfile } from "~/types/user";
-import { getSession } from "~/sessions.server";
+import type { User } from "~/types";
 import SideBar from "~/components/layouts/sidebar";
 import { QuickActions } from "~/components/dashboard/quick-actions";
 import { initSocket } from "~/services/socket";
+import { getAccessToken, isTokenSet } from "~/lib/auth";
 
-export async function loader({ request }: Route.LoaderArgs) {
-
-  const session = await getSession(request.headers.get("Cookie"));
-
-  const token = session.get("jwtoken");
-
-  if (!token) {
+export async function loader() {
+  if (!isTokenSet()) {
     return redirect("/logout");
   }
 
+  const token = getAccessToken()!;
+
   initSocket(token);
 
-  let user: UserProfile;
+  let user: User;
   try {
-    user = jwtDecode<UserProfile>(token);
+    user = jwtDecode<User>(token);
   } catch (error) {
     console.error("Failed to decode JWT:", error);
     return redirect("/login");
   }
-
 
   return { user, token };
 }

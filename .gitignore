@@ -16,6 +16,7 @@ build
 *.local
 .env
 *.tsbuildinfo
+Vox API.postman_collection.json
 
 # Editor directories and files
 .vscode/*

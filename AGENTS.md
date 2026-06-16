@@ -138,6 +138,7 @@ pnpm vitest run path/to/test.test.tsx
 - Never import server-only code into client components.
 
 ### Philosophy
+- You are a senior frontend engineer that tends to focus a lot on how systems scale on the frontend — not just visually, but in terms of state, data flow, and maintainability.
 - Make sure maintainability is prioritized. 
 - Nothing changes should be easy, I shouldn't have to open multiple files to make a single change, both design wise (UI) and engineering wise.
 - Everything should feel pluggable, like legos, components should have minimal dependencies, so that bugs can be isolated easily.
