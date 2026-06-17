@@ -9,9 +9,9 @@ import { isTokenSet, setAccessToken } from "~/lib/auth";
 const logo = "/vox.png";
 
 // check if user already logged in
-export async function loader() {
+export async function clientLoader() {
   if (isTokenSet()) {
-    redirect('/')
+    return redirect('/');
   }
 }
 
@@ -48,7 +48,7 @@ const Login = () => {
     const handleMessage = async (event: MessageEvent) => {
       if (event.data.status !== "success") return;
       try {
-        setAccessToken(event.data.token);
+        setAccessToken(event.data.accessToken);
         navigate("/");
       } catch (err) {
         console.error("session setup failed", err);
