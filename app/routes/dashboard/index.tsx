@@ -9,7 +9,7 @@ import { QuickActions } from "~/components/dashboard/quick-actions";
 import { initSocket } from "~/services/socket";
 import { getAccessToken, isTokenSet } from "~/lib/auth";
 
-export async function loader() {
+export async function clientLoader() {
   if (!isTokenSet()) {
     return redirect("/logout");
   }

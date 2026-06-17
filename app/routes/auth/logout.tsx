@@ -2,7 +2,7 @@ import { redirect } from 'react-router';
 import { clearAccessToken } from '~/lib/auth';
 import { authApi } from '~/api/endpoints';
 
-export async function loader() {
+export async function clientLoader() {
   try {
     await authApi.logout();
   } catch (error) {

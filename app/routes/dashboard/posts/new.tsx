@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useRouteLoaderData } from "react-router";
-import type { loader as dashboardLoader } from '~/routes/dashboard/index';
+import type { clientLoader as dashboardLoader } from '~/routes/dashboard/index';
 import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
 import { useApiCall } from "~/hooks/useApiCall";
