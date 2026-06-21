@@ -54,7 +54,8 @@ class ApiClient {
       const apiError = parseApiError(error);
       //handle auth error
       if (apiError.code == 'UNAUTHORIZED') {
-        window.location.href = "/logout";
+        // try getting new access token
+        await ensureToken();
       }
 
       return Promise.reject(apiError);

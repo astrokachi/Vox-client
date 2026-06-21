@@ -13,14 +13,15 @@ async function fetchRefreshToken(): Promise<string> {
 
   if (!response.ok) {
     if (response.status === 401) {
-      window.location.href = '/logout';
+      console.log("Refresh return 401");
+      // window.location.href = '/logout';
       throw new Error('Session expired');
     }
     throw new Error('Token refresh failed');
   }
 
   const body = await response.json();
-  const newToken = body.accessToken ?? body.data?.accessToken;
+  const newToken = body.data;
 
   if (!newToken) {
     throw new Error('Invalid refresh response: no access token');

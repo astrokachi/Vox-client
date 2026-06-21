@@ -7,26 +7,23 @@ import type { User } from "~/types";
 import SideBar from "~/components/layouts/sidebar";
 import { QuickActions } from "~/components/dashboard/quick-actions";
 import { initSocket } from "~/services/socket";
-import { getAccessToken, isTokenSet } from "~/lib/auth";
+import { ensureToken } from "~/lib/ensure-token";
 
 export async function clientLoader() {
-  if (!isTokenSet()) {
-    return redirect("/logout");
-  }
-
-  const token = getAccessToken()!;
+  const token = await ensureToken();
 
   initSocket(token);
 
   let user: User;
+
   try {
     user = jwtDecode<User>(token);
+    return { user, token };
   } catch (error) {
     console.error("Failed to decode JWT:", error);
-    return redirect("/login");
+    // return redirect("/login");
   }
 
-  return { user, token };
 }
 
 
