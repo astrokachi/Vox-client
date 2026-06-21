@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { redirect } from "react-router";
-import { useNavigate } from "react-router";
 import Button from "~/components/button";
 import "~/styles/login.scss";
 import type { Route } from "./+types/login";
@@ -8,89 +6,59 @@ import { authApi } from "~/api/endpoints";
 import { isTokenSet, setAccessToken } from "~/lib/auth";
 const logo = "/vox.png";
 
-// check if user already logged in
-export async function clientLoader() {
+export async function clientLoader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const accessToken = url.searchParams.get("accessToken");
+
+  if (accessToken) {
+    setAccessToken(accessToken);
+    return redirect("/");
+  }
+
   if (isTokenSet()) {
-    return redirect('/');
+    return redirect("/");
   }
 }
 
 const Login = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-
-  // open a popup window that hits the server's authorize endpoint
   const handleLogin = () => {
-    setIsLoading(true);
-    const popup = window.open(
-      authApi.authorize(),
-      "_blank",
-      "popup=true"
-    );
-
-    // listen for when closed, update loading state
-    if (popup) {
-      const checkPopup = setInterval(() => {
-        try {
-          if (popup.closed) {
-            clearInterval(checkPopup);
-            setIsLoading(false);
-          }
-        } catch (e) {
-          clearInterval(checkPopup);
-          console.error(e);
-        }
-      }, 500);
-    }
+    window.location.href = authApi.authorize();
   };
 
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      if (event.data.status !== "success") return;
-      try {
-        setAccessToken(event.data.accessToken);
-        navigate("/");
-      } catch (err) {
-        console.error("session setup failed", err);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [navigate]);
-
-  return (<div className="container">
-    <div className="logo">
-      <img src={logo} alt="logo" />
-      <h1 className="header">Vox</h1>
-    </div>
-
-    <div className="login-card">
-      <h2 className="login-card-title">Sign in to continue</h2>
-      <div className="btn-wrapper">
-        <Button isLoading={isLoading} onClick={handleLogin} withIcon>
-          Continue with X
-        </Button>
+  return (
+    <div className="container">
+      <div className="logo">
+        <img src={logo} alt="logo" />
+        <h1 className="header">Vox</h1>
       </div>
 
-      <div className="login-divider">
-        <div className="login-divider-line"></div>
-        <div className="login-divider-line"></div>
+      <div className="login-card">
+        <h2 className="login-card-title">Sign in to continue</h2>
+        <div className="btn-wrapper">
+          <Button onClick={handleLogin} withIcon>
+            Continue with X
+          </Button>
+        </div>
+
+        <div className="login-divider">
+          <div className="login-divider-line"></div>
+          <div className="login-divider-line"></div>
+        </div>
+
+        <div className="login-info">
+          <p className="login-info-text">
+            By signing in, you authorize this app to access your X account and
+            generate tweets based on your preferences.
+          </p>
+        </div>
       </div>
 
-      <div className="login-info">
-        <p className="login-info-text">
-          By signing in, you authorize this app to access your X account and generate tweets based on your preferences.
+      <div className="login-footer">
+        <p className="login-footer-text">
+          New to Vox? Your account will be created automatically.
         </p>
       </div>
     </div>
-
-    <div className="login-footer">
-      <p className="login-footer-text">
-        New to Vox? Your account will be created automatically.
-      </p>
-    </div>
-  </div>
   );
 };
 
