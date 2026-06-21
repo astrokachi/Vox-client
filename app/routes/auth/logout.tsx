@@ -1,10 +1,16 @@
 import { redirect } from 'react-router';
+import { API_BASE } from '~/api/client';
 import { clearAccessToken } from '~/lib/auth';
-import { authApi } from '~/api/endpoints';
+
+export async function loader() {
+  return null;
+}
 
 export async function clientLoader() {
   try {
-    await authApi.logout();
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: 'POST'
+    });
   } catch (error) {
     console.error("Logout API call failed:", error);
   }
@@ -13,3 +19,9 @@ export async function clientLoader() {
 
   return redirect("/login");
 }
+
+clientLoader.hydrate = true as const;
+
+const Logout = () => null;
+
+export default Logout;
