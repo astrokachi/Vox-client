@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from 'axios';
 import { parseApiError } from './parseError';
 import { isTokenSet, getAccessToken } from '~/lib/auth';
+import { ensureToken } from '~/lib/ensure-token';
 
 export const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -23,11 +24,15 @@ class ApiClient {
   }
 
   private configureInterceptors() {
-    // attach token to request if needed
-    this.instance.interceptors.request.use((config) => {
-      if (isTokenSet() && config.headers) {
-        config.headers.Authorization = `Bearer ${getAccessToken()}`
-        console.log("Auth Token :", getAccessToken());
+    this.instance.interceptors.request.use(async (config) => {
+      if (!config.headers) return config;
+
+      if (config.baseURL) {
+        // for external apis, ensure a token exists (refresh if missing)
+        const token = await ensureToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      } else if (isTokenSet()) {
+        config.headers.Authorization = `Bearer ${getAccessToken()}`;
       }
 
       return config;
