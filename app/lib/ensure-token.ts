@@ -1,10 +1,10 @@
-import { isTokenSet, setAccessToken, getAccessToken } from '~/lib/auth';
+import { setAccessToken, getAccessToken, isTokenExpiredOrExpiring } from '~/lib/auth';
 
 let refreshPromise: Promise<string> | null = null;
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-async function fetchRefreshToken(): Promise<string> {
+export async function fetchRefreshToken(): Promise<string> {
   const response = await fetch(`${API_BASE}/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
@@ -31,8 +31,9 @@ async function fetchRefreshToken(): Promise<string> {
 }
 
 export async function ensureToken(): Promise<string> {
-  if (isTokenSet()) {
-    return getAccessToken()!;
+  const token = getAccessToken();
+  if (token && !isTokenExpiredOrExpiring(token)) {
+    return token;
   }
 
   if (!refreshPromise) {

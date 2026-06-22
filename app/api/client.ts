@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from 'axios';
 import { parseApiError } from './parseError';
-import { isTokenSet, getAccessToken, setAccessToken } from '~/lib/auth';
+import { getAccessToken, isTokenExpiredOrExpiring } from '~/lib/auth';
 import { ensureToken } from '~/lib/ensure-token';
 import type { ApiResponse } from '~/types';
 
@@ -21,12 +21,14 @@ class ApiClient {
     this.instance.interceptors.request.use(async (config) => {
       if (!config.headers) return config;
 
-      if (config.baseURL) {
-        // for external apis, ensure a token exists (refresh if missing)
-        const token = await ensureToken();
+      let token = getAccessToken();
+
+      if (token && isTokenExpiredOrExpiring(token)) {
+        token = await ensureToken();
+      }
+
+      if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      } else if (isTokenSet()) {
-        config.headers.Authorization = `Bearer ${getAccessToken()}`;
       }
 
       return config;
@@ -50,15 +52,12 @@ class ApiClient {
 
         if (apiError.code === 'UNAUTHORIZED' && !originalRequest._retry) {
           originalRequest._retry = true;
-          // clear old access token before retry
-          setAccessToken(null);
 
           try {
             const newToken = await ensureToken();
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return this.instance(originalRequest); // retry, return ITS promise
+            return this.instance(originalRequest);
           } catch (refreshError) {
-            // refresh itself failed
             return Promise.reject(parseApiError(refreshError));
           }
         }
