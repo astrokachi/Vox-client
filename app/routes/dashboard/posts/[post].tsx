@@ -3,6 +3,7 @@ import { useLoaderData } from "react-router";
 import type { Route } from "./+types/[post]";
 import UserMessage from "~/components/chat/user-message";
 import AgentResponse from "~/components/chat/agent-response";
+import TypingIndicator from "~/components/chat/typing-indicator";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { getSocket } from "~/services/socket";
@@ -130,7 +131,7 @@ const Post = () => {
 
           {isTyping && (
             <div className="message-group message-assistant">
-              <div className="typing-indicator">Generating…</div>
+              <TypingIndicator />
             </div>
           )}
         </div>
