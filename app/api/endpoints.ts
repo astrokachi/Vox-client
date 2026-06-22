@@ -3,7 +3,7 @@ import type {
   ChatAddMessageDto,
   ChatCreateWithPromptDto,
   ChatGetMessagesDto,
-  ChatsResponse,
+  Chats,
   Conversation,
   ConversationCreateDto,
   ConversationDeleteDto,
@@ -11,8 +11,7 @@ import type {
   ConversationListDto,
   ConversationUpdateDto,
   Message,
-  PaginatedResponse,
-  QueueTweetRepliesResponse,
+  QueueTweetReplies,
   User,
 } from "~/types";
 import { API_BASE, externalApi, internalApi } from "./client";
@@ -29,8 +28,8 @@ export const userApi = {
 };
 
 export const campaignApi = {
-  reply: (dto: CampaignReplyDto): Promise<QueueTweetRepliesResponse> =>
-    externalApi.post<QueueTweetRepliesResponse>("/api/reply", dto.payload),
+  reply: (dto: CampaignReplyDto): Promise<QueueTweetReplies> =>
+    externalApi.post<QueueTweetReplies>("/api/reply", dto.payload),
   post: (): Promise<void> =>
     externalApi.post<void>("/api/post"),
 };
@@ -38,8 +37,8 @@ export const campaignApi = {
 export const conversationApi = {
   create: (dto: ConversationCreateDto): Promise<Conversation> =>
     externalApi.post<Conversation>("/api/conversations", dto.payload),
-  list: (dto: ConversationListDto): Promise<PaginatedResponse<Conversation>> =>
-    externalApi.get<PaginatedResponse<Conversation>>(
+  list: (dto: ConversationListDto): Promise<Conversation[]> =>
+    externalApi.get<Conversation[]>(
       `/api/conversations?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 20}`
     ),
   get: (dto: ConversationGetDto): Promise<Conversation> =>
@@ -51,10 +50,10 @@ export const conversationApi = {
 };
 
 export const chatApi = {
-  createWithPrompt: (dto: ChatCreateWithPromptDto): Promise<ChatsResponse> =>
-    externalApi.post<ChatsResponse>("/api/chat/new/prompt", dto.payload),
-  getMessages: (dto: ChatGetMessagesDto): Promise<PaginatedResponse<Message>> =>
-    externalApi.get<PaginatedResponse<Message>>(
+  createWithPrompt: (dto: ChatCreateWithPromptDto): Promise<Chats> =>
+    externalApi.post<Chats>("/api/chat/new/prompt", dto.payload),
+  getMessages: (dto: ChatGetMessagesDto): Promise<Message[]> =>
+    externalApi.get<Message[]>(
       `/api/chat/${dto.conversationId}/messages?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 50}`
     ),
   addMessage: (dto: ChatAddMessageDto): Promise<Message> =>

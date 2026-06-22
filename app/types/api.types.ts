@@ -1,3 +1,21 @@
+// Shared types 
+export type MessageRole = "user" | "assistant";
+
+export type ChatMessageType = "SINGLE" | "MULTIPLE";
+
+export interface Pagination {
+  nextCursor: string | null;
+  hasNextPage: boolean;
+}
+
+export interface ApiResponse<T = unknown> {
+  data: T;
+  message?: string;
+  success: boolean;
+  pagination?: Pagination;
+}
+
+// auth API types 
 export interface User {
   user_id: string;
   email: string;
@@ -5,33 +23,6 @@ export interface User {
   name: string;
   created_at: string;
   updated_at: string;
-}
-
-export interface Conversation {
-  id: string;
-  title: string;
-  user_id: string;
-  created_at: string;
-}
-
-export interface Message {
-  id: string;
-  conversation_id: string;
-  role: MessageRole;
-  content: string;
-  created_at: string;
-}
-
-
-export type MessageRole = "user" | "assistant";
-
-export type ChatMessageType = "SINGLE" | "MULTIPLE";
-
-// ------------------------- REQUEST + RESPONSE ----------------------------------------
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  nextCursor: string;
 }
 
 export interface RegisterRequest {
@@ -45,28 +36,24 @@ export interface LoginRequest {
   password: string;
 }
 
-
-export interface LogoutResponse {
-  status: boolean;
-  message: string;
-}
-
 export interface OAuthCallbackRequest {
   code: string;
 }
 
+// campaign API types
 export interface QueueTweetRepliesRequest {
   tweetUrls?: string[];
   customInstructions?: string;
   maximumTime?: string;
 }
 
-export interface QueueTweetRepliesResponse {
+export interface QueueTweetReplies {
   queuedCount: string;
   customInstructions: string;
   maximumTime: string;
 }
 
+// conversation API types
 export interface CreateConversationRequest {
   title: string;
 }
@@ -75,15 +62,32 @@ export interface UpdateConversationRequest {
   title: string;
 }
 
+export interface Conversation {
+  id: string;
+  title: string;
+  user_id: string;
+  created_at: string;
+}
+
+// chat API types
 export interface ChatMessageRequest {
   content: string;
   type: ChatMessageType;
 }
 
-export interface ChatsResponse {
+export interface Chats {
   id: string;
   title: string;
   user_id: string;
   created_at: string;
   messages: Message[];
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  role: MessageRole;
+  content: string;
+  type?: ChatMessageType;
+  created_at: string;
 }

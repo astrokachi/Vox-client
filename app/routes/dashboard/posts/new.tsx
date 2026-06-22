@@ -5,7 +5,7 @@ import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
 import { useApiCall } from "~/hooks/useApiCall";
 import { chatApi } from "~/api/endpoints";
-import type { ChatCreateWithPromptDto, ChatsResponse } from "~/types";
+import type { ChatCreateWithPromptDto, Chats } from "~/types";
 // import { socket } from "~/services/socket";
 
 const TRENDING_TOPICS = [
@@ -20,7 +20,7 @@ const NewPost = () => {
   const navigate = useNavigate();
   const dashboardData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
   const user = dashboardData?.user;
-  const { execute, data, loading, error } = useApiCall<ChatCreateWithPromptDto, ChatsResponse>(chatApi.createWithPrompt);
+  const { execute, data, loading, error } = useApiCall<ChatCreateWithPromptDto, Chats>(chatApi.createWithPrompt);
 
 
   const handleTopicClick = (topic: string) => {
@@ -29,6 +29,7 @@ const NewPost = () => {
 
   const handleFormSubmit = async (content: string) => {
     await execute({ payload: { content, type: "MULTIPLE" } });
+    console.log(data?.id)
     if (!error) navigate(`/${data?.id}`);
   };
 
