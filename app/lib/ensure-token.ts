@@ -13,8 +13,7 @@ async function fetchRefreshToken(): Promise<string> {
 
   if (!response.ok) {
     if (response.status === 401) {
-      console.log("Refresh return 401");
-      // window.location.href = '/logout';
+      window.location.href = '/logout';
       throw new Error('Session expired');
     }
     throw new Error('Token refresh failed');

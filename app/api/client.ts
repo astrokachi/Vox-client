@@ -1,16 +1,10 @@
 import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from 'axios';
 import { parseApiError } from './parseError';
-import { isTokenSet, getAccessToken } from '~/lib/auth';
+import { isTokenSet, getAccessToken, setAccessToken } from '~/lib/auth';
 import { ensureToken } from '~/lib/ensure-token';
+import type { ApiResponse } from '~/types';
 
 export const API_BASE = import.meta.env.VITE_API_URL;
-
-interface ApiResponse<T> {
-  data: T;
-  success: boolean;
-  message: string;
-}
-
 
 class ApiClient {
   private instance: AxiosInstance;
@@ -46,20 +40,31 @@ class ApiClient {
         });
       }
 
-      // return typed response data:window
+      // return typed response data
       return response;
 
-    }, async (error) => {
-      //normalize response errors
-      const apiError = parseApiError(error);
-      //handle auth error
-      if (apiError.code == 'UNAUTHORIZED') {
-        // try getting new access token
-        await ensureToken();
-      }
+    },
+      async (error) => {
+        const apiError = parseApiError(error);
+        const originalRequest = error.config;
 
-      return Promise.reject(apiError);
-    })
+        if (apiError.code === 'UNAUTHORIZED' && !originalRequest._retry) {
+          originalRequest._retry = true;
+          // clear old access token before retry
+          setAccessToken(null);
+
+          try {
+            const newToken = await ensureToken();
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return this.instance(originalRequest); // retry, return ITS promise
+          } catch (refreshError) {
+            // refresh itself failed
+            return Promise.reject(parseApiError(refreshError));
+          }
+        }
+
+        return Promise.reject(apiError);
+      })
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
