@@ -1,49 +1,46 @@
 import { HeartIcon, ChatCircleIcon, ShareIcon } from "@phosphor-icons/react";
+import { formatContent } from "~/utils/format-content";
 
-interface PostSuggestion {
+interface AgentResponseProps {
   id: string;
   content: string;
-  avatar?: string;
-  author?: string;
+  type?: string;
 }
-//
-// interface AgentResponseProps {
-//   suggestions: PostSuggestion[];
-// }
 
-const AgentResponse = ({ content }: PostSuggestion) => {
+const AgentResponse = ({ content, type }: AgentResponseProps) => {
+  const { parts } = formatContent(content, type);
+
   return (
     <div className="agent-response">
       <div className="suggestions-container">
-        {/* {suggestions.map((suggestion) => ( */}
-        <div className="post-card">
-          <div className="post-header">
-            <div className="avatar-wrapper">
-              <div className="avatar-gradient" />
+        {parts.map((part, i) => (
+          <div key={i} className="post-card">
+            <div className="post-header">
+              <div className="avatar-wrapper">
+                <div className="avatar-gradient" />
+              </div>
+              <button className="menu-btn">⋯</button>
             </div>
-            <button className="menu-btn">⋯</button>
-          </div>
 
-          <div className="post-content">
-            {content}
-          </div>
+            <div className="post-content">
+              {part}
+            </div>
 
-          <div className="post-footer">
-            <button className="engagement-btn">
-              <ChatCircleIcon size={16} />
-              <span>0</span>
-            </button>
-            <button className="engagement-btn">
-              <HeartIcon size={16} />
-              <span>0</span>
-            </button>
-            <button className="engagement-btn">
-              <ShareIcon size={16} />
-            </button>
+            <div className="post-footer">
+              <button className="engagement-btn">
+                <ChatCircleIcon size={16} />
+                <span>0</span>
+              </button>
+              <button className="engagement-btn">
+                <HeartIcon size={16} />
+                <span>0</span>
+              </button>
+              <button className="engagement-btn">
+                <ShareIcon size={16} />
+              </button>
+            </div>
           </div>
-        </div>
-
-        {/* ))} */}
+        ))}
       </div>
     </div>
   );

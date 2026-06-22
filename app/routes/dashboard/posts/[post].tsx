@@ -21,7 +21,7 @@ const Post = () => {
   useEffect(() => {
     if (!conversationId) return;
     loadMessages({ conversationId, cursor: "", take: 50 });
-  }, [conversationId, loadMessages]);
+  }, [conversationId]);
 
   const handleSendMessage = async (content: string) => {
     await sendMessage({
@@ -31,7 +31,7 @@ const Post = () => {
     loadMessages({ conversationId, cursor: "", take: 50 });
   };
 
-  const apiMessages = messagesData?.items ?? [];
+  const apiMessages = messagesData ?? [];
 
   return (
     <div className="post-chat-container">
@@ -49,10 +49,10 @@ const Post = () => {
           ) : (
             apiMessages.map((msg) => (
               <div key={msg.id} className={`message-group message-${msg.role}`}>
-                {msg.role === 'user' ? (
+                {msg.role.toLowerCase() === 'user' ? (
                   <UserMessage content={msg.content} />
                 ) : (
-                  <AgentResponse content={msg.content} />
+                  <AgentResponse content={msg.content} id={msg.id} type={msg.type} />
                 )}
               </div>
             ))
