@@ -20,4 +20,8 @@ export async function initSocket(token: string) {
   return socket;
 }
 
+export function getSocket(): Socket | undefined {
+  return socket;
+}
+
 export { socket };

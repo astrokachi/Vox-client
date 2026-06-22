@@ -11,6 +11,7 @@ import type {
   ConversationListDto,
   ConversationUpdateDto,
   Message,
+  MessagesPage,
   QueueTweetReplies,
   User,
 } from "~/types";
@@ -52,8 +53,8 @@ export const conversationApi = {
 export const chatApi = {
   createWithPrompt: (dto: ChatCreateWithPromptDto): Promise<Chats> =>
     externalApi.post<Chats>("/api/chat/new/prompt", dto.payload),
-  getMessages: (dto: ChatGetMessagesDto): Promise<Message[]> =>
-    externalApi.get<Message[]>(
+  getMessages: (dto: ChatGetMessagesDto): Promise<MessagesPage> =>
+    externalApi.get<MessagesPage>(
       `/api/chat/${dto.conversationId}/messages?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 50}`
     ),
   addMessage: (dto: ChatAddMessageDto): Promise<Message> =>

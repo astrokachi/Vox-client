@@ -91,3 +91,9 @@ export interface Message {
   type?: ChatMessageType;
   created_at: string;
 }
+
+export interface MessagesPage {
+  messages: Message[];
+  nextCursor: string | null;
+  hasNextPage: boolean;
+}

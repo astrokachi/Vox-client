@@ -3,10 +3,7 @@ import { useNavigate, useRouteLoaderData } from "react-router";
 import type { clientLoader as dashboardLoader } from '~/routes/dashboard/index';
 import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
-import { useApiCall } from "~/hooks/useApiCall";
 import { chatApi } from "~/api/endpoints";
-import type { ChatCreateWithPromptDto, Chats } from "~/types";
-// import { socket } from "~/services/socket";
 
 const TRENDING_TOPICS = [
   "Trump's statement",
@@ -17,20 +14,29 @@ const TRENDING_TOPICS = [
 
 const NewPost = () => {
   const [suggestion, setSuggestion] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const dashboardData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
   const user = dashboardData?.user;
-  const { execute, data, loading, error } = useApiCall<ChatCreateWithPromptDto, Chats>(chatApi.createWithPrompt);
-
 
   const handleTopicClick = (topic: string) => {
     setSuggestion(`Create a new x post on ${topic}`);
   };
 
   const handleFormSubmit = async (content: string) => {
-    await execute({ payload: { content, type: "MULTIPLE" } });
-    console.log(data?.id)
-    if (!error) navigate(`/${data?.id}`);
+    setLoading(true);
+    setError(null);
+    try {
+      const conversation = await chatApi.createWithPrompt({
+        payload: { content, type: "MULTIPLE" },
+      });
+      navigate(`/posts/${conversation.id}`);
+    } catch {
+      setError("Failed to create conversation");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,7 +63,7 @@ const NewPost = () => {
             ))}
           </div>
         </div>
-        {error && <div className="error-message">{error.message}</div>}
+        {error && <div className="error-message">{error}</div>}
         <ChatForm suggestion={suggestion} onSubmit={handleFormSubmit} />
         {loading && <div className="loading-message">Creating conversation...</div>}
       </div>
