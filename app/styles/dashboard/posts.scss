@@ -2,9 +2,98 @@
 @use "../variables" as vars;
 
 .posts-container {
+  display: flex;
+  flex-direction: column;
+  height: 98dvh;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
+}
+
+.posts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
   h1 {
     color: map.get(vars.$colors, text-primary);
+    margin: 0;
   }
+}
+
+.new-post-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: map.get(vars.$colors, primary-dark);
+  color: map.get(vars.$colors, text-light-blue);
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
+}
+
+.posts-loading {
+  text-align: center;
+  color: map.get(vars.$colors, text-secondary);
+  padding: 40px 0;
+}
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.conversation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: map.get(vars.$colors, card-fill-dark);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  border-radius: map.get(vars.$border-radius, lg);
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease,
+    border-color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.05);
+    border-color: rgba(map.get(vars.$colors, primary), 0.3);
+  }
+}
+
+.conversation-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: map.get(vars.$colors, text-secondary);
+  font-size: map.get(vars.$font-sizes, xs);
+}
+
+.conversation-date {
+  color: map.get(vars.$colors, text-secondary);
+}
+
+.conversation-title {
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .chat-container {
