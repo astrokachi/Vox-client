@@ -4,9 +4,18 @@ import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 interface ChatFormProps {
   suggestion?: string;
   onSubmit?: (content: string) => void;
+  promptCount?: number;
+  maxPrompts?: number;
+  disabled?: boolean;
 }
 
-export const ChatForm = ({ suggestion, onSubmit }: ChatFormProps) => {
+export const ChatForm = ({
+  suggestion,
+  onSubmit,
+  promptCount = 0,
+  maxPrompts = 6,
+  disabled = false,
+}: ChatFormProps) => {
   const [content, setContent] = useState("");
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -15,6 +24,7 @@ export const ChatForm = ({ suggestion, onSubmit }: ChatFormProps) => {
 
   const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (disabled) return;
     if (content.trim() && onSubmit) {
       onSubmit(content);
       setContent("");
@@ -39,11 +49,12 @@ export const ChatForm = ({ suggestion, onSubmit }: ChatFormProps) => {
           placeholder="Enter a topic or describe what you want to talk about"
           value={content}
           onChange={handleChange}
+          disabled={disabled}
         />
       </div>
       <div className="form-footer">
-        <span className="prompts-count">{0}/{6} prompts</span>
-        <button type="submit" className="generate-btn">
+        <span className="prompts-count">{promptCount}/{maxPrompts} prompts</span>
+        <button type="submit" className="generate-btn" disabled={disabled}>
           <SparkleIcon size={18} />
           Generate post
         </button>
