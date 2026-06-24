@@ -12,9 +12,11 @@ main {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
-    min-height: 100vh;
+    height: 100dvh;
+    min-height: 0;
   }
 }
 
@@ -24,9 +26,13 @@ main {
   margin-top: map.get(vars.$spacing, md);
   padding: map.get(vars.$spacing, sm);
   min-height: 100vh;
+  overflow-y: auto;
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
-    padding: 2rem;
+    padding: 3rem;
+    margin-top: 0;
+    height: 100dvh;
+    padding-bottom: 1.5rem;
     min-height: auto;
   }
 }
@@ -37,6 +43,8 @@ main {
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
     flex-direction: row;
+    height: 100dvh;
+    overflow: hidden;
   }
 }
 

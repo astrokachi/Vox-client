@@ -28,3 +28,4 @@ Vox API.postman_collection.json
 *.njsproj
 *.sln
 *.sw?
+.react-router

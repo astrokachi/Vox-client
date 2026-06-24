@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useRouteLoaderData } from "react-router";
 import type { Route } from "./+types/[post]";
-import UserMessage from "~/components/chat/user-message";
-import AgentResponse from "~/components/chat/agent-response";
-import TypingIndicator from "~/components/chat/typing-indicator";
+import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
+import PostPreview from "~/components/chat/post-preview";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
+import { useApiCall } from "~/hooks/useApiCall";
 import { getSocket } from "~/services/socket";
-import type { Message } from "~/types";
+import type { ChatGetMessagesDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
+
+const MAX_PROMPTS = 6;
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { id } = params;
@@ -17,33 +19,31 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
+  const dashboardData = useRouteLoaderData<typeof dashboardLoader>("routes/dashboard/index");
+  const user = dashboardData?.user;
+
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load existing history over REST (once per conversation).
+  // Load existing history over REST via the shared useApiCall hook.
+  const {
+    execute: loadMessages,
+    data: history,
+    loading,
+    error: loadError,
+  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages);
+
+  // Kick off the load whenever the conversation changes.
   useEffect(() => {
     if (!conversationId) return;
-    let cancelled = false;
-
-    setLoading(true);
-    chatApi
-      .getMessages({ conversationId, cursor: "", take: 50 })
-      .then((page) => {
-        if (!cancelled) setMessages(page.messages);
-      })
-      .catch(() => {
-        if (!cancelled) setError("Failed to load messages");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    loadMessages({ conversationId, cursor: "", take: 50 });
   }, [conversationId]);
+
+  // Seed local state from the loaded history so the socket can append to it.
+  useEffect(() => {
+    if (history) setMessages(history);
+  }, [history]);
 
   // Subscribe to live updates over WebSocket.
   useEffect(() => {
@@ -104,43 +104,33 @@ const Post = () => {
     }
   };
 
+  const responses = messages.filter((m) => m.role.toLowerCase() === "assistant");
+  const promptCount = messages.filter((m) => m.role.toLowerCase() === "user").length;
+
+  const isLoadingHistory = (loading || history === null) && !loadError;
+  const displayError = error ?? loadError?.message ?? null;
+
   return (
     <div className="post-chat-container">
-      <div className="chat-messages-wrapper">
-        <div className="chat-messages">
-          {loading && messages.length === 0 ? (
-            <div className="empty-state">
-              <h2>Loading...</h2>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="empty-state">
-              <h2>Generate Post Ideas</h2>
-              <p>Start a conversation to get AI-powered post suggestions</p>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className={`message-group message-${msg.role}`}>
-                {msg.role.toLowerCase() === "user" ? (
-                  <UserMessage content={msg.content} />
-                ) : (
-                  <AgentResponse content={msg.content} id={msg.id} type={msg.type} />
-                )}
-              </div>
-            ))
-          )}
-
-          {isTyping && (
-            <div className="message-group message-assistant">
-              <TypingIndicator />
-            </div>
-          )}
+      {isLoadingHistory && messages.length === 0 ? (
+        <div className="preview-frame preview-frame--loading">
+          <div className="preview-empty">
+            <h3>Loading…</h3>
+          </div>
         </div>
-      </div>
+      ) : (
+        <PostPreview responses={responses} isTyping={isTyping} user={user} />
+      )}
 
-      {error && <div className="error-message">{error}</div>}
+      {displayError && <div className="error-message">{displayError}</div>}
 
       <div className="chat-input-section">
-        <ChatForm onSubmit={handleSendMessage} />
+        <ChatForm
+          onSubmit={handleSendMessage}
+          promptCount={promptCount}
+          maxPrompts={MAX_PROMPTS}
+          disabled={promptCount >= MAX_PROMPTS}
+        />
       </div>
     </div>
   );

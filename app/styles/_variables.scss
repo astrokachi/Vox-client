@@ -19,6 +19,9 @@ $colors: (
   card-stroke: #2b2b2b,
   card-stroke-blue: #181e37,
   accent-blue-light: #0067ac,
+  accent-blue-deep: #003e68,
+  text-dim: #cdcdcd,
+  text-disabled: #5f5f5f,
 );
 
 $spacing: (
@@ -38,6 +41,7 @@ $border-radius: (
 );
 
 $font-sizes: (
+  xxs: 10px,
   xs: 12px,
   sm: 14px,
   base: 16px,

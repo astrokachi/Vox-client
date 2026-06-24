@@ -231,22 +231,22 @@
 }
 
 .textarea-wrapper {
-  padding: 20px;
+  padding: 12px;
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
-    padding: 12px;
+    padding: 10px;
   }
 }
 
 .chat-textarea {
   width: 100%;
-  min-height: 100px;
-  padding: 16px;
+  min-height: 64px;
+  padding: 12px;
   border-radius: map.get(vars.$border-radius, md);
   background: map.get(vars.$colors, card-fill-dark);
   border: 1px solid map.get(vars.$colors, card-stroke);
   color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, base);
+  font-size: map.get(vars.$font-sizes, sm);
   font-family: inherit;
   resize: vertical;
   outline: none;
@@ -270,7 +270,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  padding: 8px 12px;
   border-top: 1px solid map.get(vars.$colors, card-stroke);
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
@@ -279,11 +279,11 @@
 }
 
 .prompts-count {
-  font-size: map.get(vars.$font-sizes, sm);
+  font-size: map.get(vars.$font-sizes, xs);
   color: map.get(vars.$colors, text-secondary);
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
-    font-size: map.get(vars.$font-sizes, xs);
+    font-size: map.get(vars.$font-sizes, xxs);
   }
 }
 
@@ -291,11 +291,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: map.get(vars.$border-radius, full);
   background: map.get(vars.$colors, primary-dark);
   color: map.get(vars.$colors, text-light-blue);
-  font-size: map.get(vars.$font-sizes, sm);
+  font-size: map.get(vars.$font-sizes, xs);
   font-weight: 700;
   border: none;
   cursor: pointer;
@@ -317,11 +317,379 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 98dvh;
-  max-width: 900px;
+  justify-content: flex-end;
+  gap: 16px;
+  height: 100%;
+  max-width: 1112px;
   margin: 0 auto;
   width: 100%;
-  padding: 20px 24px;
+  padding: 12px 32px;
+  overflow: hidden;
+}
+
+.preview-frame {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-height: 0;
+  gap: 12px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+  padding: 16px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+  &--loading {
+    justify-content: center;
+  }
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.preview-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.preview-counter {
+  flex-shrink: 0;
+  font-size: map.get(vars.$font-sizes, xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: map.get(vars.$colors, text-secondary);
+}
+
+.preview-body {
+  display: flex;
+  align-items: stretch;
+}
+
+.post-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.idea-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  border-radius: map.get(vars.$border-radius, md);
+  background: rgba(map.get(vars.$colors, card-fill-dark), 0.75);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  color: map.get(vars.$colors, text-primary);
+  transition: border-color map.get(vars.$transitions, default) ease,
+    background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    border-color: rgba(map.get(vars.$colors, primary), 0.5);
+  }
+
+  &--selected {
+    border-color: map.get(vars.$colors, primary);
+    background: rgba(map.get(vars.$colors, primary), 0.08);
+  }
+}
+
+.idea-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: map.get(vars.$colors, text-secondary);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.idea-card-label {
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 500;
+}
+
+.idea-card-content {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: map.get(vars.$font-sizes, xs);
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+// Preview post modal
+.preview-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.preview-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 623px;
+  padding: 20px;
+  border-radius: map.get(vars.$border-radius, lg);
+  background: map.get(vars.$colors, card-fill);
+  border: 1px solid map.get(vars.$colors, gray-dark);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.preview-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+    font-size: map.get(vars.$font-sizes, lg);
+    font-weight: 700;
+    color: map.get(vars.$colors, text-dim);
+  }
+}
+
+.preview-modal-close {
+  display: inline-flex;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+}
+
+.preview-tweet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, card-fill-dark);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+}
+
+.preview-tweet-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.preview-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00528a, #1f0c97);
+}
+
+.preview-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.preview-username {
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 500;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.preview-handle {
+  font-size: map.get(vars.$font-sizes, xxs);
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.preview-edit-field {
+  width: 100%;
+  padding: 8px;
+  resize: none;
+  border-radius: map.get(vars.$border-radius, sm);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: transparent;
+  color: map.get(vars.$colors, text-dim);
+  font-family: inherit;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.45;
+
+  &:focus {
+    outline: none;
+    border-color: map.get(vars.$colors, primary);
+  }
+}
+
+.preview-engagements {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.preview-engage-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.preview-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-icon-btn {
+  display: inline-flex;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+}
+
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.preview-post-split {
+  display: flex;
+  align-items: stretch;
+  border-radius: map.get(vars.$border-radius, full);
+  overflow: hidden;
+}
+
+.preview-post-btn {
+  padding: 6px 16px;
+  background: map.get(vars.$colors, primary-dark);
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preview-post-caret {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  background: map.get(vars.$colors, primary-dark);
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+}
+
+.preview-refine-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: transparent;
+  border: 1px solid map.get(vars.$colors, primary-dark);
+  color: map.get(vars.$colors, primary-dark);
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+
+  svg {
+    color: map.get(vars.$colors, text-primary);
+  }
+}
+
+.idea-card-pick {
+  align-self: flex-start;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: map.get(vars.$colors, primary);
+}
+
+.preview-empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+
+  h3 {
+    margin: 0;
+    font-size: map.get(vars.$font-sizes, lg);
+    color: map.get(vars.$colors, text-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: map.get(vars.$font-sizes, sm);
+    color: map.get(vars.$colors, text-secondary);
+  }
+}
+
+.preview-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 42px;
+}
+
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: color map.get(vars.$transitions, default) ease;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:disabled {
+    color: map.get(vars.$colors, text-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.pager-counter {
+  flex-shrink: 0;
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .chat-messages-wrapper {
@@ -521,6 +889,5 @@
 .chat-input-section {
   position: relative;
   flex-shrink: 0;
-  padding: 20px 0;
-  margin-top: auto;
+  padding: 0;
 }
