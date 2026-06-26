@@ -25,6 +25,7 @@ const Post = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
 
   // Load existing history over REST via the shared useApiCall hook.
   const {
@@ -104,6 +105,13 @@ const Post = () => {
     }
   };
 
+  // Refine: drop the chosen draft into the prompt box to tweak and resend.
+  // Reset first so re-refining the same draft still re-applies it.
+  const handleRefine = (text: string) => {
+    setDraft("");
+    requestAnimationFrame(() => setDraft(text.trim()));
+  };
+
   const responses = messages.filter((m) => m.role.toLowerCase() === "assistant");
   const promptCount = messages.filter((m) => m.role.toLowerCase() === "user").length;
 
@@ -119,13 +127,20 @@ const Post = () => {
           </div>
         </div>
       ) : (
-        <PostPreview responses={responses} isTyping={isTyping} user={user} />
+        <PostPreview
+          responses={responses}
+          isTyping={isTyping}
+          user={user}
+          onRefine={handleRefine}
+        />
       )}
 
       {displayError && <div className="error-message">{displayError}</div>}
 
       <div className="chat-input-section">
         <ChatForm
+          refineDraft={draft}
+          onClearRefine={() => setDraft("")}
           onSubmit={handleSendMessage}
           promptCount={promptCount}
           maxPrompts={MAX_PROMPTS}

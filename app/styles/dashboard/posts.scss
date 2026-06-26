@@ -238,6 +238,45 @@
   }
 }
 
+.refine-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 6px 8px 6px 10px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, primary);
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refine-chip-text {
+  flex: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: map.get(vars.$font-sizes, xs);
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.refine-chip-remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .chat-textarea {
   width: 100%;
   min-height: 64px;
@@ -246,7 +285,7 @@
   background: map.get(vars.$colors, card-fill-dark);
   border: 1px solid map.get(vars.$colors, card-stroke);
   color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, sm);
+  font-size: map.get(vars.$font-sizes, xs);
   font-family: inherit;
   resize: vertical;
   outline: none;
@@ -254,7 +293,7 @@
   @media (max-width: map.get(vars.$breakpoints, sm)) {
     min-height: 80px;
     padding: 12px;
-    font-size: map.get(vars.$font-sizes, sm);
+    font-size: map.get(vars.$font-sizes, xs);
   }
 
   &::placeholder {

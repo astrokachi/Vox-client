@@ -11,9 +11,10 @@ interface PostPreviewProps {
   responses: Message[];
   isTyping: boolean;
   user?: { name?: string; username?: string };
+  onRefine?: (text: string) => void;
 }
 
-const PostPreview = ({ responses, isTyping, user }: PostPreviewProps) => {
+const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -114,6 +115,10 @@ const PostPreview = ({ responses, isTyping, user }: PostPreviewProps) => {
           handle={user?.username ? `@${user.username}` : undefined}
           date={active.created_at}
           onClose={() => setPreviewIndex(null)}
+          onRefine={(text) => {
+            onRefine?.(text);
+            setPreviewIndex(null);
+          }}
         />
       )}
     </div>
