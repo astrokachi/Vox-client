@@ -1,13 +1,18 @@
 import { jwtDecode } from 'jwt-decode';
 import { fetchRefreshToken } from '~/lib/ensure-token';
 
-let accessToken: string | null = null;
+let accessToken: string | null = sessionStorage.getItem("token");
 let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const isTokenSet = () => !!accessToken;
 
-export const setAccessToken = (token: string | null) => {
+export const setAccessToken = (token: string) => {
+  if(!token) {
+    console.warn("Token not set")
+    return;
+  }
   accessToken = token;
+  sessionStorage.setItem("token", token)
   if (token) {
     scheduleProactiveRefresh(token);
   }
