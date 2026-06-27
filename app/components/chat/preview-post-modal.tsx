@@ -118,7 +118,6 @@ const PreviewPostModal = ({
                 <CaretDownIcon size={12} weight="bold" />
               </button>
             </div>
-
             <button
               type="button"
               className="preview-refine-btn"

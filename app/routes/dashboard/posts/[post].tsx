@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLoaderData, useRouteLoaderData } from "react-router";
-import type { Route } from "./+types/[post]";
+import type { Route } from "../+types/index";
 import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
 import PostPreview from "~/components/chat/post-preview";
+import RefineHeader from "~/components/chat/refine-header";
+import RefineDraftCard from "~/components/chat/refine-draft-card";
+import RefinedOutputCard from "~/components/chat/refined-output-card";
+import PreviewPostModal from "~/components/chat/preview-post-modal";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
 import { getSocket } from "~/services/socket";
+import { formatContent } from "~/utils/format-content";
 import type { ChatGetMessagesDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -27,7 +32,12 @@ const Post = () => {
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
 
-  // Load existing history over REST via the shared useApiCall hook.
+  // Refine mode state
+  const [refineMode, setRefineMode] = useState(false);
+  const [refinedDraft, setRefinedDraft] = useState("");
+  const [refinedPreviewText, setRefinedPreviewText] = useState<string | null>(null);
+  const refineModeBaseRef = useRef(0);
+
   const {
     execute: loadMessages,
     data: history,
@@ -35,18 +45,15 @@ const Post = () => {
     error: loadError,
   } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages);
 
-  // Kick off the load whenever the conversation changes.
   useEffect(() => {
     if (!conversationId) return;
     loadMessages({ conversationId, cursor: "", take: 50 });
   }, [conversationId]);
 
-  // Seed local state from the loaded history so the socket can append to it.
   useEffect(() => {
     if (history) setMessages(history);
   }, [history]);
 
-  // Subscribe to live updates over WebSocket.
   useEffect(() => {
     if (!conversationId) return;
     const socket = getSocket();
@@ -91,7 +98,6 @@ const Post = () => {
   const handleSendMessage = async (content: string) => {
     setError(null);
     try {
-      // Persist the prompt over REST; the AI reply streams back over WebSocket.
       const userMessage = await chatApi.addMessage({
         conversationId,
         payload: { content, type: "MULTIPLE" },
@@ -105,22 +111,51 @@ const Post = () => {
     }
   };
 
-  // Refine: drop the chosen draft into the prompt box to tweak and resend.
-  // Reset first so re-refining the same draft still re-applies it.
+  // Enter refine mode: snapshot current response count so we can derive the
+  // refined output as any assistant message that arrives after this point.
   const handleRefine = (text: string) => {
+    refineModeBaseRef.current = responses.length;
+    setRefinedDraft(text.trim());
+    setRefineMode(true);
+    setDraft(text.trim());
+  };
+
+  const handleBackFromRefine = () => {
+    setRefineMode(false);
+    setRefinedDraft("");
     setDraft("");
-    requestAnimationFrame(() => setDraft(text.trim()));
+    setRefinedPreviewText(null);
   };
 
   const responses = messages.filter((m) => m.role.toLowerCase() === "assistant");
   const promptCount = messages.filter((m) => m.role.toLowerCase() === "user").length;
+
+  // The assistant response(s) that arrived after refine mode was activated.
+  const refineResponses = refineMode ? responses.slice(refineModeBaseRef.current) : [];
+  const latestRefineOutput = refineResponses.at(-1) ?? null;
+  const latestRefineContent = latestRefineOutput
+    ? (formatContent(latestRefineOutput.content, latestRefineOutput.type).parts[0] ?? null)
+    : null;
 
   const isLoadingHistory = (loading || history === null) && !loadError;
   const displayError = error ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">
-      {isLoadingHistory && messages.length === 0 ? (
+      {refineMode ? (
+        <div className="preview-frame">
+          <div className="refine-mode-container">
+            <RefineHeader onBack={handleBackFromRefine} />
+            <RefineDraftCard content={refinedDraft} />
+            <RefinedOutputCard
+              content={latestRefineContent}
+              isTyping={isTyping}
+              user={user}
+              onPreview={setRefinedPreviewText}
+            />
+        </div>
+        </div>
+      ) : isLoadingHistory && messages.length === 0 ? (
         <div className="preview-frame preview-frame--loading">
           <div className="preview-empty">
             <h3>Loading…</h3>
@@ -139,7 +174,7 @@ const Post = () => {
 
       <div className="chat-input-section">
         <ChatForm
-          refineDraft={draft}
+          refineDraft={refineMode ? undefined : draft}
           onClearRefine={() => setDraft("")}
           onSubmit={handleSendMessage}
           promptCount={promptCount}
@@ -147,6 +182,19 @@ const Post = () => {
           disabled={promptCount >= MAX_PROMPTS}
         />
       </div>
+
+      {refinedPreviewText && (
+        <PreviewPostModal
+          content={refinedPreviewText}
+          displayName={user?.name}
+          handle={user?.username ? `@${user.username}` : undefined}
+          onClose={() => setRefinedPreviewText(null)}
+          onRefine={(text) => {
+            setRefinedPreviewText(null);
+            handleRefine(text);
+          }}
+        />
+      )}
     </div>
   );
 };

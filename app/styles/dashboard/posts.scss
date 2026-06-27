@@ -370,14 +370,14 @@
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  min-height: 0;
   gap: 12px;
   border: 1px solid map.get(vars.$colors, card-stroke);
   background: map.get(vars.$colors, card-fill);
   border-radius: map.get(vars.$border-radius, lg);
-  padding: 16px;
+  padding: 20px;
+  padding-top: 24px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-
+  margin-bottom: 5px;
   &--loading {
     justify-content: center;
   }
@@ -407,12 +407,12 @@
 
 .preview-body {
   display: flex;
+    height: 100%;
   align-items: stretch;
 }
 
 .post-options {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   width: 100%;
 }
@@ -421,7 +421,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 0;
+  height: 120px;
   padding: 12px;
   overflow: hidden;
   text-align: left;
@@ -929,4 +929,168 @@
   position: relative;
   flex-shrink: 0;
   padding: 0;
+}
+
+// ─── Refine Mode ─────────────────────────────────────────────────────────────
+
+.refine-mode-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+// Header
+.refine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refine-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.refine-back-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.refine-header-title {
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refine-history-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-secondary);
+  font-size: map.get(vars.$font-sizes, sm);
+  cursor: pointer;
+  transition: color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    color: map.get(vars.$colors, text-primary);
+  }
+}
+
+// Original draft card (read-only)
+.refine-draft-card {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refine-draft-text {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.6;
+  color: map.get(vars.$colors, text-dim);
+  word-wrap: break-word;
+}
+
+// Refined AI output card
+.refined-output-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refined-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.refined-output-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refined-output-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00528a, #1f0c97);
+  flex-shrink: 0;
+}
+
+.refined-output-badge {
+  font-size: map.get(vars.$font-sizes, xs);
+  color: map.get(vars.$colors, text-secondary);
+}
+
+.refined-output-body {
+  min-height: 60px;
+}
+
+.refined-output-text {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.6;
+  color: map.get(vars.$colors, text-primary);
+  word-wrap: break-word;
+}
+
+.refined-output-placeholder {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-muted);
+  font-style: italic;
+}
+
+.refined-preview-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: map.get(vars.$colors, primary-dark);
+  color: map.get(vars.$colors, text-light-blue);
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
 }

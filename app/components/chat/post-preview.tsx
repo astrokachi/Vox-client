@@ -6,7 +6,7 @@ import PreviewPostModal from "./preview-post-modal";
 import type { Message } from "~/types";
 
 const TONE_LABELS = ["Standard", "Playful", "Educative"];
-
+ 
 interface PostPreviewProps {
   responses: Message[];
   isTyping: boolean;
@@ -35,7 +35,6 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
 
   const goPrev = () => setActiveIndex((i) => Math.max(0, i - 1));
   const goNext = () => setActiveIndex((i) => Math.min(total - 1, i + 1));
-
   return (
     <div className="preview-frame">
       <div className="preview-header">
@@ -67,7 +66,7 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
                     {TONE_LABELS[i] ?? `Option ${i + 1}`}
                   </span>
                   <ArrowRightIcon size={18} weight="bold" />
-                </span>
+                </span>b
                 <span className="idea-card-content">{part}</span>
               </button>
             ))}
