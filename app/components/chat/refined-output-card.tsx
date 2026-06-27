@@ -1,5 +1,6 @@
 import TypingIndicator from "./typing-indicator";
 import "~/styles/dashboard/posts.scss";
+import { logo } from "../layouts/navigation/desktop-sidebar";
 
 interface RefinedOutputCardProps {
   content: string | null;
@@ -20,7 +21,8 @@ const RefinedOutputCard = ({
     <div className="refined-output-card">
       <div className="refined-output-header">
         <div className="refined-output-user">
-          <div className="refined-output-avatar" />
+          <img src={logo} alt="vox-logo" height={24} width={24} />
+          {/* <div className="refined-output-avatar" /> */}
         </div>
         <span className="refined-output-badge">Standard</span>
       </div>

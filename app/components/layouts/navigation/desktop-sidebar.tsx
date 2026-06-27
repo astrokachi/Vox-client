@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { SidebarNavItems } from './sidebar-nav-items';
 import { UserMenu } from '../user-menu';
 
-const logo = "/vox-small.png";
+export const logo = "/vox-small.png";
 
 export const DesktopSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
