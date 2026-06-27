@@ -24,7 +24,9 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
-  const dashboardData = useRouteLoaderData<typeof dashboardLoader>("routes/dashboard/index");
+  const dashboardData = useRouteLoaderData<typeof dashboardLoader>(
+    "routes/dashboard/index",
+  );
   const user = dashboardData?.user;
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -35,7 +37,9 @@ const Post = () => {
   // Refine mode state
   const [refineMode, setRefineMode] = useState(false);
   const [refinedDraft, setRefinedDraft] = useState("");
-  const [refinedPreviewText, setRefinedPreviewText] = useState<string | null>(null);
+  const [refinedPreviewText, setRefinedPreviewText] = useState<string | null>(
+    null,
+  );
   const refineModeBaseRef = useRef(0);
 
   const {
@@ -63,7 +67,9 @@ const Post = () => {
 
     const appendMessage = (message: Message) => {
       setMessages((prev) =>
-        prev.some((m) => m.id === message.id) ? prev : [...prev, message]
+        prev.some((m) => m.message_group_id === message.message_group_id)
+          ? prev
+          : [...prev, message],
       );
     };
 
@@ -77,7 +83,10 @@ const Post = () => {
       if (payload.conversationId === conversationId) setIsTyping(true);
     };
 
-    const handleError = (payload: { conversationId: string; error: string }) => {
+    const handleError = (payload: {
+      conversationId: string;
+      error: string;
+    }) => {
       if (payload.conversationId !== conversationId) return;
       setIsTyping(false);
       setError(payload.error);
@@ -103,7 +112,9 @@ const Post = () => {
         payload: { content, type: "MULTIPLE" },
       });
       setMessages((prev) =>
-        prev.some((m) => m.id === userMessage.id) ? prev : [...prev, userMessage]
+        prev.some((m) => m.id === userMessage.id)
+          ? prev
+          : [...prev, userMessage],
       );
       setIsTyping(true);
     } catch {
@@ -127,14 +138,21 @@ const Post = () => {
     setRefinedPreviewText(null);
   };
 
-  const responses = messages.filter((m) => m.role.toLowerCase() === "assistant");
-  const promptCount = messages.filter((m) => m.role.toLowerCase() === "user").length;
+  const responses = messages.filter(
+    (m) => m.role.toLowerCase() === "assistant",
+  );
+  const promptCount = messages.filter(
+    (m) => m.role.toLowerCase() === "user",
+  ).length;
 
   // The assistant response(s) that arrived after refine mode was activated.
-  const refineResponses = refineMode ? responses.slice(refineModeBaseRef.current) : [];
+  const refineResponses = refineMode
+    ? responses.slice(refineModeBaseRef.current)
+    : [];
   const latestRefineOutput = refineResponses.at(-1) ?? null;
   const latestRefineContent = latestRefineOutput
-    ? (formatContent(latestRefineOutput.content, latestRefineOutput.type).parts[0] ?? null)
+    ? (formatContent(latestRefineOutput.content, latestRefineOutput.type)
+        .parts[0] ?? null)
     : null;
 
   const isLoadingHistory = (loading || history === null) && !loadError;
@@ -153,7 +171,7 @@ const Post = () => {
               user={user}
               onPreview={setRefinedPreviewText}
             />
-        </div>
+          </div>
         </div>
       ) : isLoadingHistory && messages.length === 0 ? (
         <div className="preview-frame preview-frame--loading">

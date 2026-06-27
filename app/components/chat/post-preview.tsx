@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
-import { CaretLeftIcon, CaretRightIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { useEffect, useState, useMemo } from "react";
+import {
+  CaretLeftIcon,
+  CaretRightIcon,
+  ArrowRightIcon,
+} from "@phosphor-icons/react";
 import { formatContent } from "~/utils/format-content";
 import TypingIndicator from "./typing-indicator";
 import PreviewPostModal from "./preview-post-modal";
 import type { Message } from "~/types";
 
 const TONE_LABELS = ["Standard", "Playful", "Educative"];
- 
+
 interface PostPreviewProps {
   responses: Message[];
   isTyping: boolean;
@@ -14,34 +18,57 @@ interface PostPreviewProps {
   onRefine?: (text: string) => void;
 }
 
-const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) => {
+const PostPreview = ({
+  responses,
+  isTyping,
+  user,
+  onRefine,
+}: PostPreviewProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [selected, setSelected] = useState<Record<string, number>>({});
+  const [selected, setSelected] = useState<Record<string, Message>>({});
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
-  const total = responses.length;
+  // Group messages by message_group_id
+  const groups = useMemo(() => {
+    const result: Message[][] = [];
+    for (const response of responses) {
+      const last = result[result.length - 1];
+      if (last && last[0].message_group_id === response.message_group_id) {
+        last.push(response);
+      } else {
+        result.push([response]);
+      }
+    }
+    return result;
+  }, [responses]);
 
-  // Jump to the newest response as it arrives.
+  const totalGroups = groups.length;
+
+  // Jump to the newest group as it arrives
   useEffect(() => {
-    if (total > 0) setActiveIndex(total - 1);
-  }, [total]);
+    if (totalGroups > 0) setActiveIndex(totalGroups - 1);
+  }, [totalGroups]);
 
-  const active = total > 0 ? responses[Math.min(activeIndex, total - 1)] : undefined;
-  const parts = active ? formatContent(active.content, active.type).parts : [];
-  const chosen = active ? selected[active.id] : undefined;
+  const activeGroup =
+    totalGroups > 0 ? groups[Math.min(activeIndex, totalGroups - 1)] : null;
 
-  // Show the typing state when a reply for the current (latest) turn is pending.
-  const showTyping = isTyping && (total === 0 || activeIndex === total - 1);
+  const showTyping =
+    isTyping && (totalGroups === 0 || activeIndex === totalGroups - 1);
 
   const goPrev = () => setActiveIndex((i) => Math.max(0, i - 1));
-  const goNext = () => setActiveIndex((i) => Math.min(total - 1, i + 1));
+  const goNext = () => setActiveIndex((i) => Math.min(totalGroups - 1, i + 1));
+
+  // Use the first message's id as the group key for selection tracking
+  const groupKey = activeGroup?.[0]?.id ?? "";
+  const chosenIndex = selected[groupKey];
+
   return (
     <div className="preview-frame">
       <div className="preview-header">
         <h2 className="preview-title">Choose your favorite post!</h2>
-        {total > 0 && (
+        {totalGroups > 0 && (
           <span className="preview-counter">
-            {Math.min(activeIndex + 1, total)} of {total}
+            {activeIndex + 1} of {totalGroups}
           </span>
         )}
       </div>
@@ -49,15 +76,15 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
       <div className="preview-body">
         {showTyping ? (
           <TypingIndicator />
-        ) : active ? (
+        ) : activeGroup ? (
           <div className="post-options">
-            {parts.map((part, i) => (
+            {activeGroup.map((message, i) => (
               <button
-                key={i}
+                key={message.id}
                 type="button"
-                className={`idea-card${chosen === i ? " idea-card--selected" : ""}`}
+                className={`idea-card${selected[groupKey]?.id == message.id ? "idea-card--selected" : ""}`}
                 onClick={() => {
-                  setSelected((prev) => ({ ...prev, [active.id]: i }));
+                  setSelected((prev) => ({ ...prev, [groupKey]: message }));
                   setPreviewIndex(i);
                 }}
               >
@@ -66,8 +93,8 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
                     {TONE_LABELS[i] ?? `Option ${i + 1}`}
                   </span>
                   <ArrowRightIcon size={18} weight="bold" />
-                </span>b
-                <span className="idea-card-content">{part}</span>
+                </span>
+                <span className="idea-card-content">{message.content}</span>
               </button>
             ))}
           </div>
@@ -79,7 +106,7 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
         )}
       </div>
 
-      {total > 1 && (
+      {totalGroups > 1 && (
         <div className="preview-pagination">
           <button
             type="button"
@@ -92,14 +119,14 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
           </button>
 
           <span className="pager-counter">
-            {activeIndex + 1} of {total}
+            {activeIndex + 1} of {totalGroups}
           </span>
 
           <button
             type="button"
             className="pager"
             onClick={goNext}
-            disabled={activeIndex === total - 1}
+            disabled={activeIndex === totalGroups - 1}
           >
             <span>next</span>
             <CaretRightIcon size={18} weight="bold" />
@@ -107,12 +134,12 @@ const PostPreview = ({ responses, isTyping, user, onRefine }: PostPreviewProps) 
         </div>
       )}
 
-      {active && previewIndex !== null && parts[previewIndex] !== undefined && (
+      {activeGroup && selected[groupKey] && (
         <PreviewPostModal
-          content={parts[previewIndex]}
+          content={selected[groupKey].content}
           displayName={user?.name}
           handle={user?.username ? `@${user.username}` : undefined}
-          date={active.created_at}
+          date={selected[groupKey].created_at}
           onClose={() => setPreviewIndex(null)}
           onRefine={(text) => {
             onRefine?.(text);
