@@ -1,6 +1,13 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "react-router";
 import type { Route } from "./+types/root";
-import './styles/index.scss'
+import "./styles/index.scss";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -11,7 +18,15 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: 'https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap',
+    href: "https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap",
+  },
+  {
+    rel: "preconnect",
+    href: import.meta.env.VITE_API_URL,
+  },
+  {
+    rel: "dns-prefetch",
+    href: import.meta.env.VITE_API_URL,
   },
 ];
 
@@ -34,8 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />
-
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
