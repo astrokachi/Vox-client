@@ -26,7 +26,6 @@ const PostPreview = ({
 }: PostPreviewProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selected, setSelected] = useState<Record<string, Message>>({});
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   // Group messages by message_group_id
   const groups = useMemo(() => {
@@ -82,10 +81,9 @@ const PostPreview = ({
               <button
                 key={message.id}
                 type="button"
-                className={`idea-card${selected[groupKey]?.id == message.id ? "idea-card--selected" : ""}`}
+                className={`idea-card ${selected[groupKey]?.id == message.id ? "--selected" : ""}`}
                 onClick={() => {
                   setSelected((prev) => ({ ...prev, [groupKey]: message }));
-                  setPreviewIndex(i);
                 }}
               >
                 <span className="idea-card-head">
@@ -140,10 +138,9 @@ const PostPreview = ({
           displayName={user?.name}
           handle={user?.username ? `@${user.username}` : undefined}
           date={selected[groupKey].created_at}
-          onClose={() => setPreviewIndex(null)}
+          onClose={() => setSelected({})}
           onRefine={(text) => {
             onRefine?.(text);
-            setPreviewIndex(null);
           }}
         />
       )}
