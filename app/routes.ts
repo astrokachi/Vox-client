@@ -9,7 +9,8 @@ export default [
     ...prefix("posts", [
       index("routes/dashboard/posts/index.tsx"),
       route("new", "routes/dashboard/posts/new.tsx"),
-      route(":id", "routes/dashboard/posts/[post].tsx")
+      route(":id", "routes/dashboard/posts/[post].tsx"),
+      route(":id/r/:messageId", "routes/dashboard/posts/refine-message.tsx"),
     ]),
 
     ...prefix("replies", [

@@ -1,17 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { useLoaderData, useRouteLoaderData } from "react-router";
+import { useEffect, useState } from "react";
+import { useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
 import type { Route } from "../+types/index";
 import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
 import PostPreview from "~/components/chat/post-preview";
-import RefineHeader from "~/components/chat/refine-header";
-import RefineDraftCard from "~/components/chat/refine-draft-card";
-import RefinedOutputCard from "~/components/chat/refined-output-card";
-import PreviewPostModal from "~/components/chat/preview-post-modal";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
 import { getSocket } from "~/services/socket";
-import { formatContent } from "~/utils/format-content";
 import type { ChatGetMessagesDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -24,6 +19,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
   const dashboardData = useRouteLoaderData<typeof dashboardLoader>(
     "routes/dashboard/index",
   );
@@ -33,14 +29,6 @@ const Post = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
-
-  // Refine mode state
-  const [refineMode, setRefineMode] = useState(false);
-  const [refinedDraft, setRefinedDraft] = useState("");
-  const [refinedPreviewText, setRefinedPreviewText] = useState<string | null>(
-    null,
-  );
-  const refineModeBaseRef = useRef(0);
 
   const {
     execute: loadMessages,
@@ -65,18 +53,12 @@ const Post = () => {
 
     socket.emit("conversation:join", conversationId);
 
-    const appendMessage = (message: Message) => {
-      setMessages((prev) =>
-        prev.some((m) => m.message_group_id === message.message_group_id)
-          ? prev
-          : [...prev, message],
-      );
-    };
-
     const handleReceived = (message: Message) => {
       if (message.conversation_id !== conversationId) return;
       setIsTyping(false);
-      appendMessage(message);
+      setMessages((prev) =>
+        prev.some((m) => m.id === message.id) ? prev : [...prev, message],
+      );
     };
 
     const handleTyping = (payload: { conversationId: string }) => {
@@ -122,20 +104,10 @@ const Post = () => {
     }
   };
 
-  // Enter refine mode: snapshot current response count so we can derive the
-  // refined output as any assistant message that arrives after this point.
-  const handleRefine = (text: string) => {
-    refineModeBaseRef.current = responses.length;
-    setRefinedDraft(text.trim());
-    setRefineMode(true);
-    setDraft(text.trim());
-  };
-
-  const handleBackFromRefine = () => {
-    setRefineMode(false);
-    setRefinedDraft("");
-    setDraft("");
-    setRefinedPreviewText(null);
+  const handleRefine = (message: Message) => {
+    navigate(`/posts/${conversationId}/r/${message.id}`, {
+      state: { draft: message.content },
+    });
   };
 
   const responses = messages.filter(
@@ -145,35 +117,12 @@ const Post = () => {
     (m) => m.role.toLowerCase() === "user",
   ).length;
 
-  // The assistant response(s) that arrived after refine mode was activated.
-  const refineResponses = refineMode
-    ? responses.slice(refineModeBaseRef.current)
-    : [];
-  const latestRefineOutput = refineResponses.at(-1) ?? null;
-  const latestRefineContent = latestRefineOutput
-    ? (formatContent(latestRefineOutput.content, latestRefineOutput.type)
-        .parts[0] ?? null)
-    : null;
-
   const isLoadingHistory = (loading || history === null) && !loadError;
   const displayError = error ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">
-      {refineMode ? (
-        <div className="preview-frame">
-          <div className="refine-mode-container">
-            <RefineHeader onBack={handleBackFromRefine} />
-            <RefineDraftCard content={refinedDraft} />
-            <RefinedOutputCard
-              content={latestRefineContent}
-              isTyping={isTyping}
-              user={user}
-              onPreview={setRefinedPreviewText}
-            />
-          </div>
-        </div>
-      ) : isLoadingHistory && messages.length === 0 ? (
+      {isLoadingHistory && messages.length === 0 ? (
         <div className="preview-frame preview-frame--loading">
           <div className="preview-empty">
             <h3>Loading…</h3>
@@ -192,7 +141,7 @@ const Post = () => {
 
       <div className="chat-input-section">
         <ChatForm
-          refineDraft={refineMode ? undefined : draft}
+          refineDraft={draft}
           onClearRefine={() => setDraft("")}
           onSubmit={handleSendMessage}
           promptCount={promptCount}
@@ -200,19 +149,6 @@ const Post = () => {
           disabled={promptCount >= MAX_PROMPTS}
         />
       </div>
-
-      {refinedPreviewText && (
-        <PreviewPostModal
-          content={refinedPreviewText}
-          displayName={user?.name}
-          handle={user?.username ? `@${user.username}` : undefined}
-          onClose={() => setRefinedPreviewText(null)}
-          onRefine={(text) => {
-            setRefinedPreviewText(null);
-            handleRefine(text);
-          }}
-        />
-      )}
     </div>
   );
 };
