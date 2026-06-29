@@ -1,11 +1,24 @@
+import { useState } from "react";
 import { ArrowLeftIcon, CaretDownIcon } from "@phosphor-icons/react";
 import "~/styles/dashboard/posts.scss";
 
-interface RefineHeaderProps {
-  onBack: () => void;
+interface HistoryItem {
+  id: string;
+  content: string;
 }
 
-const RefineHeader = ({ onBack }: RefineHeaderProps) => {
+interface RefineHeaderProps {
+  onBack: () => void;
+  history?: HistoryItem[];
+  onSelectHistory?: (item: HistoryItem) => void;
+}
+
+const previewText = (text: string, max = 80) =>
+  text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
+
+const RefineHeader = ({ onBack, history, onSelectHistory }: RefineHeaderProps) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="refine-header">
       <div className="refine-header-left">
@@ -20,10 +33,42 @@ const RefineHeader = ({ onBack }: RefineHeaderProps) => {
         <span className="refine-header-title">Refine Mode</span>
       </div>
 
-      <button type="button" className="refine-history-btn">
-        History
-        <CaretDownIcon size={14} weight="bold" />
-      </button>
+      {history && history.length > 0 && (
+        <div className="refine-history-wrapper">
+          <button
+            type="button"
+            className="refine-history-btn"
+            onClick={() => setOpen((p) => !p)}
+          >
+            History ({history.length})
+            <CaretDownIcon size={14} weight="bold" />
+          </button>
+
+          {open && (
+            <>
+              <div
+                className="refine-history-overlay"
+                onClick={() => setOpen(false)}
+              />
+              <div className="refine-history-dropdown">
+                {history.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="refine-history-item"
+                    onClick={() => {
+                      onSelectHistory?.(item);
+                      setOpen(false);
+                    }}
+                  >
+                    {previewText(item.content)}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };

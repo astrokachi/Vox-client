@@ -9,6 +9,7 @@ interface ChatFormProps {
   promptCount?: number;
   maxPrompts?: number;
   disabled?: boolean;
+  submitLabel?: string;
 }
 
 // Show only a bit of the draft in the chip.
@@ -23,6 +24,7 @@ export const ChatForm = ({
   promptCount = 0,
   maxPrompts = 6,
   disabled = false,
+  submitLabel = "Generate post",
 }: ChatFormProps) => {
   const [content, setContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -86,10 +88,10 @@ export const ChatForm = ({
       </div>
       <div className="form-footer">
         <span className="prompts-count">{promptCount}/{maxPrompts} prompts</span>
-        <button type="submit" className="generate-btn" disabled={disabled}>
-          <SparkleIcon size={18} />
-          Generate post
-        </button>
+          <button type="submit" className="generate-btn" disabled={disabled}>
+            <SparkleIcon size={18} />
+            {submitLabel}
+          </button>
       </div>
     </form>
   );

@@ -4,7 +4,6 @@ import {
   CaretRightIcon,
   ArrowRightIcon,
 } from "@phosphor-icons/react";
-import { formatContent } from "~/utils/format-content";
 import TypingIndicator from "./typing-indicator";
 import PreviewPostModal from "./preview-post-modal";
 import type { Message } from "~/types";
@@ -15,7 +14,7 @@ interface PostPreviewProps {
   responses: Message[];
   isTyping: boolean;
   user?: { name?: string; username?: string };
-  onRefine?: (text: string) => void;
+  onRefine?: (message: Message) => void;
 }
 
 const PostPreview = ({
@@ -59,7 +58,6 @@ const PostPreview = ({
 
   // Use the first message's id as the group key for selection tracking
   const groupKey = activeGroup?.[0]?.id ?? "";
-  const chosenIndex = selected[groupKey];
 
   return (
     <div className="preview-frame">
@@ -140,7 +138,7 @@ const PostPreview = ({
           date={selected[groupKey].created_at}
           onClose={() => setSelected({})}
           onRefine={(text) => {
-            onRefine?.(text);
+            onRefine?.({ ...selected[groupKey], content: text });
           }}
         />
       )}
