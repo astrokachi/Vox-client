@@ -9,7 +9,7 @@ import PreviewPostModal from "~/components/chat/preview-post-modal";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
-import { getSocket } from "~/services/socket";
+import { useConversationSocket } from "~/hooks/useConversationSocket";
 import type { ChatGetMessageTreeDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -26,7 +26,6 @@ const RefineMessage = () => {
   const user = dashboardData?.user;
 
   const [chain, setChain] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewContent, setPreviewContent] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -46,43 +45,13 @@ const RefineMessage = () => {
     if (treeData) setChain(treeData);
   }, [treeData]);
 
-  useEffect(() => {
-    if (!postId) return;
-    const socket = getSocket();
-    if (!socket) return;
-
-    socket.emit("conversation:join", postId);
-
-    const handleRefined = (payload: { parentId: string; message: Message }) => {
-      setIsTyping(false);
+  const { isTyping, error: socketError } = useConversationSocket({
+    conversationId: postId!,
+    onMessageRefined: (payload) => {
       setChain((prev) => [...prev, payload.message]);
       setSelectedIndex(-1);
-    };
-
-    const handleTyping = (payload: { conversationId: string }) => {
-      if (payload.conversationId === postId) setIsTyping(true);
-    };
-
-    const handleError = (payload: {
-      conversationId: string;
-      error: string;
-    }) => {
-      if (payload.conversationId !== postId) return;
-      setIsTyping(false);
-      setError(payload.error);
-    };
-
-    socket.on("message:refined", handleRefined);
-    socket.on("message:typing", handleTyping);
-    socket.on("message:error", handleError);
-
-    return () => {
-      socket.emit("conversation:leave", postId);
-      socket.off("message:refined", handleRefined);
-      socket.off("message:typing", handleTyping);
-      socket.off("message:error", handleError);
-    };
-  }, [postId]);
+    },
+  });
 
   const handleSendMessage = async (content: string) => {
     setError(null);
@@ -94,7 +63,6 @@ const RefineMessage = () => {
         messageId: targetId,
         payload: { content },
       });
-      setIsTyping(true);
     } catch {
       setError("Failed to send message");
     }
@@ -105,7 +73,8 @@ const RefineMessage = () => {
   };
 
   const activeIndex = selectedIndex >= 0 ? selectedIndex : chain.length - 1;
-  const parentMessage = activeIndex == 0 ? chain[activeIndex] : chain[activeIndex - 1];
+  const parentMessage =
+    activeIndex == 0 ? chain[activeIndex] : chain[activeIndex - 1];
   const activeMessage = activeIndex > 0 ? chain[activeIndex] : null;
 
   const historyItems = chain.slice(0, activeIndex - 1).map((m) => ({
@@ -125,7 +94,7 @@ const RefineMessage = () => {
     setPreviewContent(text);
   };
 
-  const displayError = error ?? loadError?.message ?? null;
+  const displayError = error ?? socketError ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">

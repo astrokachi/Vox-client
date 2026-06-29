@@ -6,7 +6,7 @@ import PostPreview from "~/components/chat/post-preview";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
-import { getSocket } from "~/services/socket";
+import { useConversationSocket } from "~/hooks/useConversationSocket";
 import type { ChatGetMessagesDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -26,7 +26,6 @@ const Post = () => {
   const user = dashboardData?.user;
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
 
@@ -46,45 +45,14 @@ const Post = () => {
     if (history) setMessages(history);
   }, [history]);
 
-  useEffect(() => {
-    if (!conversationId) return;
-    const socket = getSocket();
-    if (!socket) return;
-
-    socket.emit("conversation:join", conversationId);
-
-    const handleReceived = (message: Message) => {
-      if (message.conversation_id !== conversationId) return;
-      setIsTyping(false);
+  const { isTyping, error: socketError } = useConversationSocket({
+    conversationId,
+    onMessageReceived: (message) => {
       setMessages((prev) =>
         prev.some((m) => m.id === message.id) ? prev : [...prev, message],
       );
-    };
-
-    const handleTyping = (payload: { conversationId: string }) => {
-      if (payload.conversationId === conversationId) setIsTyping(true);
-    };
-
-    const handleError = (payload: {
-      conversationId: string;
-      error: string;
-    }) => {
-      if (payload.conversationId !== conversationId) return;
-      setIsTyping(false);
-      setError(payload.error);
-    };
-
-    socket.on("message:received", handleReceived);
-    socket.on("message:typing", handleTyping);
-    socket.on("message:error", handleError);
-
-    return () => {
-      socket.emit("conversation:leave", conversationId);
-      socket.off("message:received", handleReceived);
-      socket.off("message:typing", handleTyping);
-      socket.off("message:error", handleError);
-    };
-  }, [conversationId]);
+    },
+  });
 
   const handleSendMessage = async (content: string) => {
     setError(null);
@@ -98,7 +66,6 @@ const Post = () => {
           ? prev
           : [...prev, userMessage],
       );
-      setIsTyping(true);
     } catch {
       setError("Failed to send message");
     }
@@ -118,7 +85,7 @@ const Post = () => {
   ).length;
 
   const isLoadingHistory = (loading || history === null) && !loadError;
-  const displayError = error ?? loadError?.message ?? null;
+  const displayError = error ?? socketError ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">
