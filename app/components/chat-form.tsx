@@ -90,7 +90,7 @@ export const ChatForm = ({
         <span className="prompts-count">{promptCount}/{maxPrompts} prompts</span>
           <button type="submit" className="generate-btn" disabled={disabled}>
             <SparkleIcon size={18} />
-            {submitLabel}
+            <span>{submitLabel}</span>
           </button>
       </div>
     </form>

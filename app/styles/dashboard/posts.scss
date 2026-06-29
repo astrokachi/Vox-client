@@ -285,7 +285,7 @@
   background: map.get(vars.$colors, card-fill-dark);
   border: 1px solid map.get(vars.$colors, card-stroke);
   color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   font-family: inherit;
   resize: vertical;
   outline: none;
@@ -318,7 +318,7 @@
 }
 
 .prompts-count {
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   color: map.get(vars.$colors, text-secondary);
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
@@ -334,7 +334,7 @@
   border-radius: map.get(vars.$border-radius, full);
   background: map.get(vars.$colors, primary-dark);
   color: map.get(vars.$colors, text-light-blue);
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   font-weight: 700;
   border: none;
   cursor: pointer;
@@ -377,6 +377,7 @@
   padding: 20px;
   padding-top: 24px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  min-height: 300px;
   margin-bottom: 5px;
   &--loading {
     justify-content: center;
@@ -392,7 +393,7 @@
 
 .preview-title {
   margin: 0;
-  font-size: map.get(vars.$font-sizes, sm);
+  font-size: map.get(vars.$font-sizes, md);
   font-weight: 700;
   color: map.get(vars.$colors, text-primary);
 }
@@ -422,7 +423,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 120px;
+  min-height: 140px;
   padding: 12px;
   overflow: hidden;
   text-align: left;
@@ -468,7 +469,7 @@
   line-clamp: 4;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   line-height: 1.5;
   word-wrap: break-word;
 }
