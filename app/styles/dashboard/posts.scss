@@ -623,6 +623,7 @@
 
 .preview-post-btn {
   padding: 6px 16px;
+  border-radius: 0;
   background: map.get(vars.$colors, primary-dark);
   border: none;
   color: map.get(vars.$colors, text-primary);
@@ -634,6 +635,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0 8px;
+  border-radius: 0;
   background: map.get(vars.$colors, primary-dark);
   border: none;
   border-left: 1px solid rgba(0, 0, 0, 0.25);
