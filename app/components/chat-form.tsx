@@ -1,5 +1,5 @@
 import { SparkleIcon, XIcon } from "@phosphor-icons/react";
-import { useEffect, useRef, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type SubmitEvent } from "react";
 
 interface ChatFormProps {
   suggestion?: string;
@@ -28,6 +28,7 @@ export const ChatForm = ({
 }: ChatFormProps) => {
   const [content, setContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -61,7 +62,7 @@ export const ChatForm = ({
   }, [refineDraft]);
 
   return (
-    <form onSubmit={handleSubmit} className="chat-form">
+    <form ref={formRef} onSubmit={handleSubmit} className="chat-form">
       <div className="textarea-wrapper">
         {refineDraft && (
           <div className="refine-chip">
@@ -83,6 +84,12 @@ export const ChatForm = ({
           placeholder="Enter a topic or describe what you want to talk about"
           value={content}
           onChange={handleChange}
+          onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              formRef.current?.requestSubmit();
+            }
+          }}
           disabled={disabled}
         />
       </div>
