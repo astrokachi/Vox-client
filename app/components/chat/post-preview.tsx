@@ -45,7 +45,7 @@ const PostPreview = ({
   // Jump to the newest group as it arrives
   useEffect(() => {
     if (totalGroups > 0) setActiveIndex(totalGroups - 1);
-  }, [totalGroups]);
+  }, [totalGroups, responses]);
 
   const activeGroup =
     totalGroups > 0 ? groups[Math.min(activeIndex, totalGroups - 1)] : null;
@@ -62,11 +62,13 @@ const PostPreview = ({
   return (
     <div className="preview-frame">
       <div className="preview-header">
-        <h2 className="preview-title">Choose your favorite post!</h2>
         {totalGroups > 0 && (
-          <span className="preview-counter">
-            {activeIndex + 1} of {totalGroups}
-          </span>
+          <>
+            <h2 className="preview-title">Choose your favorite post!</h2>
+            <span className="preview-counter">
+              {activeIndex + 1} of {totalGroups}
+            </span>
+          </>
         )}
       </div>
 
