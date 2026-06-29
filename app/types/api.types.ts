@@ -86,8 +86,8 @@ export interface Chats {
 export interface Message {
   id: string;
   conversation_id: string;
-  message_group_id: string
-  parent_id: string;
+  message_group_id?: string;
+  parent_id?: string;
   role: MessageRole;
   content: string;
   type?: ChatMessageType;

@@ -1,8 +1,12 @@
-import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from 'axios';
-import { parseApiError } from './parseError';
-import { getAccessToken, isTokenExpiredOrExpiring } from '~/lib/auth';
-import { ensureToken } from '~/lib/ensure-token';
-import type { ApiResponse } from '~/types';
+import axios, {
+  type AxiosInstance,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from "axios";
+import { parseApiError } from "./parseError";
+import { getAccessToken, isTokenExpiredOrExpiring } from "~/lib/auth";
+import { ensureToken } from "~/lib/ensure-token";
+import type { ApiResponse } from "~/types";
 
 export const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -12,7 +16,7 @@ class ApiClient {
   constructor(config: AxiosRequestConfig) {
     this.instance = axios.create({
       ...config,
-    })
+    });
 
     this.configureInterceptors();
   }
@@ -32,25 +36,24 @@ class ApiClient {
       }
 
       return config;
-    })
+    });
 
-    this.instance.interceptors.response.use((response: AxiosResponse<ApiResponse<unknown>>) => {
-      if (import.meta.env.MODE !== "production") {
-        console.log(`${response.data.message || "RESPONSE"} :`, {
-          status: response.status,
-          data: response.data,
-        });
-      }
+    this.instance.interceptors.response.use(
+      (response: AxiosResponse<ApiResponse<unknown>>) => {
+        if (import.meta.env.MODE !== "production") {
+          console.log(`${response.data.message || "RESPONSE"} :`, {
+            ...response.data,
+          });
+        }
 
-      // return typed response data
-      return response;
-
-    },
+        // return typed response data
+        return response;
+      },
       async (error) => {
         const apiError = parseApiError(error);
         const originalRequest = error.config;
 
-        if (apiError.code === 'UNAUTHORIZED' && !originalRequest._retry) {
+        if (apiError.code === "UNAUTHORIZED" && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
@@ -63,7 +66,8 @@ class ApiClient {
         }
 
         return Promise.reject(apiError);
-      })
+      },
+    );
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
@@ -74,7 +78,7 @@ class ApiClient {
   async post<T, B = unknown>(
     url: string,
     body?: B,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const res = await this.instance.post<ApiResponse<T>>(url, body, config);
     return res.data.data;
@@ -83,7 +87,7 @@ class ApiClient {
   async put<T, B = unknown>(
     url: string,
     body?: B,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const res = await this.instance.put<ApiResponse<T>>(url, body, config);
     return res.data.data;
@@ -92,7 +96,7 @@ class ApiClient {
   async patch<T, B = unknown>(
     url: string,
     body?: B,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const res = await this.instance.patch<ApiResponse<T>>(url, body, config);
     return res.data.data;
@@ -110,5 +114,5 @@ export const internalApi = new ApiClient({
 
 export const externalApi = new ApiClient({
   baseURL: API_BASE,
-  timeout: 30000
+  timeout: 30000,
 });
