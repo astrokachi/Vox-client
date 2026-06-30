@@ -1,7 +1,7 @@
 @use "sass:map";
 @use "../variables" as vars;
+@use "../animations" as anim;
 
-$transition-speed: 0.3s;
 $text-color: #f1f1f1;
 $tooltip-bg: #333;
 $tooltip-color: #fff;
@@ -20,12 +20,24 @@ $tooltip-color: #fff;
   border-radius: 8px;
   color: $text-color;
   text-decoration: none;
-  transition: background $transition-speed ease, gap $transition-speed ease;
-  position: relative; // For tooltip positioning
+  transition:
+    background anim.duration(normal) anim.ease(out),
+    gap anim.duration(normal) anim.ease(out),
+    transform anim.duration(fast) anim.ease(out);
+  position: relative;
 
   &:hover {
     background: rgba(map.get(vars.$colors, primary), 0.1);
     color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 
   &.active {
@@ -49,11 +61,13 @@ $tooltip-color: #fff;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
-    transition: max-width $transition-speed ease, opacity $transition-speed ease;
+    transition:
+      max-width anim.duration(normal) anim.ease(out),
+      opacity anim.duration(normal) anim.ease(out);
   }
 }
 
-/* Tooltip implementation */
+/* Tooltip */
 .nav-link::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -69,28 +83,25 @@ $tooltip-color: #fff;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s anim.ease(out),
+    transform 0.2s anim.ease(out),
+    visibility 0.2s anim.ease(out);
   z-index: 2000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* 
-  When the desktop sidebar is collapsed...
-*/
 .desktop-sidebar.collapsed {
   .nav-link {
-    gap: 0; // slide icon gap away cleanly instead of snapping
-
+    gap: 0;
     padding: 5px;
 
     .link-title {
-      // Hide the text smoothly
       opacity: 0;
       max-width: 0;
       margin: 0;
     }
 
-    // Show tooltip on hover
     &:hover::after,
     &:focus-visible::after {
       opacity: 1;
