@@ -1,5 +1,6 @@
 @use "sass:map";
 @use "../variables" as vars;
+@use "../animations" as anim;
 
 .recents-con {
   margin-top: 20px;
@@ -37,6 +38,7 @@
   font-size: map.get(vars.$font-sizes, sm);
   transition: background map.get(vars.$transitions, default) ease,
     color map.get(vars.$transitions, default) ease;
+  animation: fade-in-up anim.duration(normal) anim.ease(out) both;
 
   &:hover {
     background: rgba(map.get(vars.$colors, primary), 0.1);
@@ -47,6 +49,8 @@
     background: rgba(map.get(vars.$colors, primary), 0.15);
     color: map.get(vars.$colors, primary);
   }
+
+  @include anim.fade-in-stagger(15);
 }
 
 .recents-item-icon {
