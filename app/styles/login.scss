@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   background-color: map.get(vars.$colors, primary);
   color: map.get(vars.$colors, text-primary);
   font-weight: 600;
@@ -97,7 +97,12 @@
 }
 
 .login-button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+.login-button:focus-visible {
+  outline: 2px solid map.get(vars.$colors, primary);
+  outline-offset: 2px;
 }
 
 .login-button svg {

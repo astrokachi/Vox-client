@@ -1,5 +1,6 @@
 @use "sass:map";
 @use "../variables" as vars;
+@use "../animations" as anim;
 
 .posts-container {
   display: flex;
@@ -36,10 +37,20 @@
   font-weight: 700;
   border: none;
   cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease;
+  transition: background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   &:hover {
     background: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }
 
@@ -68,12 +79,25 @@
   border-radius: map.get(vars.$border-radius, lg);
   cursor: pointer;
   transition: background map.get(vars.$transitions, default) ease,
-    border-color map.get(vars.$transitions, default) ease;
+    border-color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
+  animation: fade-in-up anim.duration(normal) anim.ease(out) both;
 
   &:hover {
     background: rgba(map.get(vars.$colors, primary), 0.05);
     border-color: rgba(map.get(vars.$colors, primary), 0.3);
   }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
+  }
+
+  @include anim.fade-in-stagger(15);
 }
 
 .conversation-card-header {
@@ -207,7 +231,9 @@
   color: map.get(vars.$colors, text-primary);
   font-size: map.get(vars.$font-sizes, sm);
   cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease;
+  transition: background map.get(vars.$transitions, default) ease,
+    border-color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
     padding: 5px 12px;
@@ -218,6 +244,15 @@
   &:hover {
     background: rgba(map.get(vars.$colors, primary), 0.15);
     border-color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }
 
@@ -338,7 +373,8 @@
   font-weight: 700;
   border: none;
   cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease;
+  transition: background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
     padding: 8px 14px;
@@ -348,6 +384,15 @@
 
   &:hover {
     background: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }
 
@@ -433,10 +478,20 @@
   border: 1px solid map.get(vars.$colors, card-stroke);
   color: map.get(vars.$colors, text-primary);
   transition: border-color map.get(vars.$transitions, default) ease,
-    background map.get(vars.$transitions, default) ease;
+    background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   &:hover {
     border-color: rgba(map.get(vars.$colors, primary), 0.5);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 
   &--selected {
@@ -485,6 +540,7 @@
   padding: 24px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
+  animation: fade-in anim.duration(fast) anim.ease(out);
 }
 
 .preview-modal {
@@ -498,6 +554,7 @@
   background: map.get(vars.$colors, card-fill);
   border: 1px solid map.get(vars.$colors, gray-dark);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  animation: fade-in-scale anim.duration(normal) anim.ease(out);
 }
 
 .preview-modal-header {
@@ -629,6 +686,21 @@
   color: map.get(vars.$colors, text-primary);
   font-weight: 600;
   cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
+  }
 }
 
 .preview-post-caret {
@@ -641,6 +713,21 @@
   border-left: 1px solid rgba(0, 0, 0, 0.25);
   color: map.get(vars.$colors, text-primary);
   cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
+  }
 }
 
 .preview-refine-btn {
@@ -657,6 +744,23 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease,
+    border-color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+    border-color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
+  }
 
   svg {
     color: map.get(vars.$colors, text-primary);
@@ -714,11 +818,25 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  transition: color map.get(vars.$transitions, default) ease;
+  transition: color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   svg {
     width: 14px;
     height: 14px;
+  }
+
+  &:hover {
+    color: map.get(vars.$colors, primary);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -792,7 +910,7 @@
 .message-group {
   display: flex;
   gap: 12px;
-  animation: fadeIn 0.3s ease;
+  animation: fade-in-up anim.duration(normal) anim.ease(out);
 
   &.message-User {
     justify-content: flex-end;
@@ -800,18 +918,6 @@
 
   &.message-Assistant {
     justify-content: flex-start;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -852,11 +958,14 @@
   gap: 12px;
   transition: background map.get(vars.$transitions, default) ease,
     border-color map.get(vars.$transitions, default) ease;
+  animation: fade-in-up anim.duration(normal) anim.ease(out) both;
 
   &:hover {
     background: rgba(map.get(vars.$colors, primary), 0.05);
     border-color: rgba(map.get(vars.$colors, primary), 0.3);
   }
+
+  @include anim.fade-in-stagger(20);
 }
 
 .post-header {
@@ -885,10 +994,20 @@
   font-size: map.get(vars.$font-sizes, lg);
   cursor: pointer;
   padding: 0;
-  transition: color map.get(vars.$transitions, default) ease;
+  transition: color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   &:hover {
     color: map.get(vars.$colors, text-primary);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }
 
@@ -914,10 +1033,20 @@
   color: map.get(vars.$colors, text-secondary);
   font-size: map.get(vars.$font-sizes, xs);
   cursor: pointer;
-  transition: color map.get(vars.$transitions, default) ease;
+  transition: color map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   &:hover {
     color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 
   svg {
@@ -1141,9 +1270,19 @@
   text-transform: uppercase;
   border: none;
   cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease;
+  transition: background map.get(vars.$transitions, default) ease,
+    transform 0.15s ease;
 
   &:hover {
     background: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }

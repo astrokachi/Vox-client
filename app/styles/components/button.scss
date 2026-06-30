@@ -1,17 +1,39 @@
 @use "sass:map";
 @use "../variables" as vars;
+@use "../animations" as anim;
 
 .btn-con {
   border-radius: map.get(vars.$border-radius, md);
   background-color: map.get(vars.$colors, primary-dark);
   width: 100%;
   border: none;
-
   margin: 0 auto;
   display: flex;
   justify-content: center;
   padding: 11px 0;
   cursor: pointer;
+  transition:
+    background-color anim.duration(fast) anim.ease(out),
+    transform anim.duration(fast) anim.ease(out);
+
+  &:hover {
+    background-color: map.get(vars.$colors, primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
 }
 
 .login-btn {

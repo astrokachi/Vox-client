@@ -1,0 +1,81 @@
+@use "sass:map";
+@use "variables" as vars;
+
+// ─── Easing shortcuts ───────────────────────────────────────────────────────
+
+@function ease($key) {
+  @return map.get(vars.$easing, $key);
+}
+
+@function duration($key) {
+  @return map.get(vars.$durations, $key);
+}
+
+// ─── Keyframes ──────────────────────────────────────────────────────────────
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes press {
+  to { transform: scale(0.97); }
+}
+
+@keyframes skeleton-pulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Stagger helper ─────────────────────────────────────────────────────────
+// Usage: @include fade-in-stagger(5);
+
+@mixin fade-in-stagger($count, $base-delay: 0.04s, $base-duration: 0.25s) {
+  @for $i from 1 through $count {
+    &:nth-child(#{$i}) {
+      animation: fade-in-up $base-duration ease-out both;
+      animation-delay: $base-delay * ($i - 1);
+    }
+  }
+}
+
+// ─── Reduced motion ─────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

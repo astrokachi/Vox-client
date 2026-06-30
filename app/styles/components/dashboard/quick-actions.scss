@@ -1,19 +1,21 @@
 @use "sass:map";
 @use "../../variables" as vars;
+@use "../../animations" as anim;
 
 .quick-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  // width: 44px;
-  // height: 44px;
   padding: 6px 7px;
   background-color: map.get(vars.$colors, gray-dark);
   color: map.get(vars.$colors, text-primary);
   border: none;
   border-radius: map.get(vars.$border-radius, md);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition:
+    background-color anim.duration(fast) anim.ease(out),
+    color anim.duration(fast) anim.ease(out),
+    transform anim.duration(fast) anim.ease(out);
 
   svg {
     color: inherit;
@@ -28,5 +30,10 @@
     background-color: rgba(map.get(vars.$colors, primary), 0.2);
     color: map.get(vars.$colors, primary);
     transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid map.get(vars.$colors, primary);
+    outline-offset: 2px;
   }
 }
