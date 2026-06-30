@@ -3,6 +3,8 @@ import type {
   ChatAddMessageDto,
   ChatCreateWithPromptDto,
   ChatGetMessagesDto,
+  ChatGetMessageTreeDto,
+  ChatRefineMessageDto,
   Chats,
   Conversation,
   ConversationCreateDto,
@@ -11,7 +13,6 @@ import type {
   ConversationListDto,
   ConversationUpdateDto,
   Message,
-  MessagesPage,
   QueueTweetReplies,
   User,
 } from "~/types";
@@ -59,4 +60,14 @@ export const chatApi = {
     ),
   addMessage: (dto: ChatAddMessageDto): Promise<Message> =>
     externalApi.post<Message>(`/api/chat/${dto.conversationId}/prompt`, dto.payload),
+  // getMessageTree: () => externalApi.get(`/api/chat/${dto.conversationId}/messages/${dto.messageId}`)
+  refineMessage: (dto: ChatRefineMessageDto): Promise<Message> =>
+    externalApi.post<Message>(
+      `/api/chat/${dto.conversationId}/messages/${dto.messageId}/refine`,
+      dto.payload,
+    ),
+  getMessageTree: (dto: ChatGetMessageTreeDto): Promise<Message[]> =>
+    externalApi.get<Message[]>(
+      `/api/chat/${dto.conversationId}/messages/${dto.messageId}/tree`,
+    ),
 };

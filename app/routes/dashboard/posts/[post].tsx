@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLoaderData, useRouteLoaderData } from "react-router";
-import type { Route } from "./+types/[post]";
+import { useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router";
+import type { Route } from "../+types/index";
 import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
 import PostPreview from "~/components/chat/post-preview";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
-import { getSocket } from "~/services/socket";
+import { useConversationSocket } from "~/hooks/useConversationSocket";
 import type { ChatGetMessagesDto, Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -19,96 +19,84 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
-  const dashboardData = useRouteLoaderData<typeof dashboardLoader>("routes/dashboard/index");
+  const navigate = useNavigate();
+  const dashboardData = useRouteLoaderData<typeof dashboardLoader>(
+    "routes/dashboard/index",
+  );
   const user = dashboardData?.user;
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
 
-  // Load existing history over REST via the shared useApiCall hook.
   const {
     execute: loadMessages,
+    prefetch: prefetchMessages,
     data: history,
     loading,
     error: loadError,
-  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages);
+  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages, {
+    cacheKey: "conversation-messages",
+  });
 
-  // Kick off the load whenever the conversation changes.
+  const messagesDto = { conversationId, cursor: "", take: 50 } satisfies ChatGetMessagesDto;
+
   useEffect(() => {
     if (!conversationId) return;
-    loadMessages({ conversationId, cursor: "", take: 50 });
+    loadMessages(messagesDto);
   }, [conversationId]);
 
-  // Seed local state from the loaded history so the socket can append to it.
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!conversationId) return;
+    prefetchMessages(messagesDto);
+  }, [pathname]);
+
   useEffect(() => {
     if (history) setMessages(history);
   }, [history]);
 
-  // Subscribe to live updates over WebSocket.
-  useEffect(() => {
-    if (!conversationId) return;
-    const socket = getSocket();
-    if (!socket) return;
-
-    socket.emit("conversation:join", conversationId);
-
-    const appendMessage = (message: Message) => {
+  const { isTyping, error: socketError } = useConversationSocket({
+    conversationId,
+    onMessageReceived: (message) => {
       setMessages((prev) =>
-        prev.some((m) => m.id === message.id) ? prev : [...prev, message]
+        prev.some((m) => m.id === message.id) ? prev : [...prev, message],
       );
-    };
-
-    const handleReceived = (message: Message) => {
-      if (message.conversation_id !== conversationId) return;
-      setIsTyping(false);
-      appendMessage(message);
-    };
-
-    const handleTyping = (payload: { conversationId: string }) => {
-      if (payload.conversationId === conversationId) setIsTyping(true);
-    };
-
-    const handleError = (payload: { conversationId: string; error: string }) => {
-      if (payload.conversationId !== conversationId) return;
-      setIsTyping(false);
-      setError(payload.error);
-    };
-
-    socket.on("message:received", handleReceived);
-    socket.on("message:typing", handleTyping);
-    socket.on("message:error", handleError);
-
-    return () => {
-      socket.emit("conversation:leave", conversationId);
-      socket.off("message:received", handleReceived);
-      socket.off("message:typing", handleTyping);
-      socket.off("message:error", handleError);
-    };
-  }, [conversationId]);
+    },
+  });
 
   const handleSendMessage = async (content: string) => {
     setError(null);
     try {
-      // Persist the prompt over REST; the AI reply streams back over WebSocket.
       const userMessage = await chatApi.addMessage({
         conversationId,
         payload: { content, type: "MULTIPLE" },
       });
       setMessages((prev) =>
-        prev.some((m) => m.id === userMessage.id) ? prev : [...prev, userMessage]
+        prev.some((m) => m.id === userMessage.id)
+          ? prev
+          : [...prev, userMessage],
       );
-      setIsTyping(true);
     } catch {
       setError("Failed to send message");
     }
   };
 
-  const responses = messages.filter((m) => m.role.toLowerCase() === "assistant");
-  const promptCount = messages.filter((m) => m.role.toLowerCase() === "user").length;
+  const handleRefine = (message: Message) => {
+    navigate(`/posts/${conversationId}/r/${message.id}`, {
+      state: { draft: message.content },
+    });
+  };
+
+  const responses = messages.filter(
+    (m) => m.role.toLowerCase() === "assistant",
+  );
+  const promptCount = messages.filter(
+    (m) => m.role.toLowerCase() === "user",
+  ).length;
 
   const isLoadingHistory = (loading || history === null) && !loadError;
-  const displayError = error ?? loadError?.message ?? null;
+  const displayError = error ?? socketError ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">
@@ -119,13 +107,20 @@ const Post = () => {
           </div>
         </div>
       ) : (
-        <PostPreview responses={responses} isTyping={isTyping} user={user} />
+        <PostPreview
+          responses={responses}
+          isTyping={isTyping}
+          user={user}
+          onRefine={handleRefine}
+        />
       )}
 
       {displayError && <div className="error-message">{displayError}</div>}
 
       <div className="chat-input-section">
         <ChatForm
+          refineDraft={draft}
+          onClearRefine={() => setDraft("")}
           onSubmit={handleSendMessage}
           promptCount={promptCount}
           maxPrompts={MAX_PROMPTS}

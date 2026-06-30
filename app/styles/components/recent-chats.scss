@@ -4,8 +4,95 @@
 .recents-con {
   margin-top: 20px;
   padding: 6px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
 }
 
 .recents-title {
   color: map.get(vars.$colors, text-steel);
+  font-size: map.get(vars.$font-sizes, xxs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 5px;
+}
+
+.recents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.recents-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: map.get(vars.$border-radius, md);
+  color: map.get(vars.$colors, text-secondary);
+  text-decoration: none;
+  font-size: map.get(vars.$font-sizes, sm);
+  transition: background map.get(vars.$transitions, default) ease,
+    color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+    color: map.get(vars.$colors, text-primary);
+  }
+
+  &--active {
+    background: rgba(map.get(vars.$colors, primary), 0.15);
+    color: map.get(vars.$colors, primary);
+  }
+}
+
+.recents-item-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.recents-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.recents-empty {
+  margin: 0;
+  padding: 0 5px;
+  font-size: map.get(vars.$font-sizes, xs);
+  color: map.get(vars.$colors, text-muted);
+}
+
+.recents-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 5px;
+}
+
+.recents-skeleton {
+  height: 28px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: recents-skeleton-pulse 1.5s infinite;
+}
+
+@keyframes recents-skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

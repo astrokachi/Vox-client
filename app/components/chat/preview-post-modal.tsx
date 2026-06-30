@@ -118,14 +118,15 @@ const PreviewPostModal = ({
                 <CaretDownIcon size={12} weight="bold" />
               </button>
             </div>
-
-            <button
-              type="button"
-              className="preview-refine-btn"
-              onClick={() => onRefine?.(text)}
-            >
-              Refine <PencilSimpleLineIcon size={16} />
-            </button>
+            {onRefine && (
+              <button
+                type="button"
+                className="preview-refine-btn"
+                onClick={() => onRefine(text)}
+              >
+                Refine <PencilSimpleLineIcon size={16} />
+              </button>
+            )}
           </div>
         </div>
       </div>

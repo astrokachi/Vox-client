@@ -49,3 +49,14 @@ export interface ChatAddMessageDto {
   conversationId: string;
   payload: ChatMessageRequest;
 }
+
+export interface ChatRefineMessageDto {
+  conversationId: string;
+  messageId: string;
+  payload: { content?: string };
+}
+
+export interface ChatGetMessageTreeDto {
+  conversationId: string;
+  messageId: string;
+}

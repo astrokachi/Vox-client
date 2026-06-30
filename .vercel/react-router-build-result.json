@@ -1,0 +1,235 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/auth/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/auth/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/overview": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/posts/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/posts/new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/posts/[post]": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/posts/refine-message": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dashboard/replies": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/auth/login": {
+        "id": "routes/auth/login",
+        "parentId": "root",
+        "file": "app/routes/auth/login.tsx",
+        "path": "login",
+        "config": {}
+      },
+      "routes/auth/logout": {
+        "id": "routes/auth/logout",
+        "parentId": "root",
+        "file": "app/routes/auth/logout.tsx",
+        "path": "logout",
+        "config": {}
+      },
+      "routes/dashboard/index": {
+        "id": "routes/dashboard/index",
+        "parentId": "root",
+        "file": "app/routes/dashboard/index.tsx",
+        "config": {}
+      },
+      "routes/dashboard/overview": {
+        "id": "routes/dashboard/overview",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/overview.tsx",
+        "index": true,
+        "config": {}
+      },
+      "routes/dashboard/posts/index": {
+        "id": "routes/dashboard/posts/index",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/posts/index.tsx",
+        "path": "posts",
+        "index": true,
+        "config": {}
+      },
+      "routes/dashboard/posts/new": {
+        "id": "routes/dashboard/posts/new",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/posts/new.tsx",
+        "path": "posts/new",
+        "config": {}
+      },
+      "routes/dashboard/posts/[post]": {
+        "id": "routes/dashboard/posts/[post]",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/posts/[post].tsx",
+        "path": "posts/:id",
+        "config": {}
+      },
+      "routes/dashboard/posts/refine-message": {
+        "id": "routes/dashboard/posts/refine-message",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/posts/refine-message.tsx",
+        "path": "posts/:id/r/:messageId",
+        "config": {}
+      },
+      "routes/dashboard/replies": {
+        "id": "routes/dashboard/replies",
+        "parentId": "routes/dashboard/index",
+        "file": "app/routes/dashboard/replies.tsx",
+        "path": "replies",
+        "index": true,
+        "config": {}
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "/home/astrokachi/Documents/x-bot-client/app",
+    "basename": "/",
+    "buildDirectory": "/home/astrokachi/Documents/x-bot-client/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "unstable_subResourceIntegrity": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/auth/login": {
+        "id": "routes/auth/login",
+        "parentId": "root",
+        "file": "routes/auth/login.tsx",
+        "path": "login"
+      },
+      "routes/auth/logout": {
+        "id": "routes/auth/logout",
+        "parentId": "root",
+        "file": "routes/auth/logout.tsx",
+        "path": "logout"
+      },
+      "routes/dashboard/index": {
+        "id": "routes/dashboard/index",
+        "parentId": "root",
+        "file": "routes/dashboard/index.tsx"
+      },
+      "routes/dashboard/overview": {
+        "id": "routes/dashboard/overview",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/overview.tsx",
+        "index": true
+      },
+      "routes/dashboard/posts/index": {
+        "id": "routes/dashboard/posts/index",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/posts/index.tsx",
+        "path": "posts",
+        "index": true
+      },
+      "routes/dashboard/posts/new": {
+        "id": "routes/dashboard/posts/new",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/posts/new.tsx",
+        "path": "posts/new"
+      },
+      "routes/dashboard/posts/[post]": {
+        "id": "routes/dashboard/posts/[post]",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/posts/[post].tsx",
+        "path": "posts/:id"
+      },
+      "routes/dashboard/posts/refine-message": {
+        "id": "routes/dashboard/posts/refine-message",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/posts/refine-message.tsx",
+        "path": "posts/:id/r/:messageId"
+      },
+      "routes/dashboard/replies": {
+        "id": "routes/dashboard/replies",
+        "parentId": "routes/dashboard/index",
+        "file": "routes/dashboard/replies.tsx",
+        "path": "replies",
+        "index": true
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "routes/auth/login.tsx",
+            "path": "login"
+          },
+          {
+            "file": "routes/auth/logout.tsx",
+            "path": "logout"
+          },
+          {
+            "file": "routes/dashboard/index.tsx",
+            "children": [
+              {
+                "file": "routes/dashboard/overview.tsx",
+                "index": true
+              },
+              {
+                "file": "routes/dashboard/posts/index.tsx",
+                "index": true,
+                "path": "posts"
+              },
+              {
+                "file": "routes/dashboard/posts/new.tsx",
+                "path": "posts/new"
+              },
+              {
+                "file": "routes/dashboard/posts/[post].tsx",
+                "path": "posts/:id"
+              },
+              {
+                "file": "routes/dashboard/posts/refine-message.tsx",
+                "path": "posts/:id/r/:messageId"
+              },
+              {
+                "file": "routes/dashboard/replies.tsx",
+                "index": true,
+                "path": "replies"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

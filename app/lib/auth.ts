@@ -1,22 +1,31 @@
-import { jwtDecode } from 'jwt-decode';
-import { fetchRefreshToken } from '~/lib/ensure-token';
+import { jwtDecode } from "jwt-decode";
+import { fetchRefreshToken } from "~/lib/ensure-token";
 
-let accessToken: string | null = null;
+let accessToken: string | null = sessionStorage.getItem("token");
 let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const isTokenSet = () => !!accessToken;
 
-export const setAccessToken = (token: string | null) => {
+export const setAccessToken = (token: string) => {
+  if (!token) {
+    console.warn("Token not set");
+    return;
+  }
   accessToken = token;
+  sessionStorage.setItem("token", token);
   if (token) {
     scheduleProactiveRefresh(token);
   }
 };
 
-export const getAccessToken = () => accessToken;
+export const getAccessToken = () => {
+  scheduleProactiveRefresh(accessToken!);
+  return accessToken;
+};
 
 export const clearAccessToken = () => {
   accessToken = null;
+  sessionStorage.clear();
   if (refreshTimer) {
     clearTimeout(refreshTimer);
     refreshTimer = null;
@@ -40,7 +49,10 @@ function scheduleProactiveRefresh(token: string) {
   }
 }
 
-export function isTokenExpiredOrExpiring(token: string, thresholdSeconds = 60): boolean {
+export function isTokenExpiredOrExpiring(
+  token: string,
+  thresholdSeconds = 60,
+): boolean {
   try {
     const { exp } = jwtDecode<{ exp: number }>(token);
     return Date.now() >= exp * 1000 - thresholdSeconds * 1000;

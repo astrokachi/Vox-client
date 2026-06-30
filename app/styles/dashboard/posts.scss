@@ -238,6 +238,45 @@
   }
 }
 
+.refine-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 6px 8px 6px 10px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, primary);
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refine-chip-text {
+  flex: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: map.get(vars.$font-sizes, xs);
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.refine-chip-remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .chat-textarea {
   width: 100%;
   min-height: 64px;
@@ -254,7 +293,7 @@
   @media (max-width: map.get(vars.$breakpoints, sm)) {
     min-height: 80px;
     padding: 12px;
-    font-size: map.get(vars.$font-sizes, sm);
+    font-size: map.get(vars.$font-sizes, xs);
   }
 
   &::placeholder {
@@ -279,7 +318,7 @@
 }
 
 .prompts-count {
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   color: map.get(vars.$colors, text-secondary);
 
   @media (max-width: map.get(vars.$breakpoints, sm)) {
@@ -295,7 +334,7 @@
   border-radius: map.get(vars.$border-radius, full);
   background: map.get(vars.$colors, primary-dark);
   color: map.get(vars.$colors, text-light-blue);
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   font-weight: 700;
   border: none;
   cursor: pointer;
@@ -331,14 +370,15 @@
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  min-height: 0;
   gap: 12px;
   border: 1px solid map.get(vars.$colors, card-stroke);
   background: map.get(vars.$colors, card-fill);
   border-radius: map.get(vars.$border-radius, lg);
-  padding: 16px;
+  padding: 20px;
+  padding-top: 24px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-
+  min-height: 300px;
+  margin-bottom: 5px;
   &--loading {
     justify-content: center;
   }
@@ -353,7 +393,7 @@
 
 .preview-title {
   margin: 0;
-  font-size: map.get(vars.$font-sizes, sm);
+  font-size: map.get(vars.$font-sizes, md);
   font-weight: 700;
   color: map.get(vars.$colors, text-primary);
 }
@@ -368,6 +408,7 @@
 
 .preview-body {
   display: flex;
+    height: 100%;
   align-items: stretch;
 }
 
@@ -382,7 +423,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 0;
+  min-height: 140px;
   padding: 12px;
   overflow: hidden;
   text-align: left;
@@ -428,7 +469,7 @@
   line-clamp: 4;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: map.get(vars.$font-sizes, xs);
+  font-size: map.get(vars.$font-sizes, sm);
   line-height: 1.5;
   word-wrap: break-word;
 }
@@ -582,6 +623,7 @@
 
 .preview-post-btn {
   padding: 6px 16px;
+  border-radius: 0;
   background: map.get(vars.$colors, primary-dark);
   border: none;
   color: map.get(vars.$colors, text-primary);
@@ -593,6 +635,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0 8px;
+  border-radius: 0;
   background: map.get(vars.$colors, primary-dark);
   border: none;
   border-left: 1px solid rgba(0, 0, 0, 0.25);
@@ -890,4 +933,217 @@
   position: relative;
   flex-shrink: 0;
   padding: 0;
+}
+
+// ─── Refine Mode ─────────────────────────────────────────────────────────────
+
+.refine-mode-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+// Header
+.refine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refine-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.refine-back-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-primary);
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.refine-header-title {
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refine-history-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: map.get(vars.$colors, text-secondary);
+  font-size: map.get(vars.$font-sizes, sm);
+  cursor: pointer;
+  transition: color map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    color: map.get(vars.$colors, text-primary);
+  }
+}
+
+.refine-history-wrapper {
+  position: relative;
+}
+
+.refine-history-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+
+.refine-history-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 91;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  max-width: 360px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, card-fill);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.refine-history-item {
+  width: 100%;
+  padding: 10px 14px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid map.get(vars.$colors, card-stroke);
+  color: map.get(vars.$colors, text-primary);
+  font-size: map.get(vars.$font-sizes, xs);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(map.get(vars.$colors, primary), 0.1);
+  }
+}
+
+// Original draft card (read-only)
+.refine-draft-card {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refine-draft-text {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.6;
+  color: map.get(vars.$colors, text-dim);
+  word-wrap: break-word;
+}
+
+// Refined AI output card
+.refined-output-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 20px;
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  background: map.get(vars.$colors, card-fill);
+  border-radius: map.get(vars.$border-radius, lg);
+}
+
+.refined-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.refined-output-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: map.get(vars.$colors, text-primary);
+}
+
+.refined-output-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00528a, #1f0c97);
+  flex-shrink: 0;
+}
+
+.refined-output-badge {
+  font-size: map.get(vars.$font-sizes, xs);
+  color: map.get(vars.$colors, text-secondary);
+}
+
+.refined-output-body {
+  min-height: 60px;
+}
+
+.refined-output-text {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.6;
+  color: map.get(vars.$colors, text-primary);
+  word-wrap: break-word;
+}
+
+.refined-output-placeholder {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-muted);
+  font-style: italic;
+}
+
+.refined-preview-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border-radius: map.get(vars.$border-radius, full);
+  background: map.get(vars.$colors, primary-dark);
+  color: map.get(vars.$colors, text-light-blue);
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background map.get(vars.$transitions, default) ease;
+
+  &:hover {
+    background: map.get(vars.$colors, primary);
+  }
 }
