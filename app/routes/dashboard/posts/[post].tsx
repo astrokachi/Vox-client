@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
+import { useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router";
 import type { Route } from "../+types/index";
 import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
 import PostPreview from "~/components/chat/post-preview";
@@ -31,15 +31,26 @@ const Post = () => {
 
   const {
     execute: loadMessages,
+    prefetch: prefetchMessages,
     data: history,
     loading,
     error: loadError,
-  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages);
+  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages, {
+    cacheKey: "conversation-messages",
+  });
+
+  const messagesDto = { conversationId, cursor: "", take: 50 } satisfies ChatGetMessagesDto;
 
   useEffect(() => {
     if (!conversationId) return;
-    loadMessages({ conversationId, cursor: "", take: 50 });
+    loadMessages(messagesDto);
   }, [conversationId]);
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!conversationId) return;
+    prefetchMessages(messagesDto);
+  }, [pathname]);
 
   useEffect(() => {
     if (history) setMessages(history);

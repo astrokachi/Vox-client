@@ -1,18 +1,32 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useCallback, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { ChatTextIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import { useApiCall } from "~/hooks/useApiCall";
 import { conversationApi } from "~/api/endpoints";
 import type { Conversation, ConversationListDto } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
+const DTO = { cursor: "", take: 50 } satisfies ConversationListDto;
+
 const Posts = () => {
   const navigate = useNavigate();
-  const { execute, data: conversations, loading } = useApiCall<ConversationListDto, Conversation[]>(conversationApi.list);
+  const { execute, prefetch, data: conversations, loading } = useApiCall<
+    ConversationListDto,
+    Conversation[]
+  >(conversationApi.list, { cacheKey: "posts-index" });
 
   useEffect(() => {
-    execute({ cursor: "", take: 50 });
+    execute(DTO);
   }, []);
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    prefetch(DTO);
+  }, [pathname]);
+
+  const handleHover = useCallback(() => {
+    prefetch(DTO);
+  }, [prefetch]);
 
   return (
     <div className="posts-container">
@@ -35,7 +49,7 @@ const Posts = () => {
       )}
 
       {!loading && conversations && conversations.length > 0 && (
-        <div className="conversation-list">
+        <div className="conversation-list" onMouseEnter={handleHover}>
           {conversations.map((conv) => (
             <div
               key={conv.id}

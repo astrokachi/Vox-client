@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useRouteLoaderData } from "react-router";
+import { useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router";
 import type { Route } from "../+types/index";
 import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
 import RefineHeader from "~/components/chat/refine-header";
@@ -32,14 +32,25 @@ const RefineMessage = () => {
 
   const {
     execute: loadTree,
+    prefetch: prefetchTree,
     data: treeData,
     error: loadError,
-  } = useApiCall<ChatGetMessageTreeDto, Message[]>(chatApi.getMessageTree);
+  } = useApiCall<ChatGetMessageTreeDto, Message[]>(chatApi.getMessageTree, {
+    cacheKey: "message-tree",
+  });
+
+  const treeDto = { conversationId: postId ?? "", messageId: messageId ?? "" } satisfies ChatGetMessageTreeDto;
 
   useEffect(() => {
     if (!postId || !messageId) return;
-    loadTree({ conversationId: postId, messageId });
+    loadTree(treeDto);
   }, [postId, messageId]);
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!postId || !messageId) return;
+    prefetchTree(treeDto);
+  }, [pathname]);
 
   useEffect(() => {
     if (treeData) setChain(treeData);
