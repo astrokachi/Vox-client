@@ -1,7 +1,10 @@
 import { jwtDecode } from "jwt-decode";
 import { fetchRefreshToken } from "~/lib/ensure-token";
 
-let accessToken: string | null = sessionStorage.getItem("token");
+// Guard browser-only storage: this module is also evaluated during SSR.
+const isBrowser = typeof window !== "undefined";
+
+let accessToken: string | null = isBrowser ? sessionStorage.getItem("token") : null;
 let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const isTokenSet = () => !!accessToken;
@@ -12,7 +15,7 @@ export const setAccessToken = (token: string) => {
     return;
   }
   accessToken = token;
-  sessionStorage.setItem("token", token);
+  if (isBrowser) sessionStorage.setItem("token", token);
   if (token) {
     scheduleProactiveRefresh(token);
   }
@@ -25,7 +28,7 @@ export const getAccessToken = () => {
 
 export const clearAccessToken = () => {
   accessToken = null;
-  sessionStorage.clear();
+  if (isBrowser) sessionStorage.removeItem("token");
   if (refreshTimer) {
     clearTimeout(refreshTimer);
     refreshTimer = null;

@@ -2,10 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { getSocket } from "~/services/socket";
 import type { Message } from "~/types";
 
+export interface MessageEvent {
+  conversationId: string;
+  messageGroupId: string;
+  parentMessageId: string | null;
+  message: Message;
+}
+
 interface UseConversationSocketOptions {
   conversationId: string;
-  onMessageReceived?: (message: Message) => void;
-  onMessageRefined?: (payload: { parentId: string; message: Message }) => void;
+  onMessageReceived?: (payload: MessageEvent) => void;
+  onMessageRefined?: (payload: MessageEvent) => void;
 }
 
 interface UseConversationSocketReturn {
@@ -33,12 +40,12 @@ export function useConversationSocket({
 
     socket.emit("conversation:join", conversationId);
 
-    const handleReceived = (message: Message) => {
+    const handleReceived = (payload: MessageEvent) => {
       setIsTyping(false);
-      onReceivedRef.current?.(message);
+      onReceivedRef.current?.(payload);
     };
 
-    const handleRefined = (payload: { parentId: string; message: Message }) => {
+    const handleRefined = (payload: MessageEvent) => {
       setIsTyping(false);
       onRefinedRef.current?.(payload);
     };

@@ -75,27 +75,34 @@ export interface ChatMessageRequest {
   type: ChatMessageType;
 }
 
-export interface Chats {
-  id: string;
-  title: string;
-  user_id: string;
-  created_at: string;
-  messages: Message[];
-}
-
 export interface Message {
   id: string;
   conversation_id: string;
-  message_group_id?: string;
-  parent_id?: string;
+  message_group_id?: string | null;
   role: MessageRole;
   content: string;
   type?: ChatMessageType;
   created_at: string;
 }
 
-export interface MessagesPage {
-  messages: Message[];
-  nextCursor: string | null;
-  hasNextPage: boolean;
+/**
+ * A turn = one question (user message) + its response variants (assistant
+ * messages). `parentMessageId` links a refinement turn to the response it
+ * refines (null for a top-level turn).
+ */
+export interface Turn {
+  turnId: string;
+  parentMessageId: string | null;
+  question: Message | null;
+  response: {
+    type: ChatMessageType;
+    options: Message[];
+  };
+}
+
+// Returned by POST /new/prompt
+export interface Chats {
+  id: string;
+  title: string;
+  turn: Turn;
 }

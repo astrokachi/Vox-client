@@ -51,12 +51,14 @@ export interface ChatAddMessageDto {
 }
 
 export interface ChatRefineMessageDto {
-  conversationId: string;
-  messageId: string;
+  responseId: string;
   payload: { content?: string };
 }
 
-export interface ChatGetMessageTreeDto {
-  conversationId: string;
-  messageId: string;
+export interface ChatGetChildrenDto {
+  responseId: string;
+}
+
+export interface ChatGetThreadDto {
+  responseId: string;
 }

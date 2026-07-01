@@ -10,8 +10,17 @@ import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
 import { useConversationSocket } from "~/hooks/useConversationSocket";
-import type { ChatGetMessageTreeDto, Message } from "~/types";
+import type { ChatGetThreadDto, Turn } from "~/types";
 import "~/styles/dashboard/posts.scss";
+
+// One step in the refinement history: the instruction (question) that was
+// asked and the refined post it produced. The very first entry is the original
+// draft being refined and has no question.
+interface HistoryEntry {
+  id: string;
+  question: string | null;
+  answer: string | null;
+}
 
 export async function loader({ params }: Route.LoaderArgs) {
   return { postId: params.id, messageId: params.messageId };
@@ -25,87 +34,105 @@ const RefineMessage = () => {
   );
   const user = dashboardData?.user;
 
-  const [chain, setChain] = useState<Message[]>([]);
+  const location = useLocation();
+  const parentDraft =
+    (location.state as { draft?: string } | null)?.draft ?? "";
+
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [previewContent, setPreviewContent] = useState<string | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const {
-    execute: loadTree,
-    prefetch: prefetchTree,
-    data: treeData,
+    execute: loadThread,
+    prefetch: prefetchThread,
+    data: threadData,
     error: loadError,
-  } = useApiCall<ChatGetMessageTreeDto, Message[]>(chatApi.getMessageTree, {
-    cacheKey: "message-tree",
+  } = useApiCall<ChatGetThreadDto, Turn[]>(chatApi.getThread, {
+    cacheKey: "message-thread",
   });
 
-  const treeDto = { conversationId: postId ?? "", messageId: messageId ?? "" } satisfies ChatGetMessageTreeDto;
+  const threadDto = { responseId: messageId ?? "" } satisfies ChatGetThreadDto;
 
   useEffect(() => {
-    if (!postId || !messageId) return;
-    loadTree(treeDto);
-  }, [postId, messageId]);
+    if (!messageId) return;
+    loadThread(threadDto);
+  }, [messageId]);
 
-  const { pathname } = useLocation();
+  const { pathname } = location;
   useEffect(() => {
-    if (!postId || !messageId) return;
-    prefetchTree(treeDto);
+    if (!messageId) return;
+    prefetchThread(threadDto);
   }, [pathname]);
 
+  // Build the history: the original draft, then each refinement turn
+  // (its instruction + the refined answer).
   useEffect(() => {
-    if (treeData) setChain(treeData);
-  }, [treeData]);
+    if (!threadData) return;
+    setHistory([
+      { id: messageId ?? "origin", question: null, answer: parentDraft },
+      ...threadData.map((t) => ({
+        id: t.response.options[0]?.id ?? t.turnId,
+        question: t.question?.content ?? null,
+        answer: t.response.options[0]?.content ?? null,
+      })),
+    ]);
+  }, [threadData, messageId, parentDraft]);
 
   const { isTyping, error: socketError } = useConversationSocket({
     conversationId: postId!,
-    onMessageRefined: (payload) => {
-      setChain((prev) => [...prev, payload.message]);
-      setSelectedIndex(-1);
+    onMessageRefined: ({ message }) => {
+      setHistory((prev) => {
+        // Fill the most recent pending entry; otherwise append.
+        for (let i = prev.length - 1; i >= 0; i--) {
+          if (prev[i].answer === null) {
+            const copy = [...prev];
+            copy[i] = { ...copy[i], id: message.id, answer: message.content };
+            return copy;
+          }
+        }
+        return [
+          ...prev,
+          { id: message.id, question: null, answer: message.content },
+        ];
+      });
     },
   });
 
+  const last = history[history.length - 1];
+  const awaitingResponse = !!last && last.answer === null;
+
+  // Only the last entry can be refined.
   const handleSendMessage = async (content: string) => {
     setError(null);
-    const targetId = chain.length > 0 ? chain[chain.length - 1].id : messageId;
-    if (!postId || !targetId) return;
+    if (awaitingResponse || !last?.id) return;
+    const targetId = last.id;
+
+    setHistory((prev) => [
+      ...prev,
+      { id: `pending-${Date.now()}`, question: content, answer: null },
+    ]);
+
     try {
-      await chatApi.refineMessage({
-        conversationId: postId,
-        messageId: targetId,
-        payload: { content },
-      });
+      await chatApi.refineMessage({ responseId: targetId, payload: { content } });
     } catch {
       setError("Failed to send message");
+      setHistory((prev) =>
+        prev.filter((e) => !(e.answer === null && e.question === content)),
+      );
     }
   };
 
-  const handleBack = () => {
-    navigate(`/posts/${postId}`);
-  };
-
-  const activeIndex = selectedIndex >= 0 ? selectedIndex : chain.length - 1;
-  const parentMessage =
-    activeIndex == 0 ? chain[activeIndex] : chain[activeIndex - 1];
-  const activeMessage = activeIndex > 0 ? chain[activeIndex] : null;
-
-  const historyItems = chain.slice(0, activeIndex - 1).map((m) => ({
-    id: m.id,
-    content: m.content,
-  }));
-
-  const handleSelectHistory = (item: { id: string; content: string }) => {
-    const idx = chain.findIndex((m) => m.id === item.id);
-    if (idx >= 0) {
-      setSelectedIndex(idx);
-      setPreviewContent(item.content);
-    }
-  };
-
-  const handlePreview = (text: string) => {
-    setPreviewContent(text);
-  };
-
+  const handleBack = () => navigate(`/posts/${postId}`);
   const displayError = error ?? socketError ?? loadError?.message ?? null;
+
+  // Completed entries are previewable; labelled by their instruction.
+  const historyItems = history
+    .filter((e) => e.answer !== null)
+    .map((e) => ({
+      id: e.id,
+      content: e.answer as string,
+      label: e.question ?? "Original",
+    }));
 
   return (
     <div className="post-chat-container">
@@ -114,15 +141,28 @@ const RefineMessage = () => {
           <RefineHeader
             onBack={handleBack}
             history={historyItems}
-            onSelectHistory={handleSelectHistory}
+            onSelectHistory={(item) => setPreviewContent(item.content)}
           />
-          <RefineDraftCard content={parentMessage?.content ?? ""} />
-          <RefinedOutputCard
-            content={activeMessage?.content ?? null}
-            isTyping={isTyping}
-            user={user}
-            onPreview={handlePreview}
-          />
+
+          <div className="refine-history-list">
+            {last && (
+              <div className="refine-entry">
+                {last.question === null ? (
+                  <RefineDraftCard content={last.answer ?? ""} />
+                ) : (
+                  <>
+                    <div className="turn-question">{last.question}</div>
+                    <RefinedOutputCard
+                      content={last.answer}
+                      isTyping={isTyping}
+                      user={user}
+                      onPreview={setPreviewContent}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -134,6 +174,7 @@ const RefineMessage = () => {
           promptCount={0}
           maxPrompts={99}
           submitLabel="Refine"
+          disabled={awaitingResponse}
         />
       </div>
 
@@ -142,10 +183,7 @@ const RefineMessage = () => {
           content={previewContent}
           displayName={user?.name}
           handle={user?.username ? `@${user.username}` : undefined}
-          onClose={() => {
-            setPreviewContent(null);
-            setSelectedIndex(-1);
-          }}
+          onClose={() => setPreviewContent(null)}
         />
       )}
     </div>

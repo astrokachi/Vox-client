@@ -451,6 +451,18 @@
   color: map.get(vars.$colors, text-secondary);
 }
 
+.turn-question {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: map.get(vars.$border-radius, md);
+  background: map.get(vars.$colors, card-fill-dark);
+  border: 1px solid map.get(vars.$colors, card-stroke);
+  color: map.get(vars.$colors, text-light);
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.4;
+}
+
 .preview-body {
   display: flex;
     height: 100%;
@@ -1073,6 +1085,21 @@
   gap: 12px;
   overflow-y: auto;
   min-height: 0;
+}
+
+.refine-history-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.refine-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 // Header
