@@ -55,10 +55,6 @@ export interface ChatRefineMessageDto {
   payload: { content?: string };
 }
 
-export interface ChatGetChildrenDto {
-  responseId: string;
-}
-
 export interface ChatGetThreadDto {
   responseId: string;
 }

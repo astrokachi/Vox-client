@@ -2,7 +2,6 @@ import type {
   CampaignReplyDto,
   ChatAddMessageDto,
   ChatCreateWithPromptDto,
-  ChatGetChildrenDto,
   ChatGetThreadDto,
   ChatGetMessagesDto,
   ChatRefineMessageDto,
@@ -65,10 +64,6 @@ export const chatApi = {
     externalApi.post<Turn>(
       `/api/chat/messages/${dto.responseId}/refine`,
       dto.payload,
-    ),
-  getChildren: (dto: ChatGetChildrenDto): Promise<Turn[]> =>
-    externalApi.get<Turn[]>(
-      `/api/chat/messages/${dto.responseId}/children`,
     ),
   getThread: (dto: ChatGetThreadDto): Promise<Turn[]> =>
     externalApi.get<Turn[]>(
