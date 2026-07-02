@@ -7,7 +7,7 @@ import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
 import { useApiCall } from "~/hooks/useApiCall";
 import { useConversationSocket } from "~/hooks/useConversationSocket";
-import type { ChatGetMessagesDto, Message } from "~/types";
+import type { ChatGetMessagesDto, Message, Turn } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
 const MAX_PROMPTS = 6;
@@ -25,9 +25,8 @@ const Post = () => {
   );
   const user = dashboardData?.user;
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [turns, setTurns] = useState<Turn[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
 
   const {
     execute: loadMessages,
@@ -35,7 +34,7 @@ const Post = () => {
     data: history,
     loading,
     error: loadError,
-  } = useApiCall<ChatGetMessagesDto, Message[]>(chatApi.getMessages, {
+  } = useApiCall<ChatGetMessagesDto, Turn[]>(chatApi.getMessages, {
     cacheKey: "conversation-messages",
   });
 
@@ -53,14 +52,25 @@ const Post = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (history) setMessages(history);
+    if (history) setTurns(history);
   }, [history]);
 
   const { isTyping, error: socketError } = useConversationSocket({
     conversationId,
-    onMessageReceived: (message) => {
-      setMessages((prev) =>
-        prev.some((m) => m.id === message.id) ? prev : [...prev, message],
+    onMessageReceived: ({ messageGroupId, message }) => {
+      // Append the streamed response option into its turn.
+      setTurns((prev) =>
+        prev.map((t) => {
+          if (t.turnId !== messageGroupId) return t;
+          if (t.response.options.some((o) => o.id === message.id)) return t;
+          return {
+            ...t,
+            response: {
+              ...t.response,
+              options: [...t.response.options, message],
+            },
+          };
+        }),
       );
     },
   });
@@ -68,14 +78,12 @@ const Post = () => {
   const handleSendMessage = async (content: string) => {
     setError(null);
     try {
-      const userMessage = await chatApi.addMessage({
+      const turn = await chatApi.addMessage({
         conversationId,
         payload: { content, type: "MULTIPLE" },
       });
-      setMessages((prev) =>
-        prev.some((m) => m.id === userMessage.id)
-          ? prev
-          : [...prev, userMessage],
+      setTurns((prev) =>
+        prev.some((t) => t.turnId === turn.turnId) ? prev : [...prev, turn],
       );
     } catch {
       setError("Failed to send message");
@@ -88,19 +96,13 @@ const Post = () => {
     });
   };
 
-  const responses = messages.filter(
-    (m) => m.role.toLowerCase() === "assistant",
-  );
-  const promptCount = messages.filter(
-    (m) => m.role.toLowerCase() === "user",
-  ).length;
-
+  const promptCount = turns.length;
   const isLoadingHistory = (loading || history === null) && !loadError;
   const displayError = error ?? socketError ?? loadError?.message ?? null;
 
   return (
     <div className="post-chat-container">
-      {isLoadingHistory && messages.length === 0 ? (
+      {isLoadingHistory && turns.length === 0 ? (
         <div className="preview-frame preview-frame--loading">
           <div className="preview-empty">
             <h3>Loading…</h3>
@@ -108,7 +110,7 @@ const Post = () => {
         </div>
       ) : (
         <PostPreview
-          responses={responses}
+          turns={turns}
           isTyping={isTyping}
           user={user}
           onRefine={handleRefine}
@@ -119,8 +121,6 @@ const Post = () => {
 
       <div className="chat-input-section">
         <ChatForm
-          refineDraft={draft}
-          onClearRefine={() => setDraft("")}
           onSubmit={handleSendMessage}
           promptCount={promptCount}
           maxPrompts={MAX_PROMPTS}

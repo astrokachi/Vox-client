@@ -2,8 +2,8 @@ import type {
   CampaignReplyDto,
   ChatAddMessageDto,
   ChatCreateWithPromptDto,
+  ChatGetThreadDto,
   ChatGetMessagesDto,
-  ChatGetMessageTreeDto,
   ChatRefineMessageDto,
   Chats,
   Conversation,
@@ -12,8 +12,8 @@ import type {
   ConversationGetDto,
   ConversationListDto,
   ConversationUpdateDto,
-  Message,
   QueueTweetReplies,
+  Turn,
   User,
 } from "~/types";
 import { API_BASE, externalApi, internalApi } from "./client";
@@ -54,20 +54,19 @@ export const conversationApi = {
 export const chatApi = {
   createWithPrompt: (dto: ChatCreateWithPromptDto): Promise<Chats> =>
     externalApi.post<Chats>("/api/chat/new/prompt", dto.payload),
-  getMessages: (dto: ChatGetMessagesDto): Promise<Message[]> =>
-    externalApi.get<Message[]>(
+  getMessages: (dto: ChatGetMessagesDto): Promise<Turn[]> =>
+    externalApi.get<Turn[]>(
       `/api/chat/${dto.conversationId}/messages?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 50}`
     ),
-  addMessage: (dto: ChatAddMessageDto): Promise<Message> =>
-    externalApi.post<Message>(`/api/chat/${dto.conversationId}/prompt`, dto.payload),
-  // getMessageTree: () => externalApi.get(`/api/chat/${dto.conversationId}/messages/${dto.messageId}`)
-  refineMessage: (dto: ChatRefineMessageDto): Promise<Message> =>
-    externalApi.post<Message>(
-      `/api/chat/${dto.conversationId}/messages/${dto.messageId}/refine`,
+  addMessage: (dto: ChatAddMessageDto): Promise<Turn> =>
+    externalApi.post<Turn>(`/api/chat/${dto.conversationId}/prompt`, dto.payload),
+  refineMessage: (dto: ChatRefineMessageDto): Promise<Turn> =>
+    externalApi.post<Turn>(
+      `/api/chat/messages/${dto.responseId}/refine`,
       dto.payload,
     ),
-  getMessageTree: (dto: ChatGetMessageTreeDto): Promise<Message[]> =>
-    externalApi.get<Message[]>(
-      `/api/chat/${dto.conversationId}/messages/${dto.messageId}/tree`,
+  getThread: (dto: ChatGetThreadDto): Promise<Turn[]> =>
+    externalApi.get<Turn[]>(
+      `/api/chat/messages/${dto.responseId}/thread`,
     ),
 };

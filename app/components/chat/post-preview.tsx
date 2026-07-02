@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import {
   CaretLeftIcon,
   CaretRightIcon,
@@ -6,85 +6,72 @@ import {
 } from "@phosphor-icons/react";
 import TypingIndicator from "./typing-indicator";
 import PreviewPostModal from "./preview-post-modal";
-import type { Message } from "~/types";
+import type { Message, Turn } from "~/types";
 
 const TONE_LABELS = ["Standard", "Playful", "Educative"];
 
 interface PostPreviewProps {
-  responses: Message[];
+  turns: Turn[];
   isTyping: boolean;
   user?: { name?: string; username?: string };
   onRefine?: (message: Message) => void;
 }
 
-const PostPreview = ({
-  responses,
-  isTyping,
-  user,
-  onRefine,
-}: PostPreviewProps) => {
+const PostPreview = ({ turns, isTyping, user, onRefine }: PostPreviewProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selected, setSelected] = useState<Record<string, Message>>({});
 
-  // Group messages by message_group_id
-  const groups = useMemo(() => {
-    const result: Message[][] = [];
-    for (const response of responses) {
-      const last = result[result.length - 1];
-      if (last && last[0].message_group_id === response.message_group_id) {
-        last.push(response);
-      } else {
-        result.push([response]);
-      }
-    }
-    return result;
-  }, [responses]);
+  const total = turns.length;
 
-  const totalGroups = groups.length;
-
-  // Jump to the newest group as it arrives
+  // Jump to the newest turn as it arrives.
   useEffect(() => {
-    if (totalGroups > 0) setActiveIndex(totalGroups - 1);
-  }, [totalGroups, responses]);
+    if (total > 0) setActiveIndex(total - 1);
+  }, [total]);
 
-  const activeGroup =
-    totalGroups > 0 ? groups[Math.min(activeIndex, totalGroups - 1)] : null;
+  const activeTurn = total > 0 ? turns[Math.min(activeIndex, total - 1)] : null;
+  const options = activeTurn?.response.options ?? [];
 
+  // Response is still pending when the active (latest) turn has no options yet.
   const showTyping =
-    isTyping && (totalGroups === 0 || activeIndex === totalGroups - 1);
+    isTyping &&
+    (total === 0 || (activeIndex === total - 1 && options.length === 0));
 
   const goPrev = () => setActiveIndex((i) => Math.max(0, i - 1));
-  const goNext = () => setActiveIndex((i) => Math.min(totalGroups - 1, i + 1));
+  const goNext = () => setActiveIndex((i) => Math.min(total - 1, i + 1));
 
-  // Use the first message's id as the group key for selection tracking
-  const groupKey = activeGroup?.[0]?.id ?? "";
+  const turnKey = activeTurn?.turnId ?? "";
+  const selectedOption = selected[turnKey];
 
   return (
     <div className="preview-frame">
       <div className="preview-header">
-        {totalGroups > 0 && (
+        {total > 0 && (
           <>
             <h2 className="preview-title">Choose your favorite post!</h2>
             <span className="preview-counter">
-              {activeIndex + 1} of {totalGroups}
+              {activeIndex + 1} of {total}
             </span>
           </>
         )}
       </div>
 
+      {activeTurn?.question && (
+        <div className="turn-question">{activeTurn.question.content}</div>
+      )}
+
       <div className="preview-body">
         {showTyping ? (
           <TypingIndicator />
-        ) : activeGroup ? (
+        ) : activeTurn && options.length > 0 ? (
           <div className="post-options">
-            {activeGroup.map((message, i) => (
+            {options.map((message, i) => (
               <button
                 key={message.id}
                 type="button"
-                className={`idea-card ${selected[groupKey]?.id == message.id ? "--selected" : ""}`}
-                onClick={() => {
-                  setSelected((prev) => ({ ...prev, [groupKey]: message }));
-                }}
+                className={`idea-card${selectedOption?.id === message.id ? " idea-card--selected" : ""}`}
+                onClick={() =>
+                  setSelected((prev) => ({ ...prev, [turnKey]: message }))
+                }
               >
                 <span className="idea-card-head">
                   <span className="idea-card-label">
@@ -96,6 +83,8 @@ const PostPreview = ({
               </button>
             ))}
           </div>
+        ) : activeTurn ? (
+          <TypingIndicator />
         ) : (
           <div className="preview-empty">
             <h3>Generate Post Ideas</h3>
@@ -104,7 +93,7 @@ const PostPreview = ({
         )}
       </div>
 
-      {totalGroups > 1 && (
+      {total > 1 && (
         <div className="preview-pagination">
           <button
             type="button"
@@ -117,14 +106,14 @@ const PostPreview = ({
           </button>
 
           <span className="pager-counter">
-            {activeIndex + 1} of {totalGroups}
+            {activeIndex + 1} of {total}
           </span>
 
           <button
             type="button"
             className="pager"
             onClick={goNext}
-            disabled={activeIndex === totalGroups - 1}
+            disabled={activeIndex === total - 1}
           >
             <span>next</span>
             <CaretRightIcon size={18} weight="bold" />
@@ -132,15 +121,15 @@ const PostPreview = ({
         </div>
       )}
 
-      {activeGroup && selected[groupKey] && (
+      {selectedOption && (
         <PreviewPostModal
-          content={selected[groupKey].content}
+          content={selectedOption.content}
           displayName={user?.name}
           handle={user?.username ? `@${user.username}` : undefined}
-          date={selected[groupKey].created_at}
+          date={selectedOption.created_at}
           onClose={() => setSelected({})}
           onRefine={(text) => {
-            onRefine?.({ ...selected[groupKey], content: text });
+            onRefine?.({ ...selectedOption, content: text });
           }}
         />
       )}

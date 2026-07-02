@@ -5,6 +5,7 @@ import "~/styles/dashboard/posts.scss";
 interface HistoryItem {
   id: string;
   content: string;
+  label?: string;
 }
 
 interface RefineHeaderProps {
@@ -61,7 +62,7 @@ const RefineHeader = ({ onBack, history, onSelectHistory }: RefineHeaderProps) =
                       setOpen(false);
                     }}
                   >
-                    {previewText(item.content)}
+                    {item.label ? previewText(item.label, 40) : previewText(item.content)}
                   </button>
                 ))}
               </div>
