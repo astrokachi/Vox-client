@@ -125,43 +125,30 @@ const RefineMessage = () => {
   const handleBack = () => navigate(`/posts/${postId}`);
   const displayError = error ?? socketError ?? loadError?.message ?? null;
 
-  // Completed entries are previewable; labelled by their instruction.
-  const historyItems = history
-    .filter((e) => e.answer !== null)
-    .map((e) => ({
-      id: e.id,
-      content: e.answer as string,
-      label: e.question ?? "Original",
-    }));
-
   return (
     <div className="post-chat-container">
-      <div className="preview-frame">
+      <div className="preview-frame preview-frame--refine">
         <div className="refine-mode-container">
-          <RefineHeader
-            onBack={handleBack}
-            history={historyItems}
-            onSelectHistory={(item) => setPreviewContent(item.content)}
-          />
+          <RefineHeader onBack={handleBack} />
 
           <div className="refine-history-list">
-            {last && (
-              <div className="refine-entry">
-                {last.question === null ? (
-                  <RefineDraftCard content={last.answer ?? ""} />
+            {history.map((entry, i) => (
+              <div key={entry.id} className="refine-entry">
+                {entry.question === null ? (
+                  <RefineDraftCard content={entry.answer ?? ""} />
                 ) : (
                   <>
-                    <div className="turn-question">{last.question}</div>
+                    <div className="turn-question">{entry.question}</div>
                     <RefinedOutputCard
-                      content={last.answer}
-                      isTyping={isTyping}
+                      content={entry.answer}
+                      isTyping={isTyping && i === history.length - 1}
                       user={user}
                       onPreview={setPreviewContent}
                     />
                   </>
                 )}
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>

@@ -1078,12 +1078,18 @@
 
 // ─── Refine Mode ─────────────────────────────────────────────────────────────
 
+// In refine mode the frame fills the available height so the thread scrolls
+// inside it (rather than the whole frame growing).
+.preview-frame--refine {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .refine-mode-container {
   display: flex;
   flex-direction: column;
   flex: 1;
   gap: 12px;
-  overflow-y: auto;
   min-height: 0;
 }
 
@@ -1093,7 +1099,7 @@
   flex: 1;
   gap: 16px;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: auto; // the single scroll region: header stays, thread scrolls
 }
 
 .refine-entry {
