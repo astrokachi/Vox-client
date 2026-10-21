@@ -29,22 +29,32 @@ const RefineMessage = () => {
   const { getPosted } = usePublishDraft();
   const [toPublish, setToPublish] = useState<PublishableDraft | null>(null);
 
-  const draftsPath = `/posts/${postId}`;
-
   return (
     <div className="post-chat-container">
-      <PageHeader
-        backTo={draftsPath}
-        backLabel="Back to drafts"
-        crumbs={[
-          { label: "Posts", to: "/posts" },
-          { label: title ?? (titleFailed ? "Post" : undefined), to: draftsPath },
-          { label: "Refine" },
-        ]}
-      />
+      <div className="preview-frame preview-frame--refine">
+        <div className="refine-mode-container">
+          <RefineHeader onBack={handleBack} />
 
-      <div className="post-chat-body">
-        <VersionList versions={versions} getPosted={getPosted} onPost={setToPublish} />
+          <div className="refine-history-list">
+            {history.map((entry, i) => (
+              <div key={entry.id} className="refine-entry">
+                {entry.question === null ? (
+                  <RefineDraftCard content={entry.answer ?? ""} />
+                ) : (
+                  <>
+                    <div className="turn-question">{entry.question}</div>
+                    <RefinedOutputCard
+                      content={entry.answer}
+                      isTyping={isTyping && i === history.length - 1}
+                      user={user}
+                      onPreview={setPreviewContent}
+                    />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {error && <div className="error-message" role="alert">{error}</div>}
