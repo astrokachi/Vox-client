@@ -22,7 +22,26 @@ $colors: (
   accent-blue-deep: #003e68,
   text-dim: #cdcdcd,
   text-disabled: #5f5f5f,
+
+  // ─── Semantic tokens ─────────────────────────────────────────────────────
+  // Prefer these in new styles. The keys above are kept so untouched files
+  // keep compiling; migrate them to these as they're edited.
+  bg: #0a0a0a,
+  surface-1: #0e0e0e, // panels sitting on the page: composer, cards, modal
+  surface-2: #161616, // controls and chips sitting on a panel
+  surface-hover: #1c1c1c,
+  border: #262626,
+  border-strong: #333333,
+  text-1: #f2f3f4,
+  text-2: #8b9095, // secondary copy, meta, placeholders (≥4.5:1 on bg)
+  text-3: #5f6368, // disabled only
+  accent: #1d9bf0,
+  accent-strong: #0c80ce, // filled button background
+  accent-on: #e8f6ff, // text on accent-strong
+  danger: #ef4444,
 );
+
+$brand-gradient: linear-gradient(135deg, #00528a, #1f0c97);
 
 $spacing: (
   xs: 4px,
@@ -32,6 +51,17 @@ $spacing: (
   xl: 32px,
 );
 
+// Corner roles: use these in new styles. Changing a role here updates every
+// element that plays it. An inner corner is never rounder than its container.
+$radius: (
+  inset: 4px, // inside a control: text-link focus areas, text skeleton lines
+  control: 8px, // every button, chip, nav row, menu item, notice
+  container: 12px, // composer, cards, previews, toasts, menus
+  overlay: 16px, // dialogs
+  round: 9999px, // avatars, dots, spinners, scrollbar thumbs
+);
+
+// Raw scale, kept so older styles compile. Prefer $radius roles.
 $border-radius: (
   sm: 4px,
   md: 8px,
@@ -43,7 +73,9 @@ $border-radius: (
 $font-sizes: (
   xxs: 10px,
   xs: 12px,
+  meta: 13px,
   sm: 14px,
+  body: 15px,
   base: 16px,
   lg: 18px,
   xl: 20px,
@@ -74,6 +106,11 @@ $durations: (
 
 $transitions: (
   default: 0.3s,
+);
+
+$layout: (
+  content-width: 880px, // lists and dashboards
+  chat-width: 1040px, // the post/refine workspace
 );
 
 $sidebar: (

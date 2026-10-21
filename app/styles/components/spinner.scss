@@ -1,21 +1,13 @@
 @use "sass:map";
 @use "../variables" as vars;
 
+// Inherits the text colour of whatever it sits in (e.g. a button label).
 .spinner {
   height: 14px;
   width: 14px;
-  border: 1px solid map.get(vars.$colors, spinner-bg);
-  border-top: 1px solid map.get(vars.$colors, border);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: map.get(vars.$radius, round);
+  opacity: 0.85;
+  animation: spin 0.8s linear infinite;
 }

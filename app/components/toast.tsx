@@ -17,7 +17,6 @@ const Toast: React.FC = () => {
         const Icon = icons[toast.type];
         return (
           <div key={toast.id} className={`toast toast--${toast.type}`}>
-            <span className="toast-accent" />
             <Icon className="toast-icon" size={20} weight="fill" />
             <span className="toast-message">{toast.message}</span>
             <button

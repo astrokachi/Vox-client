@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "~/styles/components/typing-indicator.scss";
 
 const PHRASES = [
   "Generating",
@@ -19,7 +20,12 @@ const TypingIndicator = () => {
     return () => clearInterval(id);
   }, []);
 
-  return <div className="typing-indicator">{PHRASES[index]}…</div>;
+  return (
+    <div className="typing-indicator" role="status">
+      <span className="typing-indicator-dot" aria-hidden="true" />
+      <span className="typing-indicator-text">{PHRASES[index]}…</span>
+    </div>
+  );
 };
 
 export default TypingIndicator;
