@@ -4,7 +4,9 @@ export default [
   route("login", "routes/auth/login.tsx"),
   route("logout", "routes/auth/logout.tsx"),
   layout("routes/dashboard/index.tsx", [
-    index("routes/dashboard/overview.tsx"),
+    // Overview (routes/dashboard/overview.tsx) and Replies (routes/dashboard/replies.tsx)
+    // are kept but unrouted until they are real features — see PRODUCT.md.
+    index("routes/dashboard/home.tsx"),
 
     ...prefix("posts", [
       index("routes/dashboard/posts/index.tsx"),
@@ -12,9 +14,5 @@ export default [
       route(":id", "routes/dashboard/posts/[post].tsx"),
       route(":id/r/:messageId", "routes/dashboard/posts/refine-message.tsx"),
     ]),
-
-    ...prefix("replies", [
-      index("routes/dashboard/replies.tsx"),
-    ])
   ]),
 ] satisfies RouteConfig;

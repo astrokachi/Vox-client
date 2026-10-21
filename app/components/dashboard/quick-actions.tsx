@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { CaretDownIcon, PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import '~/styles/components/dashboard/quick-actions.scss';
 
 export const QuickActions = () => {
@@ -7,12 +7,13 @@ export const QuickActions = () => {
 
   return (
     <button
+      type="button"
       className="quick-action-btn"
       onClick={() => navigate('/posts/new')}
-      title="Create new post"
+      aria-label="New post"
+      title="New post"
     >
       <PlusIcon size={20} weight="bold" />
-      <CaretDownIcon size={18} />
     </button>
   );
 };

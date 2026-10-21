@@ -3,13 +3,15 @@
 @use "../animations" as anim;
 
 .btn-con {
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   background-color: map.get(vars.$colors, primary-dark);
   width: 100%;
   border: none;
   margin: 0 auto;
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 10px;
   padding: 11px 0;
   cursor: pointer;
   transition:
@@ -42,5 +44,4 @@
   font-size: map.get(vars.$font-sizes, sm);
   outline: none;
   padding: 0;
-  margin-left: map.get(vars.$spacing, lg);
 }

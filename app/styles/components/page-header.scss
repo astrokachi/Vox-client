@@ -1,0 +1,84 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, xs);
+  min-height: 32px;
+  min-width: 0;
+}
+
+.page-header-back {
+  @include mx.button(ghost, sm);
+  width: 32px;
+  padding: 0;
+  margin-left: -8px;
+  border-radius: map.get(vars.$radius, control);
+  color: map.get(vars.$colors, text-1);
+}
+
+.breadcrumb {
+  flex: 1;
+  min-width: 0;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: map.get(vars.$font-sizes, sm);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 1;
+
+  // Only the middle crumbs (a post's title) truncate: the root crumb and a
+  // short trailing page name ("Refine") keep their full label. With two
+  // crumbs the trailing one is the title, so it may truncate.
+  &:first-child,
+  &:last-child:not(:nth-child(2)) {
+    flex-shrink: 0;
+  }
+
+  & + &::before {
+    content: "/";
+    flex-shrink: 0;
+    padding: 0 map.get(vars.$spacing, sm);
+    color: map.get(vars.$colors, text-3);
+  }
+}
+
+.breadcrumb-link {
+  @include mx.truncate;
+  color: map.get(vars.$colors, text-2);
+  text-decoration: none;
+  border-radius: map.get(vars.$radius, inset);
+
+  &:hover {
+    color: map.get(vars.$colors, text-1);
+  }
+
+  @include mx.focus-ring;
+}
+
+.breadcrumb-current {
+  @include mx.truncate;
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+}
+
+.breadcrumb-placeholder {
+  display: block;
+  width: 120px;
+  height: 14px;
+  border-radius: map.get(vars.$radius, inset);
+  background: map.get(vars.$colors, surface-2);
+}

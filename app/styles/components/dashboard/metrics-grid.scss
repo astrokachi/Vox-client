@@ -1,13 +1,17 @@
 @use "sass:map";
 @use "../../variables" as vars;
+@use "../../mixins" as mx;
 
+// One container; cells are separated by 1px gaps that show the border colour.
 .metrics-grid {
+  @include mx.surface(1);
   display: grid;
-  grid-template-columns: 1fr;
-  gap: map.get(vars.$spacing, sm);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: map.get(vars.$colors, border);
 
-  @media (min-width: map.get(vars.$breakpoints, md)) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: map.get(vars.$spacing, md);
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

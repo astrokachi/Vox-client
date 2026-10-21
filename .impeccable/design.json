@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T12:54:29.557803+00:00",
+  "title": "Design System: Vox",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "X-Sky Blue",
+        "canonical": "#1d9bf0",
+        "tonalRamp": [
+          "#000c1f",
+          "#002745",
+          "#004572",
+          "#0066a3",
+          "#1588d5",
+          "#46acfb",
+          "#9ccffc",
+          "#e2f1fe"
+        ]
+      },
+      "accent-strong": {
+        "role": "primary",
+        "displayName": "Deep Press Blue",
+        "canonical": "#0c80ce",
+        "tonalRamp": [
+          "#000c1f",
+          "#002745",
+          "#014573",
+          "#0765a4",
+          "#1c87d6",
+          "#4aacfd",
+          "#9dcffd",
+          "#e2f0fe"
+        ]
+      },
+      "accent-on": {
+        "role": "primary",
+        "displayName": "Ice Text",
+        "canonical": "#e8f6ff",
+        "tonalRamp": [
+          "#040c12",
+          "#1c272d",
+          "#38444b",
+          "#57636b",
+          "#78848c",
+          "#9aa7b0",
+          "#becbd4",
+          "#e3f1fa"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Night Floor",
+        "canonical": "#0a0a0a",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-1": {
+        "role": "neutral",
+        "displayName": "Desk Panel",
+        "canonical": "#0e0e0e",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Raised Control",
+        "canonical": "#161616",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Hover Wash",
+        "canonical": "#1c1c1c",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#262626",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "#333333",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "text-1": {
+        "role": "neutral",
+        "displayName": "Lit Text",
+        "canonical": "#f2f3f4",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818283",
+          "#a4a5a6",
+          "#c8c9ca",
+          "#edeeef"
+        ]
+      },
+      "text-2": {
+        "role": "neutral",
+        "displayName": "Desk Grey",
+        "canonical": "#8b9095",
+        "tonalRamp": [
+          "#080c0f",
+          "#22262a",
+          "#3e4347",
+          "#5d6266",
+          "#7e8388",
+          "#a1a6ab",
+          "#c4cacf",
+          "#eaeff5"
+        ]
+      },
+      "text-3": {
+        "role": "neutral",
+        "displayName": "Dim Grey",
+        "canonical": "#5f6368",
+        "tonalRamp": [
+          "#090b0f",
+          "#22252a",
+          "#3f4247",
+          "#5e6267",
+          "#7e8388",
+          "#a1a5ab",
+          "#c5cacf",
+          "#eaeff5"
+        ]
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Signal Red",
+        "canonical": "#ef4444",
+        "tonalRamp": [
+          "#210000",
+          "#4d0006",
+          "#7f0612",
+          "#b51220",
+          "#e4393b",
+          "#fa776f",
+          "#ffb3ab",
+          "#fee9e6"
+        ]
+      },
+      "brand-deep-teal": {
+        "role": "secondary",
+        "displayName": "Brand Gradient, deep teal stop",
+        "canonical": "#00528a",
+        "tonalRamp": [
+          "#000b20",
+          "#002647",
+          "#064472",
+          "#1e659e",
+          "#4487c3",
+          "#67abe9",
+          "#9fcffd",
+          "#e3f0fe"
+        ]
+      },
+      "brand-indigo": {
+        "role": "secondary",
+        "displayName": "Brand Gradient, indigo stop",
+        "canonical": "#1f0c97",
+        "tonalRamp": [
+          "#050035",
+          "#150174",
+          "#2825a8",
+          "#404dcf",
+          "#5d72f7",
+          "#879efe",
+          "#b7c7fe",
+          "#e9eefe"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The sign-in promise only; never inside the app."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles (Posts, Sign in to Vox)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dialog, empty-state and section titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Drafts, post text and the composer."
+      },
+      "body-ui": {
+        "displayName": "Body UI",
+        "purpose": "Buttons, nav links, breadcrumbs, prompt chips."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Small print, notices, small buttons."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Tone labels, prompts-left hint, character counts; sentence case."
+      }
+    },
+    "shadows": [
+      {
+        "name": "dialog",
+        "value": "0 16px 48px rgba(0, 0, 0, 0.5)",
+        "purpose": "Publish dialog over a 60% black scrim."
+      },
+      {
+        "name": "drawer",
+        "value": "4px 0 24px rgba(0, 0, 0, 0.5)",
+        "purpose": "Mobile navigation drawer."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default for every state transition."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Symmetric moves."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Hover, press, border shifts."
+      },
+      {
+        "name": "duration-normal",
+        "value": "300ms",
+        "purpose": "Dialog entrance, nav transitions."
+      },
+      {
+        "name": "duration-slow",
+        "value": "500ms",
+        "purpose": "The sign-in promise's single load-in."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97)",
+        "purpose": "Active state on every button and nav link."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled action in a region.",
+      "html": "<button class=\"ds-btn-primary\">New drafts</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 14px;border:1px solid transparent;border-radius:8px;background:#0c80ce;color:#e8f6ff;font-family:'Funnel Display',sans-serif;font-size:14px;font-weight:600;line-height:1;cursor:pointer;transition:background-color .15s cubic-bezier(0.16,1,0.3,1),transform .15s cubic-bezier(0.16,1,0.3,1)}.ds-btn-primary:hover{background:#1d9bf0}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid #1d9bf0;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined action beside or instead of the primary.",
+      "html": "<button class=\"ds-btn-secondary\">Post</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 14px;border:1px solid #333333;border-radius:8px;background:transparent;color:#f2f3f4;font-family:'Funnel Display',sans-serif;font-size:14px;font-weight:600;line-height:1;cursor:pointer;transition:background-color .15s cubic-bezier(0.16,1,0.3,1),transform .15s cubic-bezier(0.16,1,0.3,1)}.ds-btn-secondary:hover{background:#1c1c1c}.ds-btn-secondary:active{transform:scale(.97)}.ds-btn-secondary:focus-visible{outline:2px solid #1d9bf0;outline-offset:2px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Text-only action, e.g. Refine on a draft.",
+      "html": "<button class=\"ds-btn-ghost\">Refine</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 12px;border:1px solid transparent;border-radius:8px;background:transparent;color:#8b9095;font-family:'Funnel Display',sans-serif;font-size:13px;font-weight:600;line-height:1;cursor:pointer;transition:background-color .15s cubic-bezier(0.16,1,0.3,1),color .15s cubic-bezier(0.16,1,0.3,1)}.ds-btn-ghost:hover{background:#1c1c1c;color:#f2f3f4}.ds-btn-ghost:active{transform:scale(.97)}.ds-btn-ghost:focus-visible{outline:2px solid #1d9bf0;outline-offset:2px}"
+    },
+    {
+      "name": "Composer",
+      "kind": "input",
+      "refersTo": "composer",
+      "description": "One-surface prompt box docked at the bottom of the workspace.",
+      "html": "<form class=\"ds-composer\"><textarea class=\"ds-composer-text\" rows=\"1\" placeholder=\"Try another angle\"></textarea><div class=\"ds-composer-foot\"><span class=\"ds-composer-hint\">3 of 6 left</span><button type=\"button\" class=\"ds-composer-btn\">New drafts</button></div></form>",
+      "css": ".ds-composer{display:flex;flex-direction:column;gap:8px;padding:12px;background:#0e0e0e;border:1px solid #262626;border-radius:12px;transition:border-color .15s cubic-bezier(0.16,1,0.3,1)}.ds-composer:focus-within{border-color:rgba(29,155,240,.6)}.ds-composer-text{min-height:44px;padding:6px 4px;border:none;background:transparent;color:#f2f3f4;font-family:'Funnel Display',sans-serif;font-size:15px;line-height:1.45;resize:none;outline:none;caret-color:#1d9bf0}.ds-composer-text::placeholder{color:#8b9095}.ds-composer-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}.ds-composer-hint{padding-left:4px;font-size:12px;color:#8b9095;font-family:'Funnel Display',sans-serif}.ds-composer-btn{height:32px;padding:0 12px;border:none;border-radius:8px;background:#0c80ce;color:#e8f6ff;font-family:'Funnel Display',sans-serif;font-size:13px;font-weight:600;cursor:pointer}.ds-composer-btn:hover{background:#1d9bf0}"
+    },
+    {
+      "name": "Draft Card",
+      "kind": "card",
+      "refersTo": "draft-card",
+      "description": "One AI draft with its own Refine and Post actions.",
+      "html": "<article class=\"ds-draft\"><span class=\"ds-draft-label\">Playful</span><p class=\"ds-draft-text\">Friday rule: if it compiles, it ships.</p><div class=\"ds-draft-actions\"><button class=\"ds-draft-ghost\">Refine</button><button class=\"ds-draft-post\">Post</button></div></article>",
+      "css": ".ds-draft{display:flex;flex-direction:column;gap:8px;max-width:320px;padding:12px 14px;background:#0e0e0e;border:1px solid #262626;border-radius:12px;color:#f2f3f4;font-family:'Funnel Display',sans-serif}.ds-draft-label{font-size:12px;font-weight:500;color:#8b9095}.ds-draft-text{margin:0;font-size:15px;line-height:1.45}.ds-draft-actions{display:flex;justify-content:flex-end;gap:4px}.ds-draft-ghost,.ds-draft-post{height:32px;padding:0 12px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background-color .15s}.ds-draft-ghost{border:1px solid transparent;background:transparent;color:#8b9095}.ds-draft-ghost:hover{background:#1c1c1c;color:#f2f3f4}.ds-draft-post{border:1px solid #333333;background:transparent;color:#f2f3f4}.ds-draft-post:hover{background:#1c1c1c}"
+    },
+    {
+      "name": "Prompt Chip",
+      "kind": "chip",
+      "refersTo": "prompt-chip",
+      "description": "The prompt shown above the drafts it produced.",
+      "html": "<p class=\"ds-chip\">Make it more playful and shorter</p>",
+      "css": ".ds-chip{display:inline-block;margin:0;padding:6px 12px;border-radius:8px;background:#161616;color:#f2f3f4;font-family:'Funnel Display',sans-serif;font-size:14px;line-height:1.4}"
+    },
+    {
+      "name": "Sidebar Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Sidebar navigation item; active page gets a blue wash.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">New post</a><a class=\"ds-nav-link ds-nav-link--active\" href=\"#\">Posts</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:4px;width:204px;padding:8px;background:#111}.ds-nav-link{display:flex;align-items:center;padding:5px 8px;border-radius:8px;color:#f2f3f4;font-family:'Funnel Display',sans-serif;font-size:14px;text-decoration:none;transition:background .3s cubic-bezier(0.16,1,0.3,1)}.ds-nav-link:hover{background:rgba(29,155,240,.1);color:#1d9bf0}.ds-nav-link--active{background:rgba(29,155,240,.2);color:#1d9bf0;font-weight:500}.ds-nav-link:focus-visible{outline:2px solid #1d9bf0;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Desk",
+    "overview": "Vox is a dark, calm writing desk. The room is near-black and the furniture recedes: sidebar, headers and controls sit a step or two above the floor in flat tonal greys, so the only bright things on screen are the words being written. The drafts, the prompt that made them and the post about to be published carry the lightest text; everything around them is set back in secondary grey. Blue appears only where the user acts: one filled button per region, the active nav item, focus rings and the Posted mark.\n\nDensity is calm and compact. Type is small and even (14\u201315px for working text), padding hugs its content, and groups separate by spacing rather than boxes. Panels are flat with a hairline border; shadows exist only on things that float above the desk (dialogs, the mobile drawer, toasts). Motion is short and ease-out, and it all switches off under reduced motion.\n\nThe brand's one loud gesture is the logo's blue-to-indigo gradient. It belongs to the mark, avatars and the sign-in field, and nowhere else.",
+    "keyCharacteristics": [
+      "Dark only: near-black ground (#0a0a0a) with tonal surface steps, no light theme.",
+      "One sans throughout (Funnel Display), hierarchy by weight before size.",
+      "One blue action per region; secondary and ghost buttons for everything else.",
+      "Flat surfaces with 1px borders; shadows only on floating layers.",
+      "Three corner sizes by role: 8px controls, 12px containers, 16px dialogs; full rounding only for true circles.",
+      "Phosphor icons only, sized to the text beside them."
+    ],
+    "rules": [
+      {
+        "name": "The One Blue Action Rule",
+        "body": "A region gets at most one filled Deep Press Blue button. Every other action is secondary (outlined), ghost (text) or icon.",
+        "section": "colors"
+      },
+      {
+        "name": "The Gradient Is the Logo Rule",
+        "body": "The brand gradient appears only in the mark, empty avatars and the sign-in field. It is never used for text, buttons, borders or glows.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Purple Glow Rule",
+        "body": "No violet accents and no coloured halos or outer glows anywhere. Depth and emphasis come from tone, weight and the single blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight First Rule",
+        "body": "Build hierarchy with weight and colour (Lit Text against Desk Grey) before size. App titles stop at 24px.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Eyebrow Rule",
+        "body": "No small uppercase labels above headings. Tone labels sit inside their card, in sentence case.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Desk Rule",
+        "body": "Anything that sits in the page is flat with a hairline. Only dialogs, drawers and toasts may cast a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep content in Lit Text (#f2f3f4) and chrome in Desk Grey (#8b9095).",
+      "Do use exactly one Deep Press Blue filled button per region.",
+      "Do separate groups with spacing (8 / 16 / 24 / 32px) before reaching for a border or a box.",
+      "Do use Phosphor icons at 14\u201322px, matched to the text beside them.",
+      "Do keep transitions at 150\u2013300ms with the ease-out curve `cubic-bezier(0.16, 1, 0.3, 1)`, and let the global reduced-motion rule switch them off.",
+      "Do theme browser surfaces: blue text selection at 35% and a blue caret, as the global styles already do."
+    ],
+    "donts": [
+      "Don't add a light theme. Vox is dark only.",
+      "Don't use purple or violet, coloured glows, gradient text, or the brand gradient on buttons.",
+      "Don't use emoji anywhere in the interface; icons come from Phosphor.",
+      "Don't put small uppercase eyebrow labels above headings.",
+      "Don't nest cards, or put a shadow on anything that sits in the page.",
+      "Don't use pill-shaped buttons or hard-coded corner values; use a `$radius` role.",
+      "Don't use a coloured stripe thicker than 1px on the edge of a card, alert or toast."
+    ]
+  }
+}

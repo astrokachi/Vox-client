@@ -25,7 +25,7 @@
   background: map.get(vars.$colors, card-stroke);
   border: 2px solid transparent;
   background-clip: padding-box;
-  border-radius: map.get(vars.$border-radius, full);
+  border-radius: map.get(vars.$radius, round);
 
   &:hover {
     background: rgba(map.get(vars.$colors, text-secondary), 0.6);
@@ -46,8 +46,19 @@ body {
   height: 100dvh;
   overflow: hidden;
   font-family: "funnel display", sans-serif;
-  background-color: #0a0a0a;
-  color: map.get(vars.$colors, text-primary)
+  background-color: map.get(vars.$colors, bg);
+  color: map.get(vars.$colors, text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(map.get(vars.$colors, accent), 0.35);
+  color: map.get(vars.$colors, text-1);
+}
+
+input,
+textarea {
+  caret-color: map.get(vars.$colors, accent);
 }
 
 :root {
@@ -66,15 +77,19 @@ a:hover {
 }
 
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-  font-weight: 500;
+// App headings: hierarchy comes from weight first, size second. Page titles
+// set their own size (20–24px); nothing in the app should inherit a display size.
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  font-weight: 600;
+  text-wrap: balance;
 }
 
 button {
   color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: map.get(vars.$radius, control);
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;

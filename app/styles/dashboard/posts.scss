@@ -1,964 +1,149 @@
 @use "sass:map";
 @use "../variables" as vars;
-@use "../animations" as anim;
+@use "../mixins" as mx;
 
-.posts-container {
+// Page layout for the post workspace routes (new, post, refine).
+// Component styles live with their components in styles/components/.
+
+// ─── Post / refine workspace ────────────────────────────────────────────────
+// Content reads top-down; the composer stays docked at the bottom.
+
+.post-chat-container {
   display: flex;
   flex-direction: column;
-  height: 98dvh;
-  padding: 24px;
-  max-width: 800px;
+  gap: map.get(vars.$spacing, md);
+  height: 100%;
+  max-width: map.get(vars.$layout, chat-width);
   margin: 0 auto;
   width: 100%;
-  overflow: hidden;
 }
 
-.posts-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-
-  h1 {
-    color: map.get(vars.$colors, text-primary);
-    margin: 0;
-  }
-}
-
-.new-post-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: map.get(vars.$border-radius, full);
-  background: map.get(vars.$colors, primary-dark);
-  color: map.get(vars.$colors, text-light-blue);
-  font-size: map.get(vars.$font-sizes, sm);
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  &:hover {
-    background: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-}
-
-.posts-loading {
-  text-align: center;
-  color: map.get(vars.$colors, text-secondary);
-  padding: 40px 0;
-}
-
-.conversation-list {
+.post-chat-body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   flex: 1;
-  overflow-y: auto;
   min-height: 0;
+  overflow-y: auto;
+  // Room for focus rings on cards at the scroll edge.
+  padding: 2px;
+  margin: -2px;
 }
 
-.conversation-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  background: map.get(vars.$colors, card-fill-dark);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  border-radius: map.get(vars.$border-radius, lg);
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    border-color map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-  animation: fade-in-up anim.duration(normal) anim.ease(out) both;
-
-  &:hover {
-    background: rgba(map.get(vars.$colors, primary), 0.05);
-    border-color: rgba(map.get(vars.$colors, primary), 0.3);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-
-  @include anim.fade-in-stagger(15);
+.chat-input-section {
+  flex-shrink: 0;
 }
 
-.conversation-card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: map.get(vars.$colors, text-secondary);
-  font-size: map.get(vars.$font-sizes, xs);
+.error-message {
+  padding: 8px 12px;
+  border-radius: map.get(vars.$radius, control);
+  background: rgba(map.get(vars.$colors, danger), 0.1);
+  border: 1px solid rgba(map.get(vars.$colors, danger), 0.3);
+  color: #fca5a5;
+  font-size: map.get(vars.$font-sizes, meta);
 }
 
-.conversation-date {
-  color: map.get(vars.$colors, text-secondary);
+.loading-message {
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
 }
 
-.conversation-title {
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, base);
-  font-weight: 600;
-  margin: 0;
-  line-height: 1.5;
-}
+// ─── New post ───────────────────────────────────────────────────────────────
 
 .chat-container {
-  // position: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  padding: 40px 24px;
-  max-width: 720px;
+  gap: map.get(vars.$spacing, xl);
+  max-width: 680px;
+  min-height: 100%;
   margin: 0 auto;
   width: 100%;
-  height: 100%;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    gap: 20px;
-    padding: 30px 12px;
-  }
 }
 
 .greeting-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: map.get(vars.$spacing, xs);
   text-align: center;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    gap: 6px;
-  }
 }
 
-.logo-gradient {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00528a, #1f0c97);
+.greeting-logo {
+  width: 40px;
+  height: 40px;
+  margin-bottom: map.get(vars.$spacing, sm);
 }
 
 .greeting-text {
-  font-size: map.get(vars.$font-sizes, base);
-  color: map.get(vars.$colors, text-secondary);
   margin: 0;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    font-size: map.get(vars.$font-sizes, sm);
-  }
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
 }
 
 .greeting-heading {
-  font-size: map.get(vars.$font-sizes, 2xl);
-  font-weight: 700;
-  color: map.get(vars.$colors, text-primary);
   margin: 0;
+  font-size: map.get(vars.$font-sizes, xl);
+  color: map.get(vars.$colors, text-1);
 
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    font-size: map.get(vars.$font-sizes, lg);
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, 2xl);
   }
 }
 
 .input-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: map.get(vars.$spacing, md);
   width: 100%;
-  max-width: 657px;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    gap: 12px;
-  }
 }
 
 .trending-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    gap: 8px;
-  }
+  gap: map.get(vars.$spacing, sm);
 }
 
 .trending-label {
-  font-size: map.get(vars.$font-sizes, sm);
-  font-weight: 500;
-  color: map.get(vars.$colors, accent-blue-light);
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    font-size: map.get(vars.$font-sizes, xs);
-  }
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
 }
 
 .topic-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    gap: 6px;
-  }
-}
-
-.topic-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 16px;
-  border-radius: map.get(vars.$border-radius, lg);
-  background: map.get(vars.$colors, card-fill-darker);
-  border: 1px solid map.get(vars.$colors, card-stroke-blue);
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, sm);
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    border-color map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    padding: 5px 12px;
-    font-size: map.get(vars.$font-sizes, xs);
-    border-radius: map.get(vars.$border-radius, md);
-  }
-
-  &:hover {
-    background: rgba(map.get(vars.$colors, primary), 0.15);
-    border-color: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-}
-
-.chat-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  border-radius: map.get(vars.$border-radius, lg);
-  background: map.get(vars.$colors, card-fill);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.textarea-wrapper {
-  padding: 0;
-}
-
-.refine-chip {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 8px;
-  padding: 6px 8px 6px 10px;
-  border-radius: map.get(vars.$border-radius, md);
-  background: map.get(vars.$colors, primary);
-  color: map.get(vars.$colors, text-primary);
-}
-
-.refine-chip-text {
-  flex: 1;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  font-size: map.get(vars.$font-sizes, xs);
-  line-height: 1.4;
-  word-wrap: break-word;
-}
-
-.refine-chip-remove {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  background: none;
-  border: none;
-  color: map.get(vars.$colors, text-primary);
-  cursor: pointer;
-  opacity: 0.85;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-
-.chat-textarea {
-  width: 100%;
-  min-height: 52px;
-  max-height: 200px;
-  padding: 16px;
-  border-radius: map.get(vars.$border-radius, md);
-  background: map.get(vars.$colors, gray-dark);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, sm);
-  font-family: inherit;
-  resize: none;
-  overflow-y: auto;
-  outline: none;
-  line-height: 20px;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    min-height: 44px;
-    padding: 12px;
-    font-size: map.get(vars.$font-sizes, xs);
-  }
-
-  &::placeholder {
-    color: map.get(vars.$colors, text-muted);
-  }
-
-  &:focus {
-    outline: none;
-  }
-}
-
-.form-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 48px;
-}
-
-.form-footer-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.image-btn {
-  width: 38px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: map.get(vars.$border-radius, lg);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  background: none;
-  color: map.get(vars.$colors, text-secondary);
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    color map.get(vars.$transitions, default) ease;
-
-  &:hover {
-    background: map.get(vars.$overlays, hover-bg);
-    color: map.get(vars.$colors, text-primary);
-  }
-}
-
-.prompts-progress {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 90px;
-  height: 32px;
-}
-
-.progress-track {
-  width: 100%;
-  height: 3px;
-  border-radius: 1.5px;
-  background: map.get(vars.$colors, card-stroke);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 1.5px;
-  background: map.get(vars.$colors, primary);
-  transition: width map.get(vars.$transitions, default) ease;
-}
-
-.prompts-count {
-  font-size: map.get(vars.$font-sizes, xs);
-  line-height: 1;
-  color: map.get(vars.$colors, text-secondary);
-}
-
-.generate-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: map.get(vars.$border-radius, full);
-  background: map.get(vars.$colors, primary-dark);
-  color: map.get(vars.$colors, text-light-blue);
-  font-size: map.get(vars.$font-sizes, sm);
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  @media (max-width: map.get(vars.$breakpoints, sm)) {
-    padding: 8px 14px;
-    font-size: map.get(vars.$font-sizes, xs);
-    gap: 6px;
-  }
-
-  &:hover {
-    background: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-}
-
-// Chat UI Styles
-.post-chat-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 16px;
-  height: 100%;
-  max-width: 1112px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 12px 32px;
-  overflow: hidden;
-}
-
-.preview-frame {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 auto;
-  gap: 12px;
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  background: map.get(vars.$colors, card-fill);
-  border-radius: map.get(vars.$border-radius, lg);
-  padding: 20px;
-  padding-top: 24px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  min-height: 300px;
-  margin-bottom: 5px;
-  &--loading {
-    justify-content: center;
-  }
-}
-
-.preview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.preview-title {
-  margin: 0;
-  font-size: map.get(vars.$font-sizes, md);
-  font-weight: 700;
-  color: map.get(vars.$colors, text-primary);
-}
-
-.preview-counter {
-  flex-shrink: 0;
-  font-size: map.get(vars.$font-sizes, xxs);
-  font-weight: 700;
-  text-transform: uppercase;
-  color: map.get(vars.$colors, text-secondary);
-}
-
-.turn-question {
-  align-self: flex-start;
-  max-width: 100%;
-  padding: 8px 12px;
-  border-radius: map.get(vars.$border-radius, md);
-  background: map.get(vars.$colors, card-fill-dark);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  color: map.get(vars.$colors, text-light);
-  font-size: map.get(vars.$font-sizes, sm);
-  line-height: 1.4;
-}
-
-.preview-body {
-  display: flex;
-    height: 100%;
-  align-items: stretch;
-}
-
-.post-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.idea-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 140px;
-  padding: 12px;
-  overflow: hidden;
-  text-align: left;
-  cursor: pointer;
-  border-radius: map.get(vars.$border-radius, md);
-  background: rgba(map.get(vars.$colors, card-fill-dark), 0.75);
-  border: 1px solid map.get(vars.$colors, card-stroke);
-  color: map.get(vars.$colors, text-primary);
-  transition: border-color map.get(vars.$transitions, default) ease,
-    background map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  &:hover {
-    border-color: rgba(map.get(vars.$colors, primary), 0.5);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-
-  &--selected {
-    border-color: map.get(vars.$colors, primary);
-    background: rgba(map.get(vars.$colors, primary), 0.08);
-  }
-}
-
-.idea-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: map.get(vars.$colors, text-secondary);
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-.idea-card-label {
-  font-size: map.get(vars.$font-sizes, xs);
-  font-weight: 500;
-}
-
-.idea-card-content {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: map.get(vars.$font-sizes, sm);
-  line-height: 1.5;
-  word-wrap: break-word;
-}
-
-// Preview post modal
-.preview-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(2px);
-  animation: fade-in anim.duration(fast) anim.ease(out);
-}
-
-.preview-modal {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  max-width: 623px;
-  padding: 20px;
-  border-radius: map.get(vars.$border-radius, lg);
-  background: map.get(vars.$colors, card-fill);
-  border: 1px solid map.get(vars.$colors, gray-dark);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  animation: fade-in-scale anim.duration(normal) anim.ease(out);
-}
-
-.preview-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  h3 {
-    margin: 0;
-    font-size: map.get(vars.$font-sizes, lg);
-    font-weight: 700;
-    color: map.get(vars.$colors, text-dim);
-  }
-}
-
-.preview-modal-close {
-  display: inline-flex;
-  padding: 0;
-  background: none;
-  border: none;
-  color: map.get(vars.$colors, text-primary);
-  cursor: pointer;
-}
-
-.preview-tweet {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  border-radius: map.get(vars.$border-radius, md);
-  background: #000000;
-}
-
-.preview-tweet-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.preview-overflow-btn {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  background: none;
-  border: none;
-  color: map.get(vars.$colors, text-secondary);
-  cursor: pointer;
-  transition: color map.get(vars.$transitions, default) ease;
-
-  &:hover {
-    color: map.get(vars.$colors, text-primary);
-  }
-}
-
-.preview-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00528a, #1f0c97);
-  object-fit: cover;
-}
-
-.preview-user-meta {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   gap: 6px;
 }
 
-.preview-username {
-  font-size: 15px;
-  font-weight: 700;
-  color: map.get(vars.$colors, text-light);
-}
+.topic-pill {
+  @include mx.button(secondary, sm);
+  height: 30px;
+  font-weight: 500;
+  border-color: map.get(vars.$colors, border);
+  background: map.get(vars.$colors, surface-1);
 
-.preview-verified {
-  flex-shrink: 0;
-  color: #1d9bf0;
-}
-
-.preview-handle {
-  font-size: 13px;
-  font-weight: 400;
-  color: map.get(vars.$colors, text-secondary);
-}
-
-.preview-edit-field {
-  width: 100%;
-  padding: 8px 12px;
-  resize: none;
-  border: none;
-  background: transparent;
-  color: map.get(vars.$colors, text-light);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 20px;
-  outline: none;
-}
-
-.preview-engagements {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: map.get(vars.$colors, text-secondary);
-}
-
-.preview-engage-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.preview-engage-count {
-  font-size: 13px;
-  font-weight: 400;
-  color: map.get(vars.$colors, text-secondary);
-  line-height: 1;
-}
-
-.preview-modal-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 32px;
-}
-
-.preview-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.preview-post-split {
-  display: flex;
-  align-items: stretch;
-  border-radius: map.get(vars.$border-radius, full);
-  overflow: hidden;
-}
-
-.preview-post-divider {
-  width: 2px;
-  background: #00528a;
-}
-
-.preview-post-btn {
-  padding: 6px 14px;
-  border-radius: map.get(vars.$border-radius, full) 0 0 map.get(vars.$border-radius, full);
-  background: map.get(vars.$colors, primary-dark);
-  border: none;
-  color: map.get(vars.$colors, text-primary);
-  font-family: inherit;
-  font-size: map.get(vars.$font-sizes, xs);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  &:hover {
-    background: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
+  &:hover:not(:disabled) {
+    border-color: rgba(map.get(vars.$colors, accent), 0.6);
+    background: rgba(map.get(vars.$colors, accent), 0.08);
   }
 }
 
-.preview-post-caret {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 10px;
-  border-radius: 0 map.get(vars.$border-radius, full) map.get(vars.$border-radius, full) 0;
-  background: map.get(vars.$colors, primary-dark);
-  border: none;
-  color: map.get(vars.$colors, text-primary);
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
+// Replaces the composer once a post has used all its prompts.
+.prompt-limit {
+  @include mx.surface(1);
+  margin: 0;
+  padding: 14px map.get(vars.$spacing, md);
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
 
-  &:hover {
-    background: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-}
-
-.preview-refine-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: map.get(vars.$border-radius, full);
-  background: transparent;
-  border: 1px solid rgba(12, 128, 206, 0.5);
-  color: rgba(12, 128, 206, 0.8);
-  font-family: inherit;
-  font-size: map.get(vars.$font-sizes, xxs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.21em;
-  cursor: pointer;
-  transition: background map.get(vars.$transitions, default) ease,
-    border-color map.get(vars.$transitions, default) ease,
-    color map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  &:hover {
-    background: rgba(12, 128, 206, 0.1);
-    border-color: map.get(vars.$colors, primary-dark);
-    color: map.get(vars.$colors, primary-dark);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary-dark);
-    outline-offset: 2px;
-  }
-}
-
-.idea-card-pick {
-  align-self: flex-start;
-  font-size: map.get(vars.$font-sizes, xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: map.get(vars.$colors, primary);
-}
-
-.preview-empty {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-align: center;
-
-  h3 {
-    margin: 0;
-    font-size: map.get(vars.$font-sizes, lg);
-    color: map.get(vars.$colors, text-primary);
-  }
-
-  p {
-    margin: 0;
-    font-size: map.get(vars.$font-sizes, sm);
-    color: map.get(vars.$colors, text-secondary);
-  }
-}
-
-.preview-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 42px;
-}
-
-.pager {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  transition: color map.get(vars.$transitions, default) ease,
-    transform 0.15s ease;
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  &:hover {
-    color: map.get(vars.$colors, primary);
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.95);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    color: map.get(vars.$colors, text-disabled);
-    cursor: not-allowed;
-  }
-}
-
-.pager-counter {
-  flex-shrink: 0;
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, xs);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.chat-messages-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  min-height: 0;
-}
-
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: map.get(vars.$colors, card-stroke);
-    border-radius: 3px;
+  a {
+    color: map.get(vars.$colors, accent);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: map.get(vars.$radius, inset);
 
     &:hover {
-      background: rgba(map.get(vars.$colors, text-secondary), 0.5);
+      text-decoration: underline;
     }
   }
 }
@@ -1382,8 +567,6 @@
     transform: scale(0.97);
   }
 
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
+    @include mx.focus-ring;
   }
 }
