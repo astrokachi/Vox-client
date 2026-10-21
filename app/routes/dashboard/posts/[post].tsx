@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react";
-import { useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router";
+import { useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "../+types/index";
-import type { clientLoader as dashboardLoader } from "~/routes/dashboard/index";
-import PostPreview from "~/components/chat/post-preview";
+import PageHeader from "~/components/layouts/page-header";
+import TurnList, { TurnListSkeleton } from "~/components/chat/turn-list";
+import PublishDialog, { type PublishableDraft } from "~/components/chat/publish-dialog";
 import { ChatForm } from "~/components/chat-form";
-import { chatApi } from "~/api/endpoints";
-import { useApiCall } from "~/hooks/useApiCall";
-import { useConversationSocket } from "~/hooks/useConversationSocket";
-import { useImageFiles } from "~/hooks/useImageFiles";
-import { usePost } from "~/hooks/usePost";
-import type { ChatGetMessagesDto, Message, Turn } from "~/types";
+import { useConversationTitle } from "~/hooks/useConversationTitle";
+import { useDrafts } from "~/hooks/useDrafts";
+import { usePublishDraft } from "~/hooks/usePublishDraft";
+import { MAX_PROMPTS } from "~/lib/chat-limits";
+import type { Message } from "~/types";
 import "~/styles/dashboard/posts.scss";
-
-const MAX_PROMPTS = 6;
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { id } = params;
@@ -22,128 +20,68 @@ export async function loader({ params }: Route.LoaderArgs) {
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const dashboardData = useRouteLoaderData<typeof dashboardLoader>(
-    "routes/dashboard/index",
-  );
-  const user = dashboardData?.user;
+  const { title, failed: titleFailed } = useConversationTitle(conversationId);
+  const { turns, pendingTurnIds, isTyping, loading, error, sendPrompt, retry } =
+    useDrafts(conversationId);
+  const { getPosted } = usePublishDraft();
+  const [toPublish, setToPublish] = useState<PublishableDraft | null>(null);
 
-  const [turns, setTurns] = useState<Turn[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const { images, addFiles, removeFile, clearFiles } = useImageFiles();
-  const { post, posting } = usePost();
-
-  const {
-    execute: loadMessages,
-    prefetch: prefetchMessages,
-    data: history,
-    loading,
-    error: loadError,
-  } = useApiCall<ChatGetMessagesDto, Turn[]>(chatApi.getMessages, {
-    cacheKey: "conversation-messages",
-  });
-
-  const messagesDto = { conversationId, cursor: "", take: 50 } satisfies ChatGetMessagesDto;
-
-  useEffect(() => {
-    if (!conversationId) return;
-    loadMessages(messagesDto);
-  }, [conversationId]);
-
-  const { pathname } = useLocation();
-  useEffect(() => {
-    if (!conversationId) return;
-    prefetchMessages(messagesDto);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (history) setTurns(history);
-  }, [history]);
-
-  const { isTyping, error: socketError } = useConversationSocket({
-    conversationId,
-    onMessageReceived: ({ messageGroupId, message }) => {
-      // Append the streamed response option into its turn.
-      setTurns((prev) =>
-        prev.map((t) => {
-          if (t.turnId !== messageGroupId) return t;
-          if (t.response.options.some((o) => o.id === message.id)) return t;
-          return {
-            ...t,
-            response: {
-              ...t.response,
-              options: [...t.response.options, message],
-            },
-          };
-        }),
-      );
-    },
-  });
-
-  const handleSendMessage = async (content: string) => {
-    setError(null);
-    try {
-      const turn = await chatApi.addMessage({
-        conversationId,
-        payload: { content, type: "MULTIPLE" },
-      });
-      setTurns((prev) =>
-        prev.some((t) => t.turnId === turn.turnId) ? prev : [...prev, turn],
-      );
-    } catch {
-      setError("Failed to send message");
-    }
-  };
-
-  const handlePost = async (text: string, files?: File[]) => {
-    const ok = await post(text, files);
-    if (ok) clearFiles();
-  };
-
-  const handleRefine = (message: Message) => {
-    navigate(`/posts/${conversationId}/r/${message.id}`, {
-      state: { draft: message.content },
+  const handleRefine = (draft: Message) => {
+    navigate(`/posts/${conversationId}/r/${draft.id}`, {
+      state: { draft: draft.content },
     });
   };
 
-  const promptCount = turns.length;
-  const isLoadingHistory = (loading || history === null) && !loadError;
-  const displayError = error ?? socketError ?? loadError?.message ?? null;
+  const atLimit = turns.length >= MAX_PROMPTS;
 
   return (
     <div className="post-chat-container">
-      {isLoadingHistory && turns.length === 0 ? (
-        <div className="preview-frame preview-frame--loading">
-          <div className="preview-empty">
-            <h3>Loading…</h3>
-          </div>
-        </div>
-      ) : (
-        <PostPreview
-          turns={turns}
-          isTyping={isTyping}
-          user={user}
-          onRefine={handleRefine}
-          onPost={handlePost}
-          posting={posting}
-          images={images}
-          onAddFiles={addFiles}
-          onRemoveFile={removeFile}
-        />
-      )}
+      <PageHeader
+        crumbs={[
+          { label: "Posts", to: "/posts" },
+          { label: title ?? (titleFailed ? "Post" : undefined) },
+        ]}
+      />
 
-      {displayError && <div className="error-message">{displayError}</div>}
+      <div className="post-chat-body">
+        {loading ? (
+          <TurnListSkeleton />
+        ) : (
+          <TurnList
+            turns={turns}
+            pendingTurnIds={pendingTurnIds}
+            isTyping={isTyping}
+            canRetry={!atLimit}
+            getPosted={getPosted}
+            onRefine={handleRefine}
+            onPost={setToPublish}
+            onRetry={retry}
+          />
+        )}
+      </div>
+
+      {error && <div className="error-message" role="alert">{error}</div>}
 
       <div className="chat-input-section">
-        <ChatForm
-          onSubmit={handleSendMessage}
-          promptCount={promptCount}
-          maxPrompts={MAX_PROMPTS}
-          disabled={promptCount >= MAX_PROMPTS}
-          images={images}
-          onAddFiles={addFiles}
-          onRemoveFile={removeFile}
-        />
+        {atLimit ? (
+          <p className="prompt-limit">
+            You've used all {MAX_PROMPTS} prompts for this post.{" "}
+            <Link to="/posts/new">Start a new post</Link>
+          </p>
+        ) : (
+          <ChatForm
+            onSubmit={sendPrompt}
+            promptCount={turns.length}
+            maxPrompts={MAX_PROMPTS}
+            submitLabel="New drafts"
+            placeholder="Try another angle"
+          />
+        )}
       </div>
+
+      {toPublish && (
+        <PublishDialog draft={toPublish} onClose={() => setToPublish(null)} />
+      )}
     </div>
   );
 };

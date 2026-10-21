@@ -1,0 +1,105 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+.draft-card {
+  @include mx.surface(1);
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, sm);
+  min-width: 0;
+  padding: 12px 14px;
+  color: map.get(vars.$colors, text-1);
+
+  &--highlighted {
+    border-color: rgba(map.get(vars.$colors, accent), 0.6);
+  }
+
+  &--skeleton {
+    gap: 10px;
+    min-height: 140px;
+    padding-top: 14px;
+  }
+}
+
+.draft-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, sm);
+  min-height: 18px;
+}
+
+.draft-card-label {
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 500;
+  color: map.get(vars.$colors, text-2);
+}
+
+.draft-card-posted {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 600;
+  color: map.get(vars.$colors, accent);
+}
+
+.draft-card-content {
+  flex: 1;
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, body);
+  line-height: 1.45;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.draft-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: map.get(vars.$spacing, xs);
+  margin-right: -4px;
+}
+
+.draft-card-refine {
+  @include mx.button(ghost, sm);
+}
+
+.draft-card-post {
+  @include mx.button(secondary, sm);
+  min-width: 64px;
+}
+
+.draft-card-view {
+  @include mx.button(ghost, sm);
+  gap: 4px;
+  text-decoration: none;
+  color: map.get(vars.$colors, accent);
+}
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+.draft-card-skeleton-line {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: map.get(vars.$radius, inset);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s linear infinite;
+
+  &--short {
+    width: 64px;
+    margin-bottom: 4px;
+  }
+
+  &--mid {
+    width: 60%;
+  }
+}

@@ -1,0 +1,124 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+@use "../animations" as anim;
+
+// Posts index: page header + one list of conversations.
+
+.posts-container {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  max-width: map.get(vars.$layout, content-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.posts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, md);
+}
+
+.posts-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, xl);
+  color: map.get(vars.$colors, text-1);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, 2xl);
+  }
+}
+
+.new-post-btn {
+  @include mx.button(primary, sm);
+}
+
+// One container, rows split by hairlines.
+.conversation-list {
+  @include mx.surface(1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+
+  > li + li {
+    border-top: 1px solid map.get(vars.$colors, border);
+  }
+}
+
+.conversation-row {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, md);
+  min-height: 48px;
+  padding: 10px map.get(vars.$spacing, md);
+  color: map.get(vars.$colors, text-1);
+  font-weight: 400;
+  transition: background-color anim.duration(fast) anim.ease(out);
+
+  &:hover {
+    background: map.get(vars.$colors, surface-hover);
+  }
+
+  @include mx.focus-ring(-2px);
+
+  &--skeleton {
+    pointer-events: none;
+  }
+}
+
+.conversation-title {
+  @include mx.truncate;
+  flex: 1;
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 500;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, body);
+  }
+}
+
+.conversation-date {
+  flex-shrink: 0;
+  font-size: map.get(vars.$font-sizes, meta);
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-2);
+}
+
+.conversation-skeleton {
+  display: block;
+  width: 55%;
+  height: 14px;
+  border-radius: map.get(vars.$radius, inset);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s linear infinite;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+  padding: 64px map.get(vars.$spacing, md);
+  text-align: center;
+  color: map.get(vars.$colors, text-2);
+
+  h2 {
+    margin: map.get(vars.$spacing, xs) 0 0;
+    font-size: map.get(vars.$font-sizes, base);
+    color: map.get(vars.$colors, text-1);
+  }
+
+  p {
+    margin: 0;
+    font-size: map.get(vars.$font-sizes, sm);
+  }
+}

@@ -1,42 +1,32 @@
-import { ImageIcon, SparkleIcon, XIcon } from "@phosphor-icons/react";
+import { SparkleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type SubmitEvent } from "react";
-import ImageStrip from "~/components/chat/image-strip";
-import type { SelectedImage } from "~/hooks/useImageFiles";
+import "~/styles/components/chat-form.scss";
 
 interface ChatFormProps {
   suggestion?: string;
-  refineDraft?: string;
-  onClearRefine?: () => void;
-  onSubmit?: (content: string, files?: File[]) => void;
-  onAddFiles?: (files: File[]) => void;
-  onRemoveFile?: (index: number) => void;
-  images?: SelectedImage[];
+  onSubmit?: (content: string) => void;
   promptCount?: number;
+  /** When omitted, no "left" count is shown (no limit). */
   maxPrompts?: number;
   disabled?: boolean;
   submitLabel?: string;
+  placeholder?: string;
 }
 
-const previewDraft = (text: string, max = 120) =>
-  text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
-
+// Text-only composer for asking the AI for drafts or refinements.
+// Images are attached at publish time, not here.
 export const ChatForm = ({
   suggestion,
-  refineDraft,
-  onClearRefine,
   onSubmit,
-  onAddFiles,
-  onRemoveFile,
-  images = [],
   promptCount = 0,
-  maxPrompts = 6,
+  maxPrompts,
   disabled = false,
-  submitLabel = "Generate post",
+  submitLabel = "Write drafts",
+  placeholder = "Describe a topic or what you want to say",
 }: ChatFormProps) => {
   const [content, setContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -47,22 +37,10 @@ export const ChatForm = ({
     if (disabled) return;
 
     const typed = content.trim();
-    if (!typed && !refineDraft && images.length === 0) return;
+    if (!typed) return;
 
-    const message = refineDraft
-      ? `Refine this draft:\n"${refineDraft}"${typed ? `\n\n${typed}` : ""}`
-      : typed;
-
-    onSubmit?.(message, images.length > 0 ? images.map((img) => img.file) : undefined);
+    onSubmit?.(typed);
     setContent("");
-    onClearRefine?.();
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(e.target.files || []);
-    if (selected.length === 0) return;
-    onAddFiles?.(selected);
-    e.target.value = "";
   };
 
   useEffect(() => {
@@ -73,71 +51,50 @@ export const ChatForm = ({
   }, [content]);
 
   useEffect(() => {
-    if (suggestion) setContent(suggestion);
+    if (suggestion) {
+      setContent(suggestion);
+      const el = textareaRef.current;
+      el?.focus();
+      el?.setSelectionRange(suggestion.length, suggestion.length);
+    }
   }, [suggestion]);
 
-  useEffect(() => {
-    if (refineDraft) textareaRef.current?.focus();
-  }, [refineDraft]);
+  const remaining = maxPrompts !== undefined ? Math.max(maxPrompts - promptCount, 0) : null;
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="chat-form">
-      <div className="textarea-wrapper">
-        {refineDraft && (
-          <div className="refine-chip">
-            <span className="refine-chip-text">{previewDraft(refineDraft)}</span>
-            <button
-              type="button"
-              className="refine-chip-remove"
-              onClick={onClearRefine}
-              aria-label="Remove draft"
-            >
-              <XIcon size={14} weight="bold" />
-            </button>
-          </div>
-        )}
-
-        <textarea
-          ref={textareaRef}
-          className="chat-textarea"
-          placeholder="Enter a topic or describe what you want to talk about"
-          value={content}
-          onChange={handleChange}
-          onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              formRef.current?.requestSubmit();
-            }
-          }}
-          disabled={disabled}
-        />
-      </div>
-      <ImageStrip images={images} onRemove={(i) => onRemoveFile?.(i)} />
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className={`chat-form${disabled ? " chat-form--disabled" : ""}`}
+    >
+      <textarea
+        ref={textareaRef}
+        className="chat-textarea"
+        aria-label={placeholder}
+        placeholder={placeholder}
+        rows={1}
+        value={content}
+        onChange={handleChange}
+        onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            formRef.current?.requestSubmit();
+          }
+        }}
+        disabled={disabled}
+      />
       <div className="form-footer">
-        <div className="form-footer-left">
-          <button type="button" className="image-btn" aria-label="Add image" onClick={() => fileInputRef.current?.click()}>
-            <ImageIcon size={18} />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            hidden
-            onChange={handleFileChange}
-          />
-          <div className="prompts-progress">
-            <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{ width: `${(promptCount / maxPrompts) * 100}%` }}
-              />
-            </div>
-            <span className="prompts-count">{promptCount}/{maxPrompts} prompts</span>
-          </div>
-        </div>
-        <button type="submit" className="generate-btn" disabled={disabled}>
-          <SparkleIcon size={18} />
+        <span className="form-hint">
+          {remaining !== null
+            ? `${remaining} of ${maxPrompts} left`
+            : "Enter to send · Shift+Enter for a new line"}
+        </span>
+        <button
+          type="submit"
+          className="generate-btn"
+          disabled={disabled || !content.trim()}
+        >
+          <SparkleIcon size={16} weight="fill" />
           <span>{submitLabel}</span>
         </button>
       </div>

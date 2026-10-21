@@ -1,15 +1,16 @@
 import { useCallback, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { ChatTextIcon, PlusCircleIcon } from "@phosphor-icons/react";
+import { Link, useLocation } from "react-router";
+import { ChatTextIcon, PlusIcon } from "@phosphor-icons/react";
 import { useApiCall } from "~/hooks/useApiCall";
 import { conversationApi } from "~/api/endpoints";
 import type { Conversation, ConversationListDto } from "~/types";
-import "~/styles/dashboard/posts.scss";
+import { formatShortDate } from "~/utils/format-date";
+import "~/styles/dashboard/conversation-list.scss";
 
 const DTO = { cursor: "", take: 50 } satisfies ConversationListDto;
+const SKELETON_ROWS = 5;
 
 const Posts = () => {
-  const navigate = useNavigate();
   const { execute, prefetch, data: conversations, loading } = useApiCall<
     ConversationListDto,
     Conversation[]
@@ -30,42 +31,45 @@ const Posts = () => {
 
   return (
     <div className="posts-container">
-      <div className="posts-header">
-        <h1>Posts</h1>
-        <button className="new-post-btn" onClick={() => navigate("/posts/new")}>
-          <PlusCircleIcon size={20} weight="bold" />
-          New Post
-        </button>
-      </div>
+      <header className="posts-header">
+        <h1 className="posts-title">Posts</h1>
+        <Link className="new-post-btn" to="/posts/new">
+          <PlusIcon size={14} weight="bold" />
+          New post
+        </Link>
+      </header>
 
-      {loading && <div className="posts-loading">Loading conversations...</div>}
+      {loading && (
+        <ul className="conversation-list" aria-busy="true" aria-label="Loading posts">
+          {Array.from({ length: SKELETON_ROWS }, (_, i) => (
+            <li key={i} className="conversation-row conversation-row--skeleton">
+              <span className="conversation-skeleton" />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {!loading && conversations && conversations.length === 0 && (
         <div className="empty-state">
-          <ChatTextIcon size={48} />
-          <h2>No conversations yet</h2>
-          <p>Start a new post to begin generating ideas</p>
+          <ChatTextIcon size={28} />
+          <h2>No posts yet</h2>
+          <p>Start a new post to generate drafts.</p>
         </div>
       )}
 
       {!loading && conversations && conversations.length > 0 && (
-        <div className="conversation-list" onMouseEnter={handleHover}>
+        <ul className="conversation-list" onMouseEnter={handleHover}>
           {conversations.map((conv) => (
-            <div
-              key={conv.id}
-              className="conversation-card"
-              onClick={() => navigate(`/posts/${conv.id}`)}
-            >
-              <div className="conversation-card-header">
-                <ChatTextIcon size={20} />
-                <span className="conversation-date">
-                  {new Date(conv.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <h3 className="conversation-title">{conv.title}</h3>
-            </div>
+            <li key={conv.id}>
+              <Link className="conversation-row" to={`/posts/${conv.id}`}>
+                <span className="conversation-title">{conv.title}</span>
+                <time className="conversation-date" dateTime={conv.created_at}>
+                  {formatShortDate(conv.created_at)}
+                </time>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

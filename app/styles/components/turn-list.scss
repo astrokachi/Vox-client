@@ -1,0 +1,81 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// A post's prompts and drafts, read top-down. No frame around it.
+.turn-list {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, xl);
+}
+
+.turn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  // Keeps a scrolled-to turn clear of the scroll container's top edge.
+  scroll-margin-top: map.get(vars.$spacing, sm);
+}
+
+.turn-drafts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: map.get(vars.$spacing, sm);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+.turn-list-empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: map.get(vars.$spacing, xs);
+  text-align: center;
+}
+
+.turn-list-empty-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+}
+
+.turn-list-empty-hint {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+}
+
+.turn-skeleton-question {
+  display: block;
+  width: 240px;
+  max-width: 70%;
+  height: 30px;
+  border-radius: map.get(vars.$radius, control);
+  background: map.get(vars.$colors, surface-2);
+}
+
+// A turn whose drafts never arrived (the job failed or timed out).
+.turn-failed {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+  min-height: 32px;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+}
+
+.turn-failed-icon {
+  flex-shrink: 0;
+  color: map.get(vars.$colors, danger);
+}
+
+.turn-failed-retry {
+  @include mx.button(secondary, sm);
+  margin-left: map.get(vars.$spacing, xs);
+}
