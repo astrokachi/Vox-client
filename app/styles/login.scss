@@ -1,166 +1,169 @@
 @use "sass:map";
 @use "variables" as vars;
+@use "animations" as anim;
 
-.container {
-  max-width: map.get(vars.$breakpoints, xl);
-  margin: 0 auto;
-  width: 100%;
+// Sign-in: Vox's own blue field beside a calm sign-in column.
+// Phones stack the field as a band above the sign-in column.
+
+.signin {
+  display: grid;
+  grid-template-rows: auto 1fr;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: map.get(vars.$spacing, sm);
+  overflow-y: auto;
+  background: map.get(vars.$colors, bg);
 
-
-  &>span {
-    color: map.get(vars.$colors, text-muted);
-  }
-
-  &>span:last-child {
-    margin-top: map.get(vars.$spacing, sm);
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
-.emphasis {
-  font-weight: 600;
-}
+// ─── Brand field ────────────────────────────────────────────────────────────
 
-.logo {
-  height: max-content;
+.signin-field {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, xl);
+  // A band on phones: tall enough to carry the promise, short of a full screen.
+  min-height: 65svh;
+  padding: map.get(vars.$spacing, lg) map.get(vars.$spacing, md) map.get(vars.$spacing, xl);
+  background: vars.$brand-gradient;
+  color: map.get(vars.$colors, accent-on);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    padding: map.get(vars.$spacing, xl) 40px 40px;
+  }
+
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    padding: 48px 56px 64px;
+  }
+}
+
+.signin-brand {
+  display: flex;
   align-items: center;
+  gap: 10px;
+}
 
-  &>img {
-    width: 100px;
-    height: 100px;
-    transition: filter 0.2s ease, box-shadow 0.1s ease;
+// The mark's own ink is this gradient, so it sits on a dark tile to stay visible.
+.signin-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: map.get(vars.$radius, container);
+  background: map.get(vars.$colors, bg);
 
-    &:hover {
-      filter: drop-shadow(0 0 12px rgba(49, 61, 242, 0.5));
+  img {
+    width: 28px;
+    height: 28px;
+  }
+
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    width: 48px;
+    height: 48px;
+
+    img {
+      width: 36px;
+      height: 36px;
     }
   }
 }
 
-.header {
-  color: map.get(vars.$colors, text-primary);
-  font-size: map.get(vars.$font-sizes, 3xl);
-}
-
-.btn-wrapper {
-  max-width: 400px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-
-.login-card {
-  border-radius: map.get(vars.$border-radius, xl);
-  padding: map.get(vars.$spacing, lg);
-  margin-top: map.get(vars.$spacing, lg);
-  border: 1px solid map.get(vars.$colors, surface);
-  background-color: map.get(vars.$colors, surface);
-  max-width: 600px;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.login-card-title {
-  margin-bottom: map.get(vars.$spacing, lg);
-  text-align: center;
-  color: map.get(vars.$colors, text-primary);
+.signin-wordmark {
   font-size: map.get(vars.$font-sizes, xl);
   font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f4f9ff;
 }
 
-.login-error-banner {
-  margin-bottom: map.get(vars.$spacing, md);
-  padding: 12px 16px;
-  border-radius: map.get(vars.$border-radius, md);
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-}
-
-.login-error-text {
-  margin: 0;
-  color: #f87171;
-  font-size: map.get(vars.$font-sizes, sm);
-  text-align: center;
-  line-height: 1.5;
-}
-
-.login-button {
-  width: 100%;
-  padding: map.get(vars.$spacing, md) map.get(vars.$spacing, lg);
-  border-radius: map.get(vars.$border-radius, xl);
+.signin-pitch {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   gap: 12px;
-  transition: all 0.2s ease;
-  background-color: map.get(vars.$colors, primary);
-  color: map.get(vars.$colors, text-primary);
+  max-width: 34rem;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: signin-rise 0.5s anim.ease(out) both;
+  }
+}
+
+.signin-promise {
+  margin: 0;
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 4.5rem);
   font-weight: 600;
-  font-size: map.get(vars.$font-sizes, base);
-  box-shadow: 0 4px 12px rgba(29, 161, 242, 0.3);
-  border: none;
-  cursor: pointer;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: #f4f9ff;
 }
 
-.login-button:hover {
-  opacity: 0.9;
-}
-
-.login-button:active {
-  transform: scale(0.97);
-}
-
-.login-button:focus-visible {
-  outline: 2px solid map.get(vars.$colors, primary);
-  outline-offset: 2px;
-}
-
-.login-button svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.login-divider {
-  display: flex;
-  align-items: center;
-  gap: map.get(vars.$spacing, md);
-  margin: map.get(vars.$spacing, md) 0;
-}
-
-.login-divider-line {
-  flex: 1;
-  height: 1px;
-  background-color: map.get(vars.$colors, border-dark);
-}
-
-.login-divider-text {
-  color: map.get(vars.$colors, text-muted);
-  font-size: map.get(vars.$font-sizes, xs);
-}
-
-.login-info {
-  text-align: center;
-}
-
-.login-info-text {
-  color: map.get(vars.$colors, text-secondary);
-  font-size: 14.6px;
+.signin-explain {
+  max-width: 38ch;
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, body);
   line-height: 1.5;
+  // Tinted from the field, not grey: stays readable on both gradient ends.
+  color: rgba(232, 246, 255, 0.82);
+
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    font-size: map.get(vars.$font-sizes, lg);
+  }
 }
 
-.login-footer {
-  margin-top: map.get(vars.$spacing, lg);
-  margin-bottom: 8rem;
-  text-align: center;
+// ─── Sign-in column ─────────────────────────────────────────────────────────
+
+.signin-panel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: map.get(vars.$spacing, xl) map.get(vars.$spacing, md)
+    calc(#{map.get(vars.$spacing, xl)} + env(safe-area-inset-bottom));
+
+  @media (min-width: map.get(vars.$breakpoints, lg)) {
+    align-items: center;
+    padding: 48px;
+  }
 }
 
-.login-footer-text {
-  color: map.get(vars.$colors, text-muted);
-  font-size: 14.6px;
+.signin-column {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  width: 100%;
+  max-width: 360px;
+}
+
+.signin-title {
+  margin: 0 0 map.get(vars.$spacing, xs);
+  font-size: map.get(vars.$font-sizes, 2xl);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+}
+
+.signin-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: map.get(vars.$radius, control);
+  background: rgba(map.get(vars.$colors, danger), 0.1);
+  border: 1px solid rgba(map.get(vars.$colors, danger), 0.3);
+  color: #fca5a5;
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.45;
+}
+
+.signin-note {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, meta);
+  line-height: 1.5;
+  text-wrap: pretty;
+  color: map.get(vars.$colors, text-2);
+}
+
+@keyframes signin-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }

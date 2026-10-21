@@ -18,11 +18,11 @@ export async function clientLoader({ request }: Route.LoaderArgs) {
 
   if (accessToken) {
     setAccessToken(accessToken);
-    return redirect("/");
+    return redirect("/posts");
   }
 
   if (isTokenSet()) {
-    return redirect("/");
+    return redirect("/posts");
   }
 
   if (error) {
@@ -41,46 +41,48 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <div className="logo">
-        <img src={logo} alt="logo" />
-        <h1 className="header">Vox</h1>
-      </div>
+    <main className="signin">
+      {/* What Vox is, on its own colour. */}
+      <section className="signin-field" aria-labelledby="signin-promise">
+        <div className="signin-brand">
+          <span className="signin-mark">
+            <img src={logo} alt="" width={36} height={36} />
+          </span>
+          <span className="signin-wordmark">Vox</span>
+        </div>
+        <div className="signin-pitch">
+          <h1 id="signin-promise" className="signin-promise">
+            Write X posts with AI
+          </h1>
+          <p className="signin-explain">
+            Describe a topic, pick from three drafts, refine it, and publish to X
+            from here.
+          </p>
+        </div>
+      </section>
 
-      <div className="login-card">
-        <h2 className="login-card-title">Sign in to continue</h2>
+      {/* The one thing to do here. */}
+      <section className="signin-panel" aria-labelledby="signin-title">
+        <div className="signin-column">
+          <h2 id="signin-title" className="signin-title">Sign in to Vox</h2>
 
-        {authError && (
-          <div className="login-error-banner">
-            <p className="login-error-text">{authError}</p>
-          </div>
-        )}
+          {authError && (
+            <p className="signin-error" role="alert">
+              {authError}
+            </p>
+          )}
 
-        <div className="btn-wrapper">
           <Button onClick={handleLogin} withIcon>
             Continue with X
           </Button>
-        </div>
 
-        <div className="login-divider">
-          <div className="login-divider-line"></div>
-          <div className="login-divider-line"></div>
-        </div>
-
-        <div className="login-info">
-          <p className="login-info-text">
-            By signing in, you authorize this app to access your X account and
-            generate tweets based on your preferences.
+          <p className="signin-note">
+            Signing in lets Vox publish the posts you choose to your X account.
+            New to Vox? Your account will be created automatically.
           </p>
         </div>
-      </div>
-
-      <div className="login-footer">
-        <p className="login-footer-text">
-          New to Vox? Your account will be created automatically.
-        </p>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
