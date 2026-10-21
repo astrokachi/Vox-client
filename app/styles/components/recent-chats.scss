@@ -3,7 +3,6 @@
 @use "../animations" as anim;
 
 .recents-con {
-  margin-top: 20px;
   padding: 6px 16px;
   display: flex;
   flex-direction: column;
@@ -32,7 +31,7 @@
   align-items: center;
   gap: 10px;
   padding: 6px 8px;
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   color: map.get(vars.$colors, text-secondary);
   text-decoration: none;
   font-size: map.get(vars.$font-sizes, sm);
@@ -81,7 +80,7 @@
 
 .recents-skeleton {
   height: 28px;
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.04) 0%,

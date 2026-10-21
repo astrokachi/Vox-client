@@ -1,7 +1,7 @@
 import { CaretUpDownIcon } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
-import { useRouteLoaderData, useNavigate } from 'react-router';
-import type { loader as dashboardLoader } from '~/routes/dashboard/index';
+import { useNavigate } from 'react-router';
+import { useCurrentUser } from '~/hooks/useCurrentUser';
 import { UserMenuSkeleton } from './user-menu-skeleton';
 
 interface UserMenuProps {
@@ -41,7 +41,7 @@ const UserMenuContent = ({ user }: { user: UserData }) => {
 };
 
 export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
-  const { user } = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index')!;
+  const user = useCurrentUser();
   const [isExpanded, setIsExpanded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -77,12 +77,6 @@ export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
       )}
 
       <div className="user-menu-dropdown">
-        <button className="dropdown-item">
-          <span>Profile Settings</span>
-        </button>
-        <button className="dropdown-item">
-          <span>Billing</span>
-        </button>
         <button className="dropdown-item danger" onClick={handleLogout}>
           <span>Sign Out</span>
         </button>
