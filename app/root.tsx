@@ -15,6 +15,7 @@ import { ToastProvider } from "~/contexts/toast-provider";
 import Toast from "~/components/toast";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", type: "image/png", href: "/vox-small.png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
