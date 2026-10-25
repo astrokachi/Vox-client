@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import twitter from "twitter-text";
 import { ArrowUpRightIcon, CheckCircleIcon, ImageIcon, XIcon } from "@phosphor-icons/react";
 import PostImageGrid from "~/components/chat/post-image-grid";
 import Spinner from "~/components/spinner";
@@ -36,7 +37,8 @@ const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
 
   const previous = getPosted(draft.id);
   const alreadyPosted = !!previous && previous.text === text;
-  const charCount = Array.from(text).length;
+  // Counted the way X counts: emoji and CJK as 2, every link as 23.
+  const charCount = twitter.parseTweet(text).weightedLength;
   const overLimit = charCount > CHAR_LIMIT;
   const canPost = !posting && !alreadyPosted && text.trim().length > 0;
 
