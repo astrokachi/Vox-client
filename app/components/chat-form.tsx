@@ -1,13 +1,13 @@
 import { SparkleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type SubmitEvent } from "react";
+import type { DraftUsage } from "~/types";
 import "~/styles/components/chat-form.scss";
 
 interface ChatFormProps {
   suggestion?: string;
   onSubmit?: (content: string) => void;
-  promptCount?: number;
-  /** When omitted, no "left" count is shown (no limit). */
-  maxPrompts?: number;
+  /** When omitted or null, no "left" count is shown. */
+  usage?: DraftUsage | null;
   disabled?: boolean;
   submitLabel?: string;
   placeholder?: string;
@@ -18,8 +18,7 @@ interface ChatFormProps {
 export const ChatForm = ({
   suggestion,
   onSubmit,
-  promptCount = 0,
-  maxPrompts,
+  usage,
   disabled = false,
   submitLabel = "Write drafts",
   placeholder = "Describe a topic or what you want to say",
@@ -59,8 +58,6 @@ export const ChatForm = ({
     }
   }, [suggestion]);
 
-  const remaining = maxPrompts !== undefined ? Math.max(maxPrompts - promptCount, 0) : null;
-
   return (
     <form
       ref={formRef}
@@ -85,8 +82,8 @@ export const ChatForm = ({
       />
       <div className="form-footer">
         <span className="form-hint">
-          {remaining !== null
-            ? `${remaining} of ${maxPrompts} left`
+          {usage
+            ? `${usage.remaining} of ${usage.limit} free drafts left`
             : "Enter to send · Shift+Enter for a new line"}
         </span>
         <button

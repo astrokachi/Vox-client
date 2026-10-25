@@ -5,6 +5,7 @@ import { useApiCall } from "~/hooks/useApiCall";
 import { useConversationMessages } from "~/hooks/useConversationMessages";
 import { useConversationSocket } from "~/hooks/useConversationSocket";
 import { usePendingTimeout } from "~/hooks/usePendingTimeout";
+import { draftLimitMessage } from "~/lib/chat-limits";
 import type { ChatGetThreadDto, Turn } from "~/types";
 
 // One version of a draft being refined. The first is the original draft.
@@ -126,7 +127,7 @@ export const useRefineHistory = (
       await chatApi.refineMessage({ responseId: latest.id, payload: { content: instruction } });
     } catch (err) {
       console.error("Failed to refine draft:", err);
-      setError("Couldn't refine the draft. Try again.");
+      setError(draftLimitMessage(err) ?? "Couldn't refine the draft. Try again.");
       setRefinements((prev) => prev.filter((v) => v.id !== pendingId));
     }
   };

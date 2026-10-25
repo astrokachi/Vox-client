@@ -63,6 +63,13 @@ export interface UpdateConversationRequest {
   title: string;
 }
 
+// The user's free-tier draft allowance, shared across all posts.
+export interface DraftUsage {
+  used: number;
+  limit: number;
+  remaining: number;
+}
+
 export interface Conversation {
   id: string;
   title: string;

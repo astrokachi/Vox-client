@@ -3,6 +3,7 @@ import { chatApi } from "~/api/endpoints";
 import { useConversationMessages } from "~/hooks/useConversationMessages";
 import { useConversationSocket } from "~/hooks/useConversationSocket";
 import { PENDING_TIMEOUT_MS, usePendingTimeout } from "~/hooks/usePendingTimeout";
+import { draftLimitMessage } from "~/lib/chat-limits";
 import type { Turn } from "~/types";
 
 const EMPTY_IDS: ReadonlySet<string> = new Set();
@@ -71,7 +72,7 @@ export const useDrafts = (conversationId: string) => {
     setPendingTurnIds(EMPTY_IDS),
   );
 
-  // Asks for three more drafts from a new prompt.
+  // Asks for more drafts from a new prompt (up to three, as the allowance permits).
   const sendPrompt = async (content: string) => {
     setError(null);
     try {
@@ -87,13 +88,14 @@ export const useDrafts = (conversationId: string) => {
       );
     } catch (err) {
       console.error("Failed to send prompt:", err);
-      setError("Couldn't send that prompt. Try again.");
+      setError(draftLimitMessage(err) ?? "Couldn't send that prompt. Try again.");
     }
   };
 
-  // Re-asks a failed turn's prompt. This uses another prompt.
-  const retry = (turn: Turn) => {
-    if (turn.question) sendPrompt(turn.question.content);
+  // Re-asks a failed turn's prompt. Failed turns were refunded, so this
+  // spends drafts like any new prompt.
+  const retry = async (turn: Turn) => {
+    if (turn.question) await sendPrompt(turn.question.content);
   };
 
   return {

@@ -4,6 +4,8 @@ import type { clientLoader as dashboardLoader } from '~/routes/dashboard/index';
 import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
 import { chatApi } from "~/api/endpoints";
+import { useDraftUsage } from "~/hooks/useDraftUsage";
+import { draftLimitMessage } from "~/lib/chat-limits";
 
 const logo = "/vox-small.png";
 
@@ -22,6 +24,7 @@ const NewPost = () => {
   const navigate = useNavigate();
   const dashboardData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
   const user = dashboardData?.user;
+  const { usage, exhausted } = useDraftUsage();
 
   const handleTopicClick = (topic: string) => {
     setSuggestion(`${topic}: `);
@@ -35,8 +38,11 @@ const NewPost = () => {
         payload: { content: _content, type: "MULTIPLE" },
       });
       navigate(`/posts/${conversation.id}`);
-    } catch {
-      setError("Couldn't start this post. Check your connection and try again.");
+    } catch (err) {
+      setError(
+        draftLimitMessage(err) ??
+          "Couldn't start this post. Check your connection and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -67,12 +73,19 @@ const NewPost = () => {
           </div>
         </div>
         {error && <div className="error-message" role="alert">{error}</div>}
-        <ChatForm
-          suggestion={suggestion}
-          onSubmit={handleFormSubmit}
-          submitLabel="Write drafts"
-          disabled={loading}
-        />
+        {exhausted ? (
+          <p className="prompt-limit">
+            You've used all {usage?.limit} free drafts.
+          </p>
+        ) : (
+          <ChatForm
+            suggestion={suggestion}
+            onSubmit={handleFormSubmit}
+            usage={usage}
+            submitLabel="Write drafts"
+            disabled={loading}
+          />
+        )}
         {loading && <div className="loading-message" role="status">Creating your post…</div>}
       </div>
     </div>

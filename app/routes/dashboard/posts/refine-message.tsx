@@ -6,6 +6,7 @@ import VersionList from "~/components/chat/version-list";
 import PublishDialog, { type PublishableDraft } from "~/components/chat/publish-dialog";
 import { ChatForm } from "~/components/chat-form";
 import { useConversationTitle } from "~/hooks/useConversationTitle";
+import { useDraftUsage } from "~/hooks/useDraftUsage";
 import { usePublishDraft } from "~/hooks/usePublishDraft";
 import { useRefineHistory } from "~/hooks/useRefineHistory";
 import "~/styles/dashboard/posts.scss";
@@ -26,10 +27,16 @@ const RefineMessage = () => {
     messageId,
     handedOver,
   );
+  const { usage, exhausted, refresh: refreshUsage } = useDraftUsage();
   const { getPosted } = usePublishDraft();
   const [toPublish, setToPublish] = useState<PublishableDraft | null>(null);
 
   const draftsPath = `/posts/${postId}`;
+
+  const handleRefine = async (instruction: string) => {
+    await refine(instruction);
+    refreshUsage();
+  };
 
   return (
     <div className="post-chat-container">
@@ -50,12 +57,19 @@ const RefineMessage = () => {
       {error && <div className="error-message" role="alert">{error}</div>}
 
       <div className="chat-input-section">
-        <ChatForm
-          onSubmit={refine}
-          submitLabel="Refine"
-          placeholder="Describe how to change the latest version"
-          disabled={awaitingResponse || versions.length === 0}
-        />
+        {exhausted && !awaitingResponse ? (
+          <p className="prompt-limit">
+            You've used all {usage?.limit} free drafts.
+          </p>
+        ) : (
+          <ChatForm
+            onSubmit={handleRefine}
+            usage={usage}
+            submitLabel="Refine"
+            placeholder="Describe how to change the latest version"
+            disabled={awaitingResponse || versions.length === 0}
+          />
+        )}
       </div>
 
       {toPublish && (

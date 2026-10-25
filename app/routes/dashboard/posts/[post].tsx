@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { Link, useLoaderData, useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import type { Route } from "../+types/index";
 import PageHeader from "~/components/layouts/page-header";
 import TurnList, { TurnListSkeleton } from "~/components/chat/turn-list";
 import PublishDialog, { type PublishableDraft } from "~/components/chat/publish-dialog";
 import { ChatForm } from "~/components/chat-form";
 import { useConversationTitle } from "~/hooks/useConversationTitle";
+import { useDraftUsage } from "~/hooks/useDraftUsage";
 import { useDrafts } from "~/hooks/useDrafts";
 import { usePublishDraft } from "~/hooks/usePublishDraft";
-import { MAX_PROMPTS } from "~/lib/chat-limits";
-import type { Message } from "~/types";
+import type { Message, Turn } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -23,6 +23,7 @@ const Post = () => {
   const { title, failed: titleFailed } = useConversationTitle(conversationId);
   const { turns, pendingTurnIds, isTyping, loading, error, sendPrompt, retry } =
     useDrafts(conversationId);
+  const { usage, exhausted, refresh: refreshUsage } = useDraftUsage();
   const { getPosted } = usePublishDraft();
   const [toPublish, setToPublish] = useState<PublishableDraft | null>(null);
 
@@ -32,7 +33,15 @@ const Post = () => {
     });
   };
 
-  const atLimit = turns.length >= MAX_PROMPTS;
+  const handleSend = async (content: string) => {
+    await sendPrompt(content);
+    refreshUsage();
+  };
+
+  const handleRetry = async (turn: Turn) => {
+    await retry(turn);
+    refreshUsage();
+  };
 
   return (
     <div className="post-chat-container">
@@ -51,11 +60,11 @@ const Post = () => {
             turns={turns}
             pendingTurnIds={pendingTurnIds}
             isTyping={isTyping}
-            canRetry={!atLimit}
+            canRetry={!exhausted}
             getPosted={getPosted}
             onRefine={handleRefine}
             onPost={setToPublish}
-            onRetry={retry}
+            onRetry={handleRetry}
           />
         )}
       </div>
@@ -63,16 +72,14 @@ const Post = () => {
       {error && <div className="error-message" role="alert">{error}</div>}
 
       <div className="chat-input-section">
-        {atLimit ? (
+        {exhausted ? (
           <p className="prompt-limit">
-            You've used all {MAX_PROMPTS} prompts for this post.{" "}
-            <Link to="/posts/new">Start a new post</Link>
+            You've used all {usage?.limit} free drafts.
           </p>
         ) : (
           <ChatForm
-            onSubmit={sendPrompt}
-            promptCount={turns.length}
-            maxPrompts={MAX_PROMPTS}
+            onSubmit={handleSend}
+            usage={usage}
             submitLabel="New drafts"
             placeholder="Try another angle"
           />
