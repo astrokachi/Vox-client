@@ -3,6 +3,8 @@ import { ChatTextIcon } from "@phosphor-icons/react";
 import { NavLink, useLocation } from "react-router";
 import { useApiCall } from "~/hooks/useApiCall";
 import { conversationApi } from "~/api/endpoints";
+import { getSocket } from "~/services/socket";
+import type { MessageEvent } from "~/hooks/useConversationSocket";
 import type { ConversationListDto, Conversation } from "~/types";
 import "~/styles/components/recent-chats.scss";
 
@@ -17,6 +19,24 @@ export const RecentChats = () => {
   useEffect(() => {
     execute(DTO);
   }, []);
+
+  // Refetch when a turn's drafts land so a new conversation shows up without a
+  // reload. Each draft is its own event; the turn's first one triggers the fetch.
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    let lastTurnId: string | null = null;
+    const refresh = ({ messageGroupId }: MessageEvent) => {
+      if (messageGroupId === lastTurnId) return;
+      lastTurnId = messageGroupId;
+      execute(DTO);
+    };
+    socket.on("message:received", refresh);
+    return () => {
+      socket.off("message:received", refresh);
+    };
+  }, [execute]);
 
   const { pathname } = useLocation();
   useEffect(() => {
