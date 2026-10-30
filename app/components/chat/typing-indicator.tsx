@@ -1,31 +1,15 @@
-import { useEffect, useState } from "react";
 import "~/styles/components/typing-indicator.scss";
 
-const PHRASES = [
-  "Generating",
-  "Constructing",
-  "Drafting",
-  "Refining",
-  "Polishing",
-];
+interface TypingIndicatorProps {
+  label?: string;
+}
 
-const TypingIndicator = () => {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % PHRASES.length);
-    }, 1500);
-
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <div className="typing-indicator" role="status">
-      <span className="typing-indicator-dot" aria-hidden="true" />
-      <span className="typing-indicator-text">{PHRASES[index]}…</span>
-    </div>
-  );
-};
+// A pulsing dot and a steady line saying what's being written.
+const TypingIndicator = ({ label = "Writing drafts…" }: TypingIndicatorProps) => (
+  <div className="typing-indicator" role="status">
+    <span className="typing-indicator-dot" aria-hidden="true" />
+    <span className="typing-indicator-text">{label}</span>
+  </div>
+);
 
 export default TypingIndicator;
