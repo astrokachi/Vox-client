@@ -28,11 +28,11 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "preconnect",
-    href: import.meta.env.VITE_API_URL,
+    href: import.meta.env.VITE_SOCKET_URL,
   },
   {
     rel: "dns-prefetch",
-    href: import.meta.env.VITE_API_URL,
+    href: import.meta.env.VITE_SOCKET_URL,
   },
 ];
 

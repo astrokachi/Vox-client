@@ -1,0 +1,47 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// Posts page frame: title, tabs, then whichever list the tab shows.
+
+.posts-page {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  max-width: map.get(vars.$layout, content-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.posts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, md);
+}
+
+.posts-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, xl);
+  color: map.get(vars.$colors, text-1);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, 2xl);
+  }
+}
+
+// Phones already have New post in the top bar.
+.new-post-btn {
+  @include mx.button(primary, sm);
+  text-decoration: none;
+
+  @media (max-width: calc(#{map.get(vars.$breakpoints, md)} - 1px)) {
+    display: none;
+  }
+}
+
+// The way out of an empty Published tab.
+.posts-empty-link {
+  @include mx.button(secondary, sm);
+  text-decoration: none;
+}

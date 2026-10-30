@@ -17,10 +17,14 @@ export interface ConversationCreateDto {
   payload: CreateConversationRequest;
 }
 
-export interface ConversationListDto {
+export interface CursorPageDto {
   cursor?: string;
   take?: number;
 }
+
+export type ConversationListDto = CursorPageDto;
+
+export type SentPostListDto = CursorPageDto;
 
 export interface ConversationGetDto {
   id: string;

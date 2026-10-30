@@ -1,45 +1,41 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import twitter from "twitter-text";
 import { ArrowUpRightIcon, CheckCircleIcon, ImageIcon, XIcon } from "@phosphor-icons/react";
 import PostImageGrid from "~/components/chat/post-image-grid";
 import Spinner from "~/components/spinner";
 import { useCurrentUser } from "~/hooks/useCurrentUser";
 import { useImageFiles } from "~/hooks/useImageFiles";
-import { usePublishDraft } from "~/hooks/usePublishDraft";
-import { postUrl, type PostedDraft } from "~/lib/posted-drafts";
+import { usePublishDraft, type PublishOutcome } from "~/hooks/usePublishDraft";
+import { postUrl, type PostableDraft, type PostedDraft } from "~/lib/posted-drafts";
+import { X_CHAR_LIMIT, xLength } from "~/lib/x-length";
 import { formatShortDate } from "~/utils/format-date";
 import "~/styles/components/publish-dialog.scss";
 
-// X's limit for standard accounts. Paid accounts can go longer, so this warns
-// instead of blocking; X rejects the post if the account can't.
-const CHAR_LIMIT = 280;
-
-export interface PublishableDraft {
-  id: string;
+export interface PublishableDraft extends PostableDraft {
   content: string;
 }
 
 interface PublishDialogProps {
   draft: PublishableDraft;
   onClose: () => void;
+  // Called once a post goes out, so the screen can refresh what depends on it.
+  onPublished?: () => void;
 }
 
 // The one place a draft is published: edit the text, add images, post, and
 // see the result. Every Post button in the app opens this.
-const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
+const PublishDialog = ({ draft, onClose, onPublished }: PublishDialogProps) => {
   const user = useCurrentUser();
   const { publish, posting, getPosted } = usePublishDraft();
   const { images, addFiles, removeFile, clearFiles } = useImageFiles();
   const [text, setText] = useState(draft.content);
-  const [published, setPublished] = useState<PostedDraft | null>(null);
+  const [published, setPublished] = useState<PublishOutcome | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const previous = getPosted(draft.id);
+  const previous = getPosted(draft);
   const alreadyPosted = !!previous && previous.text === text;
-  // Counted the way X counts: emoji and CJK as 2, every link as 23.
-  const charCount = twitter.parseTweet(text).weightedLength;
-  const overLimit = charCount > CHAR_LIMIT;
+  const charCount = xLength(text);
+  const overLimit = charCount > X_CHAR_LIMIT;
   const canPost = !posting && !alreadyPosted && text.trim().length > 0;
 
   const close = () => {
@@ -67,10 +63,11 @@ const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
   const handlePost = async () => {
     if (!canPost) return;
     const files = images.length > 0 ? images.map((img) => img.file) : undefined;
-    const record = await publish(draft.id, text, files);
-    if (!record) return;
+    const outcome = await publish(draft.id, text, files);
+    if (!outcome) return;
     clearFiles();
-    setPublished(record);
+    setPublished(outcome);
+    onPublished?.();
   };
 
   const viewUrl = (record: PostedDraft | null) =>
@@ -89,7 +86,7 @@ const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
       >
         <div className="publish-header">
           <h3 id="publish-dialog-title" className="publish-title">
-            {published ? "Posted" : "Post to X"}
+            {published?.duplicate ? "Already posted" : published ? "Posted" : "Post to X"}
           </h3>
           <button
             type="button"
@@ -105,12 +102,16 @@ const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
         {published ? (
           <div className="publish-success" role="status">
             <CheckCircleIcon className="publish-success-icon" size={32} weight="fill" />
-            <p className="publish-success-text">Your post is live on X.</p>
+            <p className="publish-success-text">
+              {published.duplicate
+                ? "You've already posted this, so it wasn't posted again."
+                : "Your post is live on X."}
+            </p>
             <div className="publish-success-actions">
-              {viewUrl(published) && (
+              {viewUrl(published.record) && (
                 <a
                   className="publish-view-btn"
-                  href={viewUrl(published) as string}
+                  href={viewUrl(published.record) as string}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -175,7 +176,7 @@ const PublishDialog = ({ draft, onClose }: PublishDialogProps) => {
                 className={`publish-count${overLimit ? " publish-count--over" : ""}`}
                 aria-live="polite"
               >
-                {charCount} / {CHAR_LIMIT}
+                {charCount} / {X_CHAR_LIMIT}
                 {overLimit && " · Over limit"}
               </span>
 

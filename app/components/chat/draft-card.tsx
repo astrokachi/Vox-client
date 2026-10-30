@@ -1,4 +1,6 @@
 import { ArrowUpRightIcon, CheckIcon, PencilSimpleLineIcon } from "@phosphor-icons/react";
+import CopyButton from "~/components/copy-button";
+import { X_CHAR_LIMIT, xLength } from "~/lib/x-length";
 import "~/styles/components/draft-card.scss";
 
 interface DraftCardProps {
@@ -13,6 +15,25 @@ interface DraftCardProps {
   onPost: () => void;
 }
 
+interface DraftLengthProps {
+  content: string;
+}
+
+// The draft's length as X counts it; flagged once it won't fit.
+const DraftLength = ({ content }: DraftLengthProps) => {
+  const length = xLength(content);
+  const over = length > X_CHAR_LIMIT;
+  return (
+    <span
+      className={`draft-card-length${over ? " draft-card-length--over" : ""}`}
+      title={`${length} of ${X_CHAR_LIMIT} characters`}
+    >
+      {length}
+      {over && " · Too long"}
+    </span>
+  );
+};
+
 // One draft with its own actions. Once posted, Post gives way to a link.
 const DraftCard = ({
   label,
@@ -26,17 +47,21 @@ const DraftCard = ({
   <article className={`draft-card${highlighted ? " draft-card--highlighted" : ""}`}>
     <header className="draft-card-head">
       <span className="draft-card-label">{label}</span>
-      {posted && (
-        <span className="draft-card-posted">
-          <CheckIcon size={12} weight="bold" />
-          Posted
-        </span>
-      )}
+      <span className="draft-card-meta">
+        {posted && (
+          <span className="draft-card-posted">
+            <CheckIcon size={12} weight="bold" />
+            Posted
+          </span>
+        )}
+        <CopyButton text={content} label="Copy draft" />
+      </span>
     </header>
 
     <p className="draft-card-content">{content}</p>
 
     <footer className="draft-card-actions">
+      <DraftLength content={content} />
       {onRefine && (
         <button type="button" className="draft-card-refine" onClick={onRefine}>
           <PencilSimpleLineIcon size={14} />

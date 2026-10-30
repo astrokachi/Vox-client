@@ -1,0 +1,18 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// Sits where the composer was, so it keeps the composer's surface.
+.out-of-drafts {
+  @include mx.surface(1);
+  margin: 0;
+  padding: 14px map.get(vars.$spacing, md);
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.45;
+  color: map.get(vars.$colors, text-2);
+}
+
+.out-of-drafts-title {
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+}

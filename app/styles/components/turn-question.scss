@@ -1,9 +1,16 @@
 @use "sass:map";
 @use "../variables" as vars;
 
+// The pill and its time share a row; a long prompt wraps inside the pill.
+.turn-question-row {
+  display: flex;
+  align-items: baseline;
+  gap: map.get(vars.$spacing, sm);
+  min-width: 0;
+}
+
 .turn-question {
-  align-self: flex-start;
-  max-width: 100%;
+  min-width: 0;
   margin: 0;
   padding: 6px 12px;
   border-radius: map.get(vars.$radius, control);
@@ -13,4 +20,12 @@
   line-height: 1.4;
   white-space: pre-line;
   overflow-wrap: anywhere;
+}
+
+.turn-question-time {
+  flex-shrink: 0;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-2);
+  white-space: nowrap;
 }

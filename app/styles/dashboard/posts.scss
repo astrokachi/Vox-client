@@ -18,6 +18,14 @@
   width: 100%;
 }
 
+// The page header and, once posted, its status line, kept close together.
+.post-chat-head {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, xs);
+  flex-shrink: 0;
+}
+
 .post-chat-body {
   display: flex;
   flex-direction: column;
@@ -31,20 +39,6 @@
 
 .chat-input-section {
   flex-shrink: 0;
-}
-
-.error-message {
-  padding: 8px 12px;
-  border-radius: map.get(vars.$radius, control);
-  background: rgba(map.get(vars.$colors, danger), 0.1);
-  border: 1px solid rgba(map.get(vars.$colors, danger), 0.3);
-  color: #fca5a5;
-  font-size: map.get(vars.$font-sizes, meta);
-}
-
-.loading-message {
-  font-size: map.get(vars.$font-sizes, meta);
-  color: map.get(vars.$colors, text-2);
 }
 
 // ─── New post ───────────────────────────────────────────────────────────────
@@ -88,64 +82,5 @@
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
     font-size: map.get(vars.$font-sizes, 2xl);
-  }
-}
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  gap: map.get(vars.$spacing, md);
-  width: 100%;
-}
-
-.trending-section {
-  display: flex;
-  flex-direction: column;
-  gap: map.get(vars.$spacing, sm);
-}
-
-.trending-label {
-  font-size: map.get(vars.$font-sizes, meta);
-  color: map.get(vars.$colors, text-2);
-}
-
-.topic-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.topic-pill {
-  @include mx.button(secondary, sm);
-  height: 30px;
-  font-weight: 500;
-  border-color: map.get(vars.$colors, border);
-  background: map.get(vars.$colors, surface-1);
-
-  &:hover:not(:disabled) {
-    border-color: rgba(map.get(vars.$colors, accent), 0.6);
-    background: rgba(map.get(vars.$colors, accent), 0.08);
-  }
-}
-
-// Replaces the composer once a post has used all its prompts.
-.prompt-limit {
-  @include mx.surface(1);
-  margin: 0;
-  padding: 14px map.get(vars.$spacing, md);
-  font-size: map.get(vars.$font-sizes, sm);
-  color: map.get(vars.$colors, text-2);
-
-  a {
-    color: map.get(vars.$colors, accent);
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: map.get(vars.$radius, inset);
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    @include mx.focus-ring;
   }
 }

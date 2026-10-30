@@ -6,7 +6,7 @@ import axios, {
 import { parseApiError } from "./parseError";
 import { getAccessToken, isTokenExpiredOrExpiring } from "~/lib/auth";
 import { ensureToken } from "~/lib/ensure-token";
-import type { ApiResponse } from "~/types";
+import type { ApiResponse, Page } from "~/types";
 
 export const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -73,6 +73,15 @@ class ApiClient {
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const res = await this.instance.get<ApiResponse<T>>(url, config);
     return res.data.data;
+  }
+
+  // A cursor-paginated list, keeping the cursor the plain get() drops.
+  async getPage<T>(url: string, config?: AxiosRequestConfig): Promise<Page<T>> {
+    const res = await this.instance.get<ApiResponse<T[]>>(url, config);
+    return {
+      items: res.data.data,
+      nextCursor: res.data.pagination?.nextCursor ?? null,
+    };
   }
 
   async post<T, B = unknown>(

@@ -13,7 +13,10 @@ import type {
   ConversationGetDto,
   ConversationListDto,
   ConversationUpdateDto,
-  PostResponse,
+  Page,
+  PostResponseData,
+  SentPost,
+  SentPostListDto,
   QueueTweetReplies,
   Turn,
   User,
@@ -39,15 +42,19 @@ export const campaignApi = {
 };
 
 export const postApi = {
-  post: (formData: FormData): Promise<PostResponse> =>
-    externalApi.post<PostResponse>("/api/post", formData),
+  post: (formData: FormData): Promise<PostResponseData> =>
+    externalApi.post<PostResponseData>("/api/post", formData),
+  listSent: (dto: SentPostListDto): Promise<Page<SentPost>> =>
+    externalApi.getPage<SentPost>(
+      `/api/post/sent?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 20}`
+    ),
 };
 
 export const conversationApi = {
   create: (dto: ConversationCreateDto): Promise<Conversation> =>
     externalApi.post<Conversation>("/api/conversations", dto.payload),
-  list: (dto: ConversationListDto): Promise<Conversation[]> =>
-    externalApi.get<Conversation[]>(
+  list: (dto: ConversationListDto): Promise<Page<Conversation>> =>
+    externalApi.getPage<Conversation>(
       `/api/conversations?cursor=${dto.cursor ?? ""}&take=${dto.take ?? 20}`
     ),
   get: (dto: ConversationGetDto): Promise<Conversation> =>

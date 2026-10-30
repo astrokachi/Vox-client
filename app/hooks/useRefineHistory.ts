@@ -6,7 +6,7 @@ import { useConversationMessages } from "~/hooks/useConversationMessages";
 import { useConversationSocket } from "~/hooks/useConversationSocket";
 import { usePendingTimeout } from "~/hooks/usePendingTimeout";
 import { draftLimitMessage } from "~/lib/chat-limits";
-import type { ChatGetThreadDto, Turn } from "~/types";
+import type { ChatGetThreadDto, DraftPosted, Turn } from "~/types";
 
 // One version of a draft being refined. The first is the original draft.
 export interface RefineVersion {
@@ -15,6 +15,10 @@ export interface RefineVersion {
   instruction: string | null;
   // Null while the AI is still writing it (or the original is loading).
   content: string | null;
+  // When the instruction was given (ISO); null for the original.
+  askedAt: string | null;
+  // The server's record of publishing it, when loaded from history.
+  posted?: DraftPosted | null;
 }
 
 const PENDING_PREFIX = "pending-";
@@ -23,6 +27,8 @@ const toVersion = (turn: Turn): RefineVersion => ({
   id: turn.response.options[0]?.id ?? turn.turnId,
   instruction: turn.question?.content ?? null,
   content: turn.response.options[0]?.content ?? null,
+  askedAt: turn.question?.created_at ?? null,
+  posted: turn.response.options[0]?.posted ?? null,
 });
 
 // The original draft and every refinement of it, oldest first.
@@ -71,11 +77,17 @@ export const useRefineHistory = (
   const original = useMemo<RefineVersion | null>(() => {
     const fromServer = turns
       ?.flatMap((t) => t.response.options)
-      .find((m) => m.id === messageId)?.content;
-    const content = fromServer ?? fallbackDraft ?? null;
+      .find((m) => m.id === messageId);
+    const content = fromServer?.content ?? fallbackDraft ?? null;
     // Loaded and still not found: nothing to show for the original.
     if (content === null && !loadingOriginal) return null;
-    return { id: messageId, instruction: null, content };
+    return {
+      id: messageId,
+      instruction: null,
+      content,
+      askedAt: null,
+      posted: fromServer?.posted ?? null,
+    };
   }, [turns, messageId, fallbackDraft, loadingOriginal]);
 
   const { lastActivity } = useConversationSocket({
@@ -90,7 +102,10 @@ export const useRefineHistory = (
             return copy;
           }
         }
-        return [...prev, { id: message.id, instruction: null, content: message.content }];
+        return [
+          ...prev,
+          { id: message.id, instruction: null, content: message.content, askedAt: null },
+        ];
       });
     },
     onError: () => failPending(),
@@ -121,7 +136,10 @@ export const useRefineHistory = (
     if (awaitingResponse || !latest || latest.id.startsWith(PENDING_PREFIX)) return;
     const pendingId = `${PENDING_PREFIX}${Date.now()}`;
 
-    setRefinements((prev) => [...prev, { id: pendingId, instruction, content: null }]);
+    setRefinements((prev) => [
+      ...prev,
+      { id: pendingId, instruction, content: null, askedAt: new Date().toISOString() },
+    ]);
 
     try {
       await chatApi.refineMessage({ responseId: latest.id, payload: { content: instruction } });

@@ -1,0 +1,127 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// Shared by every paged list: day groups, loading/error/empty states and the
+// "show older" button.
+
+.paged-list {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, lg);
+}
+
+// ─── Day group ───────────────────────────────────────────────────────────────
+
+.list-group {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.list-group-label {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, meta);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-2);
+}
+
+// One panel per group, rows split by hairlines.
+.list-group-items {
+  @include mx.surface(1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+
+  > li + li {
+    border-top: 1px solid map.get(vars.$colors, border);
+  }
+}
+
+// ─── Load more ───────────────────────────────────────────────────────────────
+
+.paged-list-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.paged-list-more-btn {
+  @include mx.button(secondary, sm);
+  min-width: 160px;
+}
+
+.paged-list-more-error {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, meta);
+  color: #fca5a5;
+}
+
+// ─── Loading ─────────────────────────────────────────────────────────────────
+
+.list-skeleton-label {
+  display: block;
+  width: 64px;
+  height: 12px;
+  border-radius: map.get(vars.$radius, inset);
+  background: map.get(vars.$colors, surface-2);
+}
+
+.list-skeleton-row {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 map.get(vars.$spacing, md);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    min-height: 48px;
+  }
+}
+
+.list-skeleton-line {
+  display: block;
+  width: 55%;
+  height: 14px;
+  border-radius: map.get(vars.$radius, inset);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s linear infinite;
+}
+
+// ─── Empty ───────────────────────────────────────────────────────────────────
+
+.list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: map.get(vars.$spacing, xs);
+  padding: 48px 0 map.get(vars.$spacing, md);
+
+  // Whatever the empty state offers instead (a composer, a link).
+  > :not(.list-empty-title, .list-empty-hint) {
+    margin-top: map.get(vars.$spacing, lg);
+  }
+}
+
+.list-empty-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+  text-align: center;
+}
+
+.list-empty-hint {
+  max-width: 40ch;
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+  text-align: center;
+}

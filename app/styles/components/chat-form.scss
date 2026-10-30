@@ -69,3 +69,49 @@
 .generate-btn {
   @include mx.button(primary, sm);
 }
+
+// ─── Compact (phones) ────────────────────────────────────────────────────────
+// Empty and unfocused, the composer is one row so reading gets the screen.
+// Focusing it or filling it (e.g. from a starter idea) brings the hint back.
+
+@media (max-width: #{map.get(vars.$breakpoints, md) - 1px}) {
+  .chat-form:not(:focus-within):not(.chat-form--filled) {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 6px 6px 12px;
+
+    .chat-textarea {
+      min-height: 36px;
+    }
+
+    .form-hint {
+      display: none;
+    }
+
+    .generate-btn {
+      width: 32px;
+      padding: 0;
+    }
+
+    .generate-btn-label {
+      @include mx.visually-hidden;
+    }
+  }
+}
+
+// ─── Notices around the composer ──────────────────────────────────────────────
+// Kept with the composer so every screen that imports it gets them.
+
+.error-message {
+  padding: 8px 12px;
+  border-radius: map.get(vars.$radius, control);
+  background: rgba(map.get(vars.$colors, danger), 0.1);
+  border: 1px solid rgba(map.get(vars.$colors, danger), 0.3);
+  color: #fca5a5;
+  font-size: map.get(vars.$font-sizes, meta);
+}
+
+.loading-message {
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
+}

@@ -3,10 +3,11 @@ import DraftCard, { DraftCardSkeleton } from "./draft-card";
 import TurnQuestion from "./turn-question";
 import TypingIndicator from "./typing-indicator";
 import { useScrollToLatest } from "~/hooks/useScrollToLatest";
-import { postUrl, type PostedDraft } from "~/lib/posted-drafts";
+import { postUrl, type PostableDraft, type PostedDraft } from "~/lib/posted-drafts";
 import type { Message, Turn } from "~/types";
 import "~/styles/components/turn-list.scss";
 
+// The server writes drafts in this tone order (DRAFT_TONES in x-bot's const.ts).
 const TONE_LABELS = ["Standard", "Playful", "Educative"];
 
 const toneLabel = (i: number) => TONE_LABELS[i] ?? `Option ${i + 1}`;
@@ -18,7 +19,7 @@ interface TurnListProps {
   isTyping: boolean;
   // False once the post is out of prompts (a retry uses one).
   canRetry: boolean;
-  getPosted: (draftId: string) => PostedDraft | null;
+  getPosted: (draft: PostableDraft) => PostedDraft | null;
   onRefine: (draft: Message) => void;
   onPost: (draft: Message) => void;
   onRetry: (turn: Turn) => void;
@@ -91,7 +92,12 @@ const TurnList = ({
             className="turn"
             aria-label={turn.question ? `Drafts for: ${turn.question.content}` : "Drafts"}
           >
-            {turn.question && <TurnQuestion content={turn.question.content} />}
+            {turn.question && (
+              <TurnQuestion
+                content={turn.question.content}
+                askedAt={turn.question.created_at}
+              />
+            )}
 
             {options.length === 0 && pendingTurnIds.has(turn.turnId) ? (
               <PendingDrafts />
@@ -102,7 +108,7 @@ const TurnList = ({
             ) : (
               <div className="turn-drafts">
                 {options.map((message, i) => {
-                  const posted = getPosted(message.id);
+                  const posted = getPosted(message);
                   return (
                     <DraftCard
                       key={message.id}

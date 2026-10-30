@@ -1,0 +1,77 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// A published post: the text as it went out, then where it came from and
+// where to go next.
+.published-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px map.get(vars.$spacing, md) 10px;
+}
+
+.published-item-text {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: map.get(vars.$font-sizes, body);
+  line-height: 1.45;
+  color: map.get(vars.$colors, text-1);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  // Long posts are cut here; the full text is on X.
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+}
+
+.published-item-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, xs) map.get(vars.$spacing, md);
+}
+
+.published-item-context {
+  display: flex;
+  flex: 1 1 200px;
+  min-width: 0;
+  gap: 6px;
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
+
+  time {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.published-item-source {
+  @include mx.truncate;
+
+  &::before {
+    content: "·";
+    margin-right: 6px;
+  }
+}
+
+.published-item-actions {
+  display: flex;
+  gap: map.get(vars.$spacing, xs);
+  margin-left: auto;
+  // Lines the ghost buttons' text up with the panel's right padding.
+  margin-right: -8px;
+}
+
+.published-item-action {
+  @include mx.button(ghost, sm);
+  padding: 0 8px;
+  text-decoration: none;
+
+  &--x {
+    gap: 4px;
+    color: map.get(vars.$colors, accent);
+  }
+}

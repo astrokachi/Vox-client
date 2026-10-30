@@ -25,5 +25,13 @@ export const useConversationMessages = (conversationId: string) => {
     prefetch(dto);
   }, [pathname]);
 
-  return { turns: data, loading: (loading || data === null) && !error, error };
+  const isLoading = (loading || data === null) && !error;
+
+  // Loads the history again after a failure; ignored while a load is running.
+  const reload = () => {
+    if (!conversationId || loading) return;
+    execute(dto);
+  };
+
+  return { turns: data, loading: isLoading, error, reload };
 };

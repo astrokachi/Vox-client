@@ -1,13 +1,12 @@
 import { SparkleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type SubmitEvent } from "react";
-import type { DraftUsage } from "~/types";
 import "~/styles/components/chat-form.scss";
 
 interface ChatFormProps {
   suggestion?: string;
   onSubmit?: (content: string) => void;
-  /** When omitted or null, no "left" count is shown. */
-  usage?: DraftUsage | null;
+  /** Line under the field, e.g. what sending will cost; a keyboard tip when omitted. */
+  hint?: string | null;
   disabled?: boolean;
   submitLabel?: string;
   placeholder?: string;
@@ -18,7 +17,7 @@ interface ChatFormProps {
 export const ChatForm = ({
   suggestion,
   onSubmit,
-  usage,
+  hint,
   disabled = false,
   submitLabel = "Write drafts",
   placeholder = "Describe a topic or what you want to say",
@@ -62,7 +61,7 @@ export const ChatForm = ({
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className={`chat-form${disabled ? " chat-form--disabled" : ""}`}
+      className={`chat-form${disabled ? " chat-form--disabled" : ""}${content ? " chat-form--filled" : ""}`}
     >
       <textarea
         ref={textareaRef}
@@ -82,9 +81,7 @@ export const ChatForm = ({
       />
       <div className="form-footer">
         <span className="form-hint">
-          {usage
-            ? `${usage.remaining} of ${usage.limit} free drafts left`
-            : "Enter to send · Shift+Enter for a new line"}
+          {hint ?? "Enter to send · Shift+Enter for a new line"}
         </span>
         <button
           type="submit"
@@ -92,7 +89,7 @@ export const ChatForm = ({
           disabled={disabled || !content.trim()}
         >
           <SparkleIcon size={16} weight="fill" />
-          <span>{submitLabel}</span>
+          <span className="generate-btn-label">{submitLabel}</span>
         </button>
       </div>
     </form>
