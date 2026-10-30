@@ -2,13 +2,18 @@ import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import type { Route } from "../+types/index";
 import PageHeader from "~/components/layouts/page-header";
+import LoadError from "~/components/load-error";
 import TurnList, { TurnListSkeleton } from "~/components/chat/turn-list";
+import OutOfDrafts from "~/components/chat/out-of-drafts";
+import PostStatus from "~/components/chat/post-status";
 import PublishDialog, { type PublishableDraft } from "~/components/chat/publish-dialog";
 import { ChatForm } from "~/components/chat-form";
-import { useConversationTitle } from "~/hooks/useConversationTitle";
+import { useConversation } from "~/hooks/useConversation";
 import { useDraftUsage } from "~/hooks/useDraftUsage";
 import { useDrafts } from "~/hooks/useDrafts";
 import { usePublishDraft } from "~/hooks/usePublishDraft";
+import { costHint } from "~/lib/draft-cost";
+import { postUrl } from "~/lib/posted-drafts";
 import type { Message, Turn } from "~/types";
 import "~/styles/dashboard/posts.scss";
 
@@ -20,9 +25,23 @@ export async function loader({ params }: Route.LoaderArgs) {
 const Post = () => {
   const { conversationId } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const { title, failed: titleFailed } = useConversationTitle(conversationId);
-  const { turns, pendingTurnIds, isTyping, loading, error, sendPrompt, retry } =
-    useDrafts(conversationId);
+  const {
+    title,
+    publishedPost,
+    failed: titleFailed,
+    refresh: refreshConversation,
+  } = useConversation(conversationId);
+  const {
+    turns,
+    pendingTurnIds,
+    isTyping,
+    loading,
+    loadError,
+    reload,
+    error,
+    sendPrompt,
+    retry,
+  } = useDrafts(conversationId);
   const { usage, exhausted, refresh: refreshUsage } = useDraftUsage();
   const { getPosted } = usePublishDraft();
   const [toPublish, setToPublish] = useState<PublishableDraft | null>(null);
@@ -45,27 +64,38 @@ const Post = () => {
 
   return (
     <div className="post-chat-container">
-      <PageHeader
-        crumbs={[
-          { label: "Posts", to: "/posts" },
-          { label: title ?? (titleFailed ? "Post" : undefined) },
-        ]}
-      />
+      <div className="post-chat-head">
+        <PageHeader
+          crumbs={[
+            { label: "Posts", to: "/posts" },
+            { label: title ?? (titleFailed ? "Post" : undefined) },
+          ]}
+        />
+        {publishedPost && (
+          <PostStatus
+            publishedAt={publishedPost.published_at}
+            url={publishedPost.x_post_id ? postUrl(publishedPost.x_post_id) : null}
+          />
+        )}
+      </div>
 
       <div className="post-chat-body">
+        {loadError && <LoadError message={loadError} onRetry={reload} />}
         {loading ? (
           <TurnListSkeleton />
         ) : (
-          <TurnList
-            turns={turns}
-            pendingTurnIds={pendingTurnIds}
-            isTyping={isTyping}
-            canRetry={!exhausted}
-            getPosted={getPosted}
-            onRefine={handleRefine}
-            onPost={setToPublish}
-            onRetry={handleRetry}
-          />
+          !(loadError && turns.length === 0) && (
+            <TurnList
+              turns={turns}
+              pendingTurnIds={pendingTurnIds}
+              isTyping={isTyping}
+              canRetry={!exhausted}
+              getPosted={getPosted}
+              onRefine={handleRefine}
+              onPost={setToPublish}
+              onRetry={handleRetry}
+            />
+          )
         )}
       </div>
 
@@ -73,13 +103,14 @@ const Post = () => {
 
       <div className="chat-input-section">
         {exhausted ? (
-          <p className="prompt-limit">
-            You've used all {usage?.limit} free drafts.
-          </p>
+          <OutOfDrafts
+            limit={usage?.limit}
+            next={turns.length > 0 ? "You can still post any draft above." : undefined}
+          />
         ) : (
           <ChatForm
             onSubmit={handleSend}
-            usage={usage}
+            hint={usage ? costHint(usage, "set") : null}
             submitLabel="New drafts"
             placeholder="Try another angle"
           />
@@ -87,7 +118,11 @@ const Post = () => {
       </div>
 
       {toPublish && (
-        <PublishDialog draft={toPublish} onClose={() => setToPublish(null)} />
+        <PublishDialog
+          draft={toPublish}
+          onClose={() => setToPublish(null)}
+          onPublished={refreshConversation}
+        />
       )}
     </div>
   );

@@ -1,0 +1,27 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// Quiet icon action; widens to show "Copied" for a moment after a copy.
+// Negative margins keep it from making a header row taller.
+.copy-btn {
+  @include mx.button(ghost, sm);
+  position: relative;
+  gap: 4px;
+  height: 28px;
+  min-width: 28px;
+  margin: -5px -6px;
+  padding: 0 7px;
+  font-size: map.get(vars.$font-sizes, xs);
+
+  // A finger-sized hit area around the small visible button.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
+
+  &--copied {
+    color: map.get(vars.$colors, accent);
+  }
+}

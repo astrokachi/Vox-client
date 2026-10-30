@@ -18,9 +18,9 @@ Vox is an AI writing assistant for X posts. The user describes a topic, Vox writ
 
 **Post → Drafts → Refine → Publish.** Use these words in the UI; do not expose system terms (conversation, turn, message, prompt group).
 
-- **Post**: one writing session about a topic (backend: conversation). Listed under Posts.
-- **Drafts**: three AI options per request, labelled by tone (Standard, Playful, Educative). A post allows 6 draft requests.
-- **Refine**: rewrite one draft with an instruction; produces a sequence of versions. Unlimited.
+- **Post**: one writing session about a topic (backend: conversation). Listed under Posts → All; the ones published to X are under Posts → Published.
+- **Drafts**: three AI options per request, written in a fixed tone order (Standard, Playful, Educative) and labelled to match. Free accounts get 6 drafts in total, across all posts: a new set uses 3 (fewer if fewer are left). The composer always says what the next action will use.
+- **Refine**: rewrite one draft with an instruction; produces a sequence of versions. Each refine uses 1 draft from the same allowance.
 - **Publish**: review the post exactly as it will appear on X, optionally attach images, and post it.
 
 ## Scope
@@ -36,4 +36,5 @@ The source for Overview and Replies is kept in the repo but not routed.
 ## Constraints
 
 - Publishing posts to the user's real X account is irreversible from the app; the publish step must show exactly what will be posted and confirm success with a link.
-- The backend does not yet record which draft was published. Until it does, "Posted" state is stored per user in the browser (localStorage). Backend follow-up: accept the draft id on `POST /api/post` and store the returned post id, which unlocks durable Posted state and the Overview insights.
+- Publishing is guarded on the server: the same text can't be posted twice by the same user (double clicks, retries, other devices). A refused duplicate returns the earlier post's id, and the app shows it as already posted.
+- The backend records every post published from Vox with the draft and post it came from. That backs Posts → Published, the Posted mark on the Posts list, the Posted mark on draft cards, and the "Published" line on a post, so they're the same on every device. The browser keeps its own record (localStorage) only to show a post made since the page loaded. This link also unlocks Overview insights.

@@ -1,6 +1,9 @@
+import type { DraftPosted } from "~/types";
+
 // Which drafts have been published, so the same draft can't be posted twice.
-// Stored per user in localStorage until the backend links posts to drafts
-// (see PRODUCT.md), so it doesn't sync across devices.
+// The server's record (`posted` on drafts loaded from history) works across
+// devices; this per-user localStorage record covers posts made since the
+// history loaded. `resolvePosted` merges the two.
 
 export interface PostedDraft {
   postId: string | null;
@@ -9,6 +12,28 @@ export interface PostedDraft {
 }
 
 export type PostedDrafts = Record<string, PostedDraft>;
+
+// A draft as the screens hold it: its id, and the server's record if loaded.
+export interface PostableDraft {
+  id: string;
+  posted?: DraftPosted | null;
+}
+
+// The most recent publish of a draft, from either record; null if never posted.
+export const resolvePosted = (
+  draft: PostableDraft,
+  local: PostedDraft | undefined,
+): PostedDraft | null => {
+  const server: PostedDraft | null = draft.posted
+    ? {
+        postId: draft.posted.x_post_id,
+        text: draft.posted.content,
+        postedAt: draft.posted.published_at,
+      }
+    : null;
+  if (!server || !local) return server ?? local ?? null;
+  return Date.parse(local.postedAt) > Date.parse(server.postedAt) ? local : server;
+};
 
 const KEY_PREFIX = "vox:posted:";
 const EMPTY: PostedDrafts = {};

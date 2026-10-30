@@ -36,6 +36,12 @@
   color: map.get(vars.$colors, text-2);
 }
 
+.draft-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+}
+
 .draft-card-posted {
   display: inline-flex;
   align-items: center;
@@ -60,6 +66,19 @@
   justify-content: flex-end;
   gap: map.get(vars.$spacing, xs);
   margin-right: -4px;
+}
+
+// Pushed to the left of the actions.
+.draft-card-length {
+  margin-right: auto;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-2);
+
+  &--over {
+    font-weight: 600;
+    color: map.get(vars.$colors, danger);
+  }
 }
 
 .draft-card-refine {

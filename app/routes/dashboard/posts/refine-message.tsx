@@ -3,12 +3,14 @@ import { useLoaderData, useLocation } from "react-router";
 import type { Route } from "../+types/index";
 import PageHeader from "~/components/layouts/page-header";
 import VersionList from "~/components/chat/version-list";
+import OutOfDrafts from "~/components/chat/out-of-drafts";
 import PublishDialog, { type PublishableDraft } from "~/components/chat/publish-dialog";
 import { ChatForm } from "~/components/chat-form";
-import { useConversationTitle } from "~/hooks/useConversationTitle";
+import { useConversation } from "~/hooks/useConversation";
 import { useDraftUsage } from "~/hooks/useDraftUsage";
 import { usePublishDraft } from "~/hooks/usePublishDraft";
 import { useRefineHistory } from "~/hooks/useRefineHistory";
+import { costHint } from "~/lib/draft-cost";
 import "~/styles/dashboard/posts.scss";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -21,7 +23,7 @@ const RefineMessage = () => {
   // Draft text handed over from the drafts screen; shown until the original loads.
   const handedOver = (location.state as { draft?: string } | null)?.draft;
 
-  const { title, failed: titleFailed } = useConversationTitle(postId);
+  const { title, failed: titleFailed } = useConversation(postId);
   const { versions, awaitingResponse, error, refine } = useRefineHistory(
     postId,
     messageId,
@@ -58,13 +60,14 @@ const RefineMessage = () => {
 
       <div className="chat-input-section">
         {exhausted && !awaitingResponse ? (
-          <p className="prompt-limit">
-            You've used all {usage?.limit} free drafts.
-          </p>
+          <OutOfDrafts
+            limit={usage?.limit}
+            next={versions.length > 0 ? "You can still post any version above." : undefined}
+          />
         ) : (
           <ChatForm
             onSubmit={handleRefine}
-            usage={usage}
+            hint={usage ? costHint(usage, "refine") : null}
             submitLabel="Refine"
             placeholder="Describe how to change the latest version"
             disabled={awaitingResponse || versions.length === 0}
