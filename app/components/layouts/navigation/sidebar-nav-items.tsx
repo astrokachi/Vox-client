@@ -6,9 +6,9 @@ export const SidebarNavItems = () => {
   return (
     <>
       <div className='nav-links-con'>
-        {navLinks.map(({ title, ref, icon, type, tooltip }) =>
+        {navLinks.map(({ title, ref, icon, type, tooltip, exclude }) =>
           <div className="link-con" key={ref}>
-            <LinkItem icon={icon} title={title} ref={ref} tooltip={tooltip} type={type as 'link' | 'action'} />
+            <LinkItem icon={icon} title={title} ref={ref} tooltip={tooltip} type={type} exclude={exclude} />
           </div>
         )}
       </div>
