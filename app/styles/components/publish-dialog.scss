@@ -1,0 +1,193 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+@use "../animations" as anim;
+
+.publish-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: map.get(vars.$spacing, md);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  animation: fade-in anim.duration(fast) anim.ease(out);
+}
+
+.publish-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: map.get(vars.$spacing, md);
+  border-radius: map.get(vars.$radius, overlay);
+  background: map.get(vars.$colors, surface-1);
+  border: 1px solid map.get(vars.$colors, border);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  outline: none;
+  animation: fade-in-scale anim.duration(normal) anim.ease(out);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    padding: 20px;
+  }
+}
+
+.publish-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.publish-title {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, base);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-1);
+}
+
+.publish-close {
+  @include mx.button(ghost, sm);
+  width: 32px;
+  padding: 0;
+  margin-right: -6px;
+  border-radius: map.get(vars.$radius, control);
+}
+
+// ─── The post, as it will look on X ─────────────────────────────────────────
+
+.publish-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: map.get(vars.$spacing, md);
+  border-radius: map.get(vars.$radius, container);
+  background: #000000;
+  border: 1px solid map.get(vars.$colors, border);
+}
+
+.publish-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.publish-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: map.get(vars.$radius, round);
+  background: vars.$brand-gradient;
+  object-fit: cover;
+}
+
+.publish-user-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.publish-name {
+  @include mx.truncate;
+  flex-shrink: 1;
+  font-size: map.get(vars.$font-sizes, body);
+  font-weight: 700;
+  color: map.get(vars.$colors, text-1);
+}
+
+.publish-handle {
+  @include mx.truncate;
+  flex-shrink: 2;
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
+}
+
+.publish-text {
+  width: 100%;
+  min-height: 72px;
+  padding: 4px 0;
+  resize: none;
+  border: none;
+  border-radius: map.get(vars.$radius, inset);
+  background: transparent;
+  color: map.get(vars.$colors, text-1);
+  font-family: inherit;
+  font-size: map.get(vars.$font-sizes, base);
+  line-height: 1.35;
+  field-sizing: content;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 1px rgba(map.get(vars.$colors, accent), 0.5);
+  }
+}
+
+// ─── Footer ──────────────────────────────────────────────────────────────────
+
+.publish-footer {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.publish-image-btn {
+  @include mx.button(icon, sm);
+}
+
+.publish-count {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-2);
+
+  &--over {
+    color: map.get(vars.$colors, danger);
+  }
+}
+
+.publish-post-btn {
+  @include mx.button(primary, sm);
+  min-width: 64px;
+}
+
+.publish-view-btn {
+  @include mx.button(secondary, sm);
+  gap: 4px;
+  text-decoration: none;
+}
+
+// ─── After posting ──────────────────────────────────────────────────────────
+
+.publish-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: map.get(vars.$spacing, lg) 0 map.get(vars.$spacing, sm);
+  text-align: center;
+}
+
+.publish-success-icon {
+  color: map.get(vars.$colors, accent);
+}
+
+.publish-success-text {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+}
+
+.publish-success-actions {
+  display: flex;
+  gap: map.get(vars.$spacing, sm);
+  margin-top: map.get(vars.$spacing, xs);
+}

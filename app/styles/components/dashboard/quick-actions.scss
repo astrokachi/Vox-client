@@ -1,39 +1,10 @@
 @use "sass:map";
 @use "../../variables" as vars;
-@use "../../animations" as anim;
+@use "../../mixins" as mx;
 
 .quick-action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 7px;
-  background-color: map.get(vars.$colors, gray-dark);
-  color: map.get(vars.$colors, text-primary);
-  border: none;
-  border-radius: map.get(vars.$border-radius, md);
-  cursor: pointer;
-  transition:
-    background-color anim.duration(fast) anim.ease(out),
-    color anim.duration(fast) anim.ease(out),
-    transform anim.duration(fast) anim.ease(out);
-
-  svg {
-    color: inherit;
-  }
-
-  &:hover {
-    background-color: rgba(map.get(vars.$colors, primary), 0.1);
-    color: map.get(vars.$colors, primary);
-  }
-
-  &:active {
-    background-color: rgba(map.get(vars.$colors, primary), 0.2);
-    color: map.get(vars.$colors, primary);
-    transform: scale(0.95);
-  }
-
-  &:focus-visible {
-    outline: 2px solid map.get(vars.$colors, primary);
-    outline-offset: 2px;
-  }
+  @include mx.button(icon);
+  width: 40px;
+  height: 40px;
+  color: map.get(vars.$colors, text-1);
 }

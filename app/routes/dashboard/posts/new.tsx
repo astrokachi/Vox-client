@@ -3,14 +3,18 @@ import { useNavigate, useRouteLoaderData } from "react-router";
 import type { clientLoader as dashboardLoader } from '~/routes/dashboard/index';
 import "~/styles/dashboard/posts.scss";
 import { ChatForm } from "~/components/chat-form";
-import { useImageFiles } from "~/hooks/useImageFiles";
 import { chatApi } from "~/api/endpoints";
+import { useDraftUsage } from "~/hooks/useDraftUsage";
+import { draftLimitMessage } from "~/lib/chat-limits";
 
-const TRENDING_TOPICS = [
-  "Trump's statement",
-  "Design and AI",
-  "Freelancing on Upwork",
-  "#30dayschallenge",
+const logo = "/vox-small.png";
+
+// Starter ideas, not live trends: each fills the composer with a prompt to edit.
+const STARTER_IDEAS = [
+  "A lesson I learned this week",
+  "A tool I can't work without",
+  "A hot take on my industry",
+  "Behind the scenes of a project",
 ];
 
 const NewPost = () => {
@@ -20,10 +24,10 @@ const NewPost = () => {
   const navigate = useNavigate();
   const dashboardData = useRouteLoaderData<typeof dashboardLoader>('routes/dashboard/index');
   const user = dashboardData?.user;
-  const { images, addFiles, removeFile, clearFiles } = useImageFiles();
+  const { usage, exhausted } = useDraftUsage();
 
   const handleTopicClick = (topic: string) => {
-    setSuggestion(`Create a new x post on ${topic}`);
+    setSuggestion(`${topic}: `);
   };
 
   const handleFormSubmit = async (_content: string) => {
@@ -33,10 +37,12 @@ const NewPost = () => {
       const conversation = await chatApi.createWithPrompt({
         payload: { content: _content, type: "MULTIPLE" },
       });
-      clearFiles();
       navigate(`/posts/${conversation.id}`);
-    } catch {
-      setError("Failed to create conversation");
+    } catch (err) {
+      setError(
+        draftLimitMessage(err) ??
+          "Couldn't start this post. Check your connection and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -45,16 +51,16 @@ const NewPost = () => {
   return (
     <div className="chat-container">
       <div className="greeting-section">
-        <div className="logo-gradient" />
-        <p className="greeting-text">Hi, {user?.name}</p>
-        <h2 className="greeting-heading">What would you like to tweet about?</h2>
+        <img className="greeting-logo" src={logo} alt="" />
+        {user?.name && <p className="greeting-text">Hi, {user.name}</p>}
+        <h2 className="greeting-heading">What do you want to post about?</h2>
       </div>
 
       <div className="input-section">
         <div className="trending-section">
-          <span className="trending-label">Try these trending X topics</span>
-          <div className="topic-pills">
-            {TRENDING_TOPICS.map((topic) => (
+          <span className="trending-label" id="trending-label">Need an idea?</span>
+          <div className="topic-pills" role="group" aria-labelledby="trending-label">
+            {STARTER_IDEAS.map((topic) => (
               <button
                 key={topic}
                 type="button"
@@ -66,15 +72,21 @@ const NewPost = () => {
             ))}
           </div>
         </div>
-        {error && <div className="error-message">{error}</div>}
-        <ChatForm
-          suggestion={suggestion}
-          onSubmit={handleFormSubmit}
-          images={images}
-          onAddFiles={addFiles}
-          onRemoveFile={removeFile}
-        />
-        {loading && <div className="loading-message">Creating conversation...</div>}
+        {error && <div className="error-message" role="alert">{error}</div>}
+        {exhausted ? (
+          <p className="prompt-limit">
+            You've used all {usage?.limit} free drafts.
+          </p>
+        ) : (
+          <ChatForm
+            suggestion={suggestion}
+            onSubmit={handleFormSubmit}
+            usage={usage}
+            submitLabel="Write drafts"
+            disabled={loading}
+          />
+        )}
+        {loading && <div className="loading-message" role="status">Creating your post…</div>}
       </div>
     </div>
   );

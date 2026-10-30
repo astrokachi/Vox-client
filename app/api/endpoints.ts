@@ -8,6 +8,7 @@ import type {
   Chats,
   Conversation,
   ConversationCreateDto,
+  DraftUsage,
   ConversationDeleteDto,
   ConversationGetDto,
   ConversationListDto,
@@ -71,6 +72,8 @@ export const chatApi = {
       `/api/chat/messages/${dto.responseId}/refine`,
       dto.payload,
     ),
+  usage: (): Promise<DraftUsage> =>
+    externalApi.get<DraftUsage>("/api/chat/usage"),
   getThread: (dto: ChatGetThreadDto): Promise<Turn[]> =>
     externalApi.get<Turn[]>(
       `/api/chat/messages/${dto.responseId}/thread`,

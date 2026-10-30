@@ -1,34 +1,31 @@
 @use "sass:map";
 @use "../../variables" as vars;
+@use "../../mixins" as mx;
 
 .metric-card {
   display: flex;
   flex-direction: column;
   gap: map.get(vars.$spacing, xs);
-  padding: map.get(vars.$spacing, sm);
-  background-color: map.get(vars.$colors, surface);
-  border: 1px solid map.get(vars.$colors, liner);
-  border-radius: map.get(vars.$border-radius, md);
+  min-width: 0;
+  padding: 12px 14px;
+  background-color: map.get(vars.$colors, surface-1);
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
-    gap: map.get(vars.$spacing, sm);
-    padding: map.get(vars.$spacing, md);
+    padding: 14px map.get(vars.$spacing, md);
   }
 }
 
 .metric-label {
-  font-size: map.get(vars.$font-sizes, xs);
-  color: map.get(vars.$colors, text-muted);
-
-  @media (min-width: map.get(vars.$breakpoints, md)) {
-    font-size: map.get(vars.$font-sizes, sm);
-  }
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
 }
 
 .metric-value {
+  @include mx.truncate;
   font-size: map.get(vars.$font-sizes, base);
-  font-weight: 700;
-  color: map.get(vars.$colors, text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-1);
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
     font-size: map.get(vars.$font-sizes, lg);

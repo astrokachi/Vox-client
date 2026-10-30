@@ -23,7 +23,6 @@ export const LinkItem = ({ title, icon, ref, tooltip, type = 'link' }: LinkItemP
   return (
     <NavLink
       to={ref}
-      end
       className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
       data-tooltip={tooltip}
     >

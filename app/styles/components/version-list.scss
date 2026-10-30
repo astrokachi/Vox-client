@@ -1,0 +1,27 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+// Refine: the original draft, then each instruction and the version it made.
+.version-list {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, lg);
+  width: 100%;
+  max-width: 640px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.version {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-margin-top: map.get(vars.$spacing, sm);
+}
+
+.version-list-missing {
+  margin: 0;
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+}

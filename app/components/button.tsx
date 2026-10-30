@@ -20,7 +20,7 @@ const Button = ({
 }: ButtonProps) => {
   return (
     <button className="btn-con" onClick={onClick} disabled={disabled}>
-      {withIcon && <img src={xIcon} width={12} />}
+      {withIcon && <img src={xIcon} width={12} alt="" />}
       <span className={`login-btn`}>{isLoading ? <Spinner /> : children}</span>
     </button>
   );

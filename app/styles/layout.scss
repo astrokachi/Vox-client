@@ -1,34 +1,10 @@
 @use "sass:map";
 @use "./variables" as vars;
+@use "./mixins" as mx;
 
 
 main {
-  // max-width: map.get(vars.$breakpoints, xl);
   margin: 0 auto;
-}
-
-.main-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.dashboard-content {
-  position: relative;
-  flex: 1;
-  margin-top: map.get(vars.$spacing, md);
-  padding: map.get(vars.$spacing, sm);
-  overflow-y: auto;
-
-  @media (min-width: map.get(vars.$breakpoints, md)) {
-    padding: 3rem;
-    margin-top: 0;
-    height: 100dvh;
-    padding-bottom: 1.5rem;
-    min-height: auto;
-  }
 }
 
 .app-layout {
@@ -42,18 +18,42 @@ main {
   }
 }
 
-// Mobile header - hamburger menu
+.main-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+// The scroll container for every dashboard page. Pages own their max-width;
+// the gutter lives here so it is the same everywhere.
+.dashboard-content {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: map.get(vars.$spacing, md);
+  overflow-y: auto;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    padding: map.get(vars.$spacing, xl) 40px;
+  }
+}
+
+// Mobile header — a normal flex row above the content (not fixed), so it can
+// never cover the page.
 .mobile-header {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  padding: map.get(vars.$spacing, sm) map.get(vars.$spacing, sm);
-  background-color: map.get(vars.$colors, bg-dark);
-  width: 100%;
-  border-bottom: none;
   gap: map.get(vars.$spacing, sm);
-  position: relative;
-  position: fixed;
+  width: 100%;
+  height: 52px;
+  padding: 0 map.get(vars.$spacing, sm);
+  background-color: map.get(vars.$colors, bg);
+  border-bottom: 1px solid map.get(vars.$colors, border);
   z-index: 100;
 
   @media (min-width: map.get(vars.$breakpoints, md)) {
@@ -72,28 +72,9 @@ main {
 }
 
 .mobile-menu-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include mx.button(ghost);
+  width: 40px;
   padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: map.get(vars.$colors, text-primary);
-  transition: color 0.2s ease;
-
-  &:active {
-    background: rgba(map.get(vars.$colors, primary), 0.2);
-    color: map.get(vars.$colors, primary);
-    transform: scale(0.95);
-  }
-
-  &:hover {
-    background: rgba(map.get(vars.$colors, primary), 0.1);
-    color: map.get(vars.$colors, primary);
-  }
-
-  svg {
-    color: inherit;
-  }
+  border-radius: map.get(vars.$radius, control);
+  color: map.get(vars.$colors, text-1);
 }

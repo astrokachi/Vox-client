@@ -51,7 +51,7 @@
   font-size: map.get(vars.$font-sizes, sm);
   font-family: inherit;
   padding: 8px 12px;
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
 
   &:hover {
     color: map.get(vars.$colors, text-secondary);
@@ -69,7 +69,7 @@
   padding: 16px;
   background: map.get(vars.$colors, card-fill);
   border: 1px solid map.get(vars.$colors, card-stroke);
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   text-align: left;
   font-family: "SF Mono", "Fira Code", monospace;
   font-size: map.get(vars.$font-sizes, xs);
@@ -88,7 +88,7 @@
 
 .error-boundary-btn {
   padding: 10px 20px;
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   font-size: map.get(vars.$font-sizes, sm);
   font-weight: 500;
   font-family: inherit;

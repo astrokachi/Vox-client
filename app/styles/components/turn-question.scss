@@ -1,0 +1,16 @@
+@use "sass:map";
+@use "../variables" as vars;
+
+.turn-question {
+  align-self: flex-start;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: map.get(vars.$radius, control);
+  background: map.get(vars.$colors, surface-2);
+  color: map.get(vars.$colors, text-1);
+  font-size: map.get(vars.$font-sizes, sm);
+  line-height: 1.4;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,71 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+@use "../animations" as anim;
+
+// One surface: the textarea has no box of its own; the whole composer shows focus.
+.chat-form {
+  @include mx.surface(1);
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, sm);
+  padding: 12px;
+  transition: border-color anim.duration(fast) anim.ease(out);
+
+  &:focus-within {
+    border-color: rgba(map.get(vars.$colors, accent), 0.6);
+  }
+
+  &--disabled {
+    opacity: 0.7;
+  }
+}
+
+.chat-textarea {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  max-height: 200px;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  color: map.get(vars.$colors, text-1);
+  // 16px on phones stops iOS from zooming into the field.
+  font-size: map.get(vars.$font-sizes, base);
+  font-family: inherit;
+  line-height: 1.45;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    font-size: map.get(vars.$font-sizes, body);
+  }
+
+  &::placeholder {
+    color: map.get(vars.$colors, text-2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.form-hint {
+  @include mx.truncate;
+  padding-left: 4px;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-variant-numeric: tabular-nums;
+  color: map.get(vars.$colors, text-2);
+}
+
+.generate-btn {
+  @include mx.button(primary, sm);
+}

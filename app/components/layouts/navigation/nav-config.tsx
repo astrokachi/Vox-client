@@ -1,12 +1,14 @@
-import { ChatsCircleIcon, NotePencilIcon, PlusIcon, SquaresFourIcon, TargetIcon } from '@phosphor-icons/react';
+import { NotePencilIcon, PlusIcon } from '@phosphor-icons/react';
 
+// Rendered in this order as one group.
+// Overview, Replies and Campaigns return here when they are real features (PRODUCT.md).
 export const navLinks = [
   {
-    title: "Overview",
-    ref: "/",
-    icon: <SquaresFourIcon size={22} />,
-    type: "link",
-    tooltip: "Overview"
+    title: "New post",
+    ref: "/posts/new",
+    icon: <PlusIcon size={22} />,
+    type: "action",
+    tooltip: "New post"
   },
   {
     title: "Posts",
@@ -14,26 +16,5 @@ export const navLinks = [
     icon: <NotePencilIcon size={22} />,
     type: "link",
     tooltip: "Posts"
-  },
-  {
-    title: "Replies",
-    ref: "/replies",
-    icon: <ChatsCircleIcon size={22} />,
-    type: "link",
-    tooltip: "Replies"
-  },
-  {
-    title: "Campaigns",
-    ref: "/campaigns",
-    icon: <TargetIcon size={22} />,
-    type: "link",
-    tooltip: "Campaigns"
-  },
-  {
-    title: "New Post",
-    ref: "/posts/new",
-    icon: <PlusIcon size={22} />,
-    type: "action",
-    tooltip: "New Post"
   },
 ];

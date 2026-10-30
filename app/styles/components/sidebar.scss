@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: center;
   padding: map.get(vars.$spacing, sm);
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
   transition: background map.get(vars.$transitions, default) ease;
 
   &:hover {
@@ -94,13 +94,6 @@
     background: rgba(map.get(vars.$colors, primary), 0.2);
     color: map.get(vars.$colors, primary);
   }
-}
-
-.actions-con {
-  display: flex;
-  flex-direction: column;
-  gap: map.get(vars.$spacing, sm);
-  padding: 0 map.get(vars.$spacing, sm);
 }
 
 .nav-links-con {
@@ -226,7 +219,7 @@
   color: inherit;
   cursor: pointer;
   padding: 5px;
-  border-radius: 8px;
+  border-radius: map.get(vars.$radius, control);
   transition: background 0.3s ease, gap 0.3s ease;
 
 
@@ -235,7 +228,7 @@
 .user-avatar {
   width: 36px;
   height: 36px;
-  border-radius: map.get(vars.$border-radius, full);
+  border-radius: map.get(vars.$radius, round);
   background: linear-gradient(135deg, map.get(vars.$colors, primary), map.get(vars.$colors, secondary));
   display: flex;
   align-items: center;
@@ -298,7 +291,7 @@
   right: map.get(vars.$spacing, sm);
   background: map.get(vars.$colors, surface);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, container);
   z-index: 100;
   padding: map.get(vars.$spacing, xs);
   display: flex;
@@ -325,7 +318,7 @@
   color: map.get(vars.$colors, text-primary);
   cursor: pointer;
   padding: map.get(vars.$spacing, sm) map.get(vars.$spacing, md);
-  border-radius: map.get(vars.$border-radius, sm);
+  border-radius: map.get(vars.$radius, control);
   font-size: map.get(vars.$font-sizes, sm);
   text-align: left;
   transition: background map.get(vars.$transitions, default) ease;
@@ -356,7 +349,7 @@
   );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
-  border-radius: map.get(vars.$border-radius, md);
+  border-radius: map.get(vars.$radius, control);
 
   @keyframes skeleton-loading {
     0% {
@@ -378,12 +371,12 @@
   color: inherit;
   cursor: not-allowed;
   padding: 5px;
-  border-radius: 8px;
+  border-radius: map.get(vars.$radius, control);
 
   .user-avatar {
     width: 36px;
     height: 36px;
-    border-radius: map.get(vars.$border-radius, full);
+    border-radius: map.get(vars.$radius, round);
     flex-shrink: 0;
   }
 

@@ -19,8 +19,7 @@
   align-items: center;
   gap: map.get(vars.$spacing, sm);
   padding: map.get(vars.$spacing, md);
-  padding-left: map.get(vars.$spacing, lg);
-  border-radius: map.get(vars.$border-radius, lg);
+  border-radius: map.get(vars.$radius, container);
   background: rgba(10, 10, 10, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -38,22 +37,6 @@
   }
 }
 
-.toast-accent {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-}
-
-.toast--success .toast-accent {
-  background: map.get(vars.$colors, primary);
-}
-
-.toast--error .toast-accent {
-  background: #f44336;
-}
 
 .toast-icon {
   flex-shrink: 0;
@@ -81,7 +64,7 @@
   color: map.get(vars.$colors, text-secondary);
   cursor: pointer;
   padding: 2px;
-  border-radius: map.get(vars.$border-radius, sm);
+  border-radius: map.get(vars.$radius, control);
   display: flex;
   align-items: center;
   justify-content: center;
