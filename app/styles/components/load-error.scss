@@ -1,0 +1,27 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+.load-error {
+  @include mx.surface(1);
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+  padding: 10px 10px 10px map.get(vars.$spacing, md);
+  font-size: map.get(vars.$font-sizes, sm);
+  color: map.get(vars.$colors, text-2);
+}
+
+.load-error-icon {
+  flex-shrink: 0;
+  color: map.get(vars.$colors, danger);
+}
+
+.load-error-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.load-error-retry {
+  @include mx.button(secondary, sm);
+}

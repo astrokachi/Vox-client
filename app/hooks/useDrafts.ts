@@ -24,7 +24,7 @@ const isRecentlyAsked = (turn: Turn) =>
 // A turn with no drafts is either still being written (in `pendingTurnIds`)
 // or failed.
 export const useDrafts = (conversationId: string) => {
-  const { turns: history, loading, error: loadError } =
+  const { turns: history, loading, error: loadError, reload } =
     useConversationMessages(conversationId);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [pendingTurnIds, setPendingTurnIds] = useState<ReadonlySet<string>>(EMPTY_IDS);
@@ -103,7 +103,11 @@ export const useDrafts = (conversationId: string) => {
     pendingTurnIds,
     isTyping,
     loading: loading && turns.length === 0,
-    error: error ?? loadError?.message ?? null,
+    // The history didn't load, kept apart from a failed send. Prompts sent
+    // since can still show, so this doesn't mean the post is empty.
+    loadError: loadError && !history ? "Couldn't load this post's drafts." : null,
+    reload,
+    error,
     sendPrompt,
     retry,
   };
