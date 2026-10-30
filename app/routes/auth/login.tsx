@@ -18,11 +18,11 @@ export async function clientLoader({ request }: Route.LoaderArgs) {
 
   if (accessToken) {
     setAccessToken(accessToken);
-    return redirect("/posts");
+    return redirect("/posts/new");
   }
 
   if (isTokenSet()) {
-    return redirect("/posts");
+    return redirect("/posts/new");
   }
 
   if (error) {
