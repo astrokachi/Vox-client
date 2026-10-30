@@ -1,0 +1,46 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+@use "../animations" as anim;
+
+// Underlined text tabs on a hairline; the active one is marked in text colour,
+// not brand colour, so it stays quiet next to the content.
+.posts-tabs {
+  display: flex;
+  gap: map.get(vars.$spacing, lg);
+  border-bottom: 1px solid map.get(vars.$colors, border);
+}
+
+.posts-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  font-size: map.get(vars.$font-sizes, sm);
+  font-weight: 600;
+  color: map.get(vars.$colors, text-2);
+  text-decoration: none;
+  border-radius: map.get(vars.$radius, inset);
+  transition: color anim.duration(fast) anim.ease(out);
+
+  &:hover {
+    color: map.get(vars.$colors, text-1);
+  }
+
+  &--active {
+    color: map.get(vars.$colors, text-1);
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      background: map.get(vars.$colors, text-1);
+    }
+  }
+
+  @include mx.focus-ring(-2px);
+}

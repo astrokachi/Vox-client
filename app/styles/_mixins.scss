@@ -95,11 +95,33 @@
   }
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+
+    // A faded accent fill still reads as clickable, so a disabled primary
+    // goes neutral; the outlined and text variants just fade.
+    @if $variant == primary {
+      background: map.get(vars.$colors, surface-2);
+      border-color: map.get(vars.$colors, border);
+      color: map.get(vars.$colors, text-disabled);
+    } @else {
+      opacity: 0.5;
+    }
   }
 
   @include focus-ring;
+}
+
+// Hidden on screen, still read by screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 // Plain text that truncates to one line inside a flex row.

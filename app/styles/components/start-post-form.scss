@@ -1,0 +1,41 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+
+// The first prompt of a post: starter ideas above the composer.
+.start-post {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, md);
+  width: 100%;
+}
+
+.start-post-ideas {
+  display: flex;
+  flex-direction: column;
+  gap: map.get(vars.$spacing, sm);
+}
+
+.start-post-ideas-label {
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
+}
+
+.topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.topic-pill {
+  @include mx.button(secondary, sm);
+  height: 30px;
+  font-weight: 500;
+  border-color: map.get(vars.$colors, border);
+  background: map.get(vars.$colors, surface-1);
+
+  &:hover:not(:disabled) {
+    border-color: rgba(map.get(vars.$colors, accent), 0.6);
+    background: rgba(map.get(vars.$colors, accent), 0.08);
+  }
+}

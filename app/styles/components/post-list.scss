@@ -1,0 +1,73 @@
+@use "sass:map";
+@use "../variables" as vars;
+@use "../mixins" as mx;
+@use "../animations" as anim;
+
+// A post row: title over its meta on phones, one line from md up.
+.post-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 10px map.get(vars.$spacing, md);
+  color: map.get(vars.$colors, text-1);
+  text-decoration: none;
+  transition: background-color anim.duration(fast) anim.ease(out);
+
+  &:hover {
+    background: map.get(vars.$colors, surface-hover);
+  }
+
+  @include mx.focus-ring(-2px);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    flex-direction: row;
+    align-items: center;
+    gap: map.get(vars.$spacing, md);
+    min-height: 48px;
+  }
+}
+
+.post-row-title {
+  @include mx.truncate;
+  font-size: map.get(vars.$font-sizes, body);
+  font-weight: 500;
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    flex: 1;
+  }
+}
+
+.post-row-meta {
+  display: flex;
+  align-items: center;
+  gap: map.get(vars.$spacing, sm);
+  font-size: map.get(vars.$font-sizes, meta);
+  color: map.get(vars.$colors, text-2);
+
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    flex-shrink: 0;
+    gap: map.get(vars.$spacing, md);
+  }
+}
+
+// Same mark as a posted draft card, so "Posted" reads the same everywhere.
+.post-row-posted {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: map.get(vars.$font-sizes, xs);
+  font-weight: 600;
+  color: map.get(vars.$colors, accent);
+}
+
+.post-row-time {
+  font-variant-numeric: tabular-nums;
+
+  // A fixed column so times line up down the list.
+  @media (min-width: map.get(vars.$breakpoints, md)) {
+    min-width: 64px;
+    text-align: right;
+  }
+}

@@ -8,6 +8,12 @@ export interface Pagination {
   hasNextPage: boolean;
 }
 
+// One page of a cursor-paginated list; `nextCursor` is null on the last page.
+export interface Page<T> {
+  items: T[];
+  nextCursor: string | null;
+}
+
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
@@ -75,6 +81,18 @@ export interface Conversation {
   title: string;
   user_id: string;
   created_at: string;
+  // True once any of its drafts has been posted to X (list endpoint).
+  published?: boolean;
+  // The latest post published from it, refinements included (single-post endpoint).
+  published_post?: { x_post_id: string | null; published_at: string } | null;
+}
+
+// When a draft was last published, as the server records it.
+export interface DraftPosted {
+  x_post_id: string | null;
+  // The text that went out; it may have been edited from the draft.
+  content: string;
+  published_at: string;
 }
 
 // chat API types
@@ -91,6 +109,8 @@ export interface Message {
   content: string;
   type?: ChatMessageType;
   created_at: string;
+  // Drafts loaded from history only; absent on prompts and streamed drafts.
+  posted?: DraftPosted | null;
 }
 
 /**
@@ -109,14 +129,23 @@ export interface Turn {
 }
 
 // Post API types
+// The published post, as X returned it.
 export interface PostResponseData {
   id: string;
   text: string;
   edit_history_tweet_ids: string[];
 }
 
-export interface PostResponse {
-  data: PostResponseData;
+// A post published to X, listed under Posts → Published.
+export interface SentPost {
+  id: string;
+  content: string;
+  x_post_id: string | null;
+  // Null when it wasn't published from a draft, or its post was deleted.
+  conversation_id: string | null;
+  conversation_title: string | null;
+  message_id: string | null;
+  published_at: string;
 }
 
 // Returned by POST /new/prompt

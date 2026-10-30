@@ -9,7 +9,11 @@ export default [
     index("routes/dashboard/home.tsx"),
 
     ...prefix("posts", [
-      index("routes/dashboard/posts/index.tsx"),
+      // All and Published share the Posts header and tabs.
+      layout("routes/dashboard/posts/list-layout.tsx", [
+        index("routes/dashboard/posts/index.tsx"),
+        route("published", "routes/dashboard/posts/published.tsx"),
+      ]),
       route("new", "routes/dashboard/posts/new.tsx"),
       route(":id", "routes/dashboard/posts/[post].tsx"),
       route(":id/r/:messageId", "routes/dashboard/posts/refine-message.tsx"),

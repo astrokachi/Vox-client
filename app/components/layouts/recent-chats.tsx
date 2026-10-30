@@ -5,16 +5,17 @@ import { useApiCall } from "~/hooks/useApiCall";
 import { conversationApi } from "~/api/endpoints";
 import { getSocket } from "~/services/socket";
 import type { MessageEvent } from "~/hooks/useConversationSocket";
-import type { ConversationListDto, Conversation } from "~/types";
+import type { ConversationListDto, Conversation, Page } from "~/types";
 import "~/styles/components/recent-chats.scss";
 
 const DTO = { take: 15 } satisfies ConversationListDto;
 
 export const RecentChats = () => {
-  const { execute, prefetch, data: conversations, loading } = useApiCall<
+  const { execute, prefetch, data, loading } = useApiCall<
     ConversationListDto,
-    Conversation[]
-  >(conversationApi.list, { cacheKey: "recent-conversations" });
+    Page<Conversation>
+  >(conversationApi.list, { cacheKey: "recent-conversations-page" });
+  const conversations = data?.items;
 
   useEffect(() => {
     execute(DTO);
